@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 460"
+     width="920" height="460" font-family="ui-monospace, Menlo, Consolas, Courier, monospace"
+     font-size="13" fill="#111111" text-rendering="geometricPrecision">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#111111"/>
+    </marker>
+    <marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#888888"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="white"/>
+<text x="20" y="30" font-size="15" font-weight="700" text-anchor="start" fill="#111111" dominant-baseline="middle">Two parallel policy tiers</text>
+<text x="20" y="48" font-size="11" font-weight="400" text-anchor="start" fill="#888888" dominant-baseline="middle">Same observation contract, different latency / capability</text><rect x="40" y="60" width="400" height="170" rx="8" ry="8" fill="#E7FFE7" stroke="#3B7A57" stroke-width="1" stroke-dasharray="5 3"/>
+<text x="52" y="76" font-size="11" font-weight="600" text-anchor="start" fill="#888888" dominant-baseline="middle">In-process (low latency)</text><rect x="60" y="100" width="170" height="50" rx="6" ry="6" fill="white" stroke="#3B7A57" stroke-width="1.5"/>
+<text x="145" y="117" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">RLPolicyController</text>
+<text x="145" y="135" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">C++</text><rect x="250" y="100" width="170" height="50" rx="6" ry="6" fill="white" stroke="#3B7A57" stroke-width="1.5"/>
+<text x="335" y="125" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">ONNX runtime</text>
+<rect x="60" y="165" width="170" height="50" rx="6" ry="6" fill="white" stroke="#3B7A57" stroke-width="1.5"/>
+<text x="145" y="182" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">ObservationManager</text>
+<text x="145" y="200" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">C++</text><line x1="230" y1="125" x2="250" y2="125" stroke="#3B7A57" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="145" y1="165" x2="145" y2="150" stroke="#3B7A57" stroke-width="1.4" marker-end="url(#arrow-grey)"/><rect x="480" y="60" width="400" height="170" rx="8" ry="8" fill="#FFF6DF" stroke="#FDB515" stroke-width="1" stroke-dasharray="5 3"/>
+<text x="492" y="76" font-size="11" font-weight="600" text-anchor="start" fill="#888888" dominant-baseline="middle">Out-of-process (heavy models)</text><rect x="500" y="100" width="170" height="50" rx="6" ry="6" fill="white" stroke="#FDB515" stroke-width="1.5"/>
+<text x="585" y="117" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">RemotePolicyController</text>
+<text x="585" y="135" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">C++</text><rect x="690" y="100" width="170" height="50" rx="6" ry="6" fill="white" stroke="#FDB515" stroke-width="1.5"/>
+<text x="775" y="117" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">bar_policy</text>
+<text x="775" y="135" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">Python rclpy</text><rect x="690" y="165" width="170" height="50" rx="6" ry="6" fill="white" stroke="#FDB515" stroke-width="1.5"/>
+<text x="775" y="190" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">PyTorch / VLA / HF</text>
+<line x1="670" y1="125" x2="690" y2="125" stroke="#FDB515" stroke-width="1.4" marker-end="url(#arrow-grey)"/>
+<rect x="631" y="109" width="98" height="16" rx="3" ry="3" fill="white" stroke="none"/>
+<text x="680" y="117" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">MITAction / DDS</text><line x1="775" y1="165" x2="775" y2="150" stroke="#FDB515" stroke-width="1.4" marker-end="url(#arrow-grey)"/><rect x="280" y="290" width="360" height="50" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="460" y="307" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">MITState  (canonical observation)</text>
+<text x="460" y="325" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">joint pos/vel/effort, IMU quat (w,x,y,z), gyro, accel, last_action</text><line x1="280" y1="315" x2="145" y2="215" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="640" y1="315" x2="775" y2="215" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><rect x="360" y="390" width="200" height="44" rx="6" ry="6" fill="#EEEEEE" stroke="#888888" stroke-width="1.5"/>
+<text x="460" y="412" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">5 cmd interfaces / joint</text>
+<line x1="230" y1="150" x2="460" y2="390" stroke="#888888" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrow-grey)"/><line x1="585" y1="150" x2="460" y2="390" stroke="#888888" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrow-grey)"/></svg>

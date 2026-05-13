@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Production build output
+build/
+
+# Docusaurus
+.docusaurus/
+
+# OS / editor
+.DS_Store
+*.log
+.idea/
+.vscode/
+
+# TypeScript
+*.tsbuildinfo

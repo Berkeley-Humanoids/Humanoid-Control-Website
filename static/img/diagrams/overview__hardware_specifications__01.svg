@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 540"
+     width="1000" height="540" font-family="ui-monospace, Menlo, Consolas, Courier, monospace"
+     font-size="13" fill="#111111" text-rendering="geometricPrecision">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#111111"/>
+    </marker>
+    <marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#888888"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="white"/>
+<text x="20" y="30" font-size="15" font-weight="700" text-anchor="start" fill="#111111" dominant-baseline="middle">Lite kinematic tree</text>
+<text x="20" y="48" font-size="11" font-weight="400" text-anchor="start" fill="#888888" dominant-baseline="middle">17 actuated joints (per-joint effort limit shown)</text><rect x="420" y="70" width="160" height="40" rx="6" ry="6" fill="#EEEEEE" stroke="#888888" stroke-width="1.5"/>
+<text x="500" y="90" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">base_link</text>
+<rect x="420" y="120" width="160" height="40" rx="6" ry="6" fill="#EEEEEE" stroke="#888888" stroke-width="1.5"/>
+<text x="500" y="140" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">chest</text>
+<line x1="500" y1="110" x2="500" y2="120" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><rect x="20" y="180" width="170" height="36" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="105" y="190" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">left_shoulder_pitch</text>
+<text x="105" y="208" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">17 Nm</text><rect x="20" y="228" width="170" height="36" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="105" y="238" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">left_shoulder_roll</text>
+<text x="105" y="256" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">14 Nm</text><rect x="20" y="276" width="170" height="36" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="105" y="286" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">left_shoulder_yaw</text>
+<text x="105" y="304" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">14 Nm</text><rect x="20" y="324" width="170" height="36" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="105" y="334" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">left_elbow_pitch</text>
+<text x="105" y="352" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">14 Nm</text><rect x="20" y="372" width="170" height="36" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="105" y="382" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">left_wrist_yaw</text>
+<text x="105" y="400" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">5.5 Nm</text><rect x="20" y="420" width="170" height="36" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="105" y="430" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">left_wrist_roll</text>
+<text x="105" y="448" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">5.5 Nm</text><rect x="20" y="468" width="170" height="36" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="105" y="478" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">left_wrist_pitch</text>
+<text x="105" y="496" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">5.5 Nm</text><rect x="415" y="220" width="170" height="36" rx="6" ry="6" fill="#FFF6DF" stroke="#FDB515" stroke-width="1.5"/>
+<text x="500" y="230" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">neck_yaw</text>
+<text x="500" y="248" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">10 Nm</text><rect x="415" y="280" width="170" height="36" rx="6" ry="6" fill="#FFF6DF" stroke="#FDB515" stroke-width="1.5"/>
+<text x="500" y="290" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">neck_roll</text>
+<text x="500" y="308" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">10 Nm</text><rect x="415" y="340" width="170" height="36" rx="6" ry="6" fill="#FFF6DF" stroke="#FDB515" stroke-width="1.5"/>
+<text x="500" y="350" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">neck_pitch</text>
+<text x="500" y="368" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">10 Nm</text><rect x="810" y="180" width="170" height="36" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="895" y="190" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">right_shoulder_pitch</text>
+<text x="895" y="208" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">17 Nm</text><rect x="810" y="228" width="170" height="36" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="895" y="238" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">right_shoulder_roll</text>
+<text x="895" y="256" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">14 Nm</text><rect x="810" y="276" width="170" height="36" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="895" y="286" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">right_shoulder_yaw</text>
+<text x="895" y="304" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">14 Nm</text><rect x="810" y="324" width="170" height="36" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="895" y="334" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">right_elbow_pitch</text>
+<text x="895" y="352" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">14 Nm</text><rect x="810" y="372" width="170" height="36" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="895" y="382" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">right_wrist_yaw</text>
+<text x="895" y="400" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">5.5 Nm</text><rect x="810" y="420" width="170" height="36" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="895" y="430" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">right_wrist_roll</text>
+<text x="895" y="448" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">5.5 Nm</text><rect x="810" y="468" width="170" height="36" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="895" y="478" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">right_wrist_pitch</text>
+<text x="895" y="496" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">5.5 Nm</text><polyline points="440,160 105,175 105,180" fill="none" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow)"/><polyline points="500,160 500,215 500,220" fill="none" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow)"/><polyline points="560,160 895,175 895,180" fill="none" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow)"/><line x1="105" y1="216" x2="105" y2="228" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="105" y1="264" x2="105" y2="276" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="105" y1="312" x2="105" y2="324" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="105" y1="360" x2="105" y2="372" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="105" y1="408" x2="105" y2="420" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="105" y1="456" x2="105" y2="468" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="500" y1="256" x2="500" y2="280" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="500" y1="316" x2="500" y2="340" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="895" y1="216" x2="895" y2="228" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="895" y1="264" x2="895" y2="276" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="895" y1="312" x2="895" y2="324" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="895" y1="360" x2="895" y2="372" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="895" y1="408" x2="895" y2="420" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="895" y1="456" x2="895" y2="468" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><rect x="20" y="480" width="20" height="16" rx="3" ry="3" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="30" y="488" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle"></text>
+<text x="46" y="488" font-size="11" font-weight="400" text-anchor="start" fill="#111111" dominant-baseline="middle">arm joint</text><rect x="140" y="480" width="20" height="16" rx="3" ry="3" fill="#FFF6DF" stroke="#FDB515" stroke-width="1.5"/>
+<text x="150" y="488" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle"></text>
+<text x="166" y="488" font-size="11" font-weight="400" text-anchor="start" fill="#111111" dominant-baseline="middle">neck joint</text></svg>

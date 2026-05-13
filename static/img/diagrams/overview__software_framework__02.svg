@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 460"
+     width="940" height="460" font-family="ui-monospace, Menlo, Consolas, Courier, monospace"
+     font-size="13" fill="#111111" text-rendering="geometricPrecision">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#111111"/>
+    </marker>
+    <marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#888888"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="white"/>
+<text x="20" y="30" font-size="15" font-weight="700" text-anchor="start" fill="#111111" dominant-baseline="middle">Five-mode FSM</text>
+<text x="20" y="48" font-size="11" font-weight="400" text-anchor="start" fill="#888888" dominant-baseline="middle">Only one controller is active at a time; joint_state_broadcaster always runs</text><rect x="60" y="100" width="200" height="56" rx="6" ry="6" fill="#E7FFE7" stroke="#3B7A57" stroke-width="1.5"/>
+<text x="160" y="128" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">ZERO_TORQUE</text>
+<rect x="60" y="250" width="200" height="56" rx="6" ry="6" fill="#E7FFE7" stroke="#3B7A57" stroke-width="1.5"/>
+<text x="160" y="278" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">DAMPING</text>
+<rect x="360" y="250" width="200" height="56" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="460" y="278" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">STANDBY</text>
+<rect x="660" y="150" width="200" height="56" rx="6" ry="6" fill="#FFF6DF" stroke="#FDB515" stroke-width="1.5"/>
+<text x="760" y="178" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">LOCOMOTION</text>
+<rect x="660" y="320" width="200" height="56" rx="6" ry="6" fill="#FFF6DF" stroke="#FDB515" stroke-width="1.5"/>
+<text x="760" y="348" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">REMOTE</text>
+<line x1="130" y1="156" x2="130" y2="250" stroke="#111111" stroke-width="1.4" marker-end="url(#arrow)"/><rect x="73" y="186" width="114" height="18" rx="4" ry="4" fill="white" stroke="#888888" stroke-width="0.8"/>
+<text x="130" y="195" font-size="11" font-weight="400" text-anchor="middle" fill="#111111" dominant-baseline="middle">DAMP (X / Ctrl+C)</text><line x1="180" y1="250" x2="180" y2="156" stroke="#111111" stroke-width="1.4" marker-end="url(#arrow)"/><rect x="156" y="186" width="48" height="18" rx="4" ry="4" fill="white" stroke="#888888" stroke-width="0.8"/>
+<text x="180" y="195" font-size="11" font-weight="400" text-anchor="middle" fill="#111111" dominant-baseline="middle">manual</text><line x1="260" y1="278" x2="360" y2="278" stroke="#111111" stroke-width="1.4" marker-end="url(#arrow)"/><rect x="265" y="261" width="90" height="18" rx="4" ry="4" fill="white" stroke="#888888" stroke-width="0.8"/>
+<text x="310" y="270" font-size="11" font-weight="400" text-anchor="middle" fill="#111111" dominant-baseline="middle">LOAD (L1+A|B)</text><line x1="360" y1="290" x2="260" y2="290" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><rect x="292" y="273" width="36" height="18" rx="4" ry="4" fill="white" stroke="#888888" stroke-width="0.8"/>
+<text x="310" y="282" font-size="11" font-weight="400" text-anchor="middle" fill="#111111" dominant-baseline="middle">DAMP</text><line x1="560" y1="260" x2="660" y2="178" stroke="#111111" stroke-width="1.4" marker-end="url(#arrow)"/><rect x="535" y="202" width="150" height="18" rx="4" ry="4" fill="white" stroke="#888888" stroke-width="0.8"/>
+<text x="610" y="211" font-size="11" font-weight="400" text-anchor="middle" fill="#111111" dominant-baseline="middle">START_LOCOMOTION (R1+B)</text><text x="610" y="220" font-size="10" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">+is_finished</text><line x1="560" y1="290" x2="660" y2="348" stroke="#111111" stroke-width="1.4" marker-end="url(#arrow)"/><rect x="547" y="302" width="126" height="18" rx="4" ry="4" fill="white" stroke="#888888" stroke-width="0.8"/>
+<text x="610" y="311" font-size="11" font-weight="400" text-anchor="middle" fill="#111111" dominant-baseline="middle">START_REMOTE (R1+A)</text><polyline points="660,178 550,178 550,230 450,230 260,230" fill="none" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow)"/><rect x="408" y="206" width="84" height="18" rx="4" ry="4" fill="white" stroke="#888888" stroke-width="0.8"/>
+<text x="450" y="215" font-size="11" font-weight="400" text-anchor="middle" fill="#111111" dominant-baseline="middle">DAMP / fault</text><polyline points="660,348 550,348 550,320 450,320 260,320" fill="none" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow)"/><rect x="398" y="296" width="84" height="18" rx="4" ry="4" fill="white" stroke="#888888" stroke-width="0.8"/>
+<text x="440" y="305" font-size="11" font-weight="400" text-anchor="middle" fill="#111111" dominant-baseline="middle">DAMP / fault</text><line x1="60" y1="130" x2="30" y2="130" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><text x="30" y="118" font-size="10" font-weight="400" text-anchor="end" fill="#888888" dominant-baseline="middle">QUIT</text><line x1="60" y1="280" x2="30" y2="280" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><text x="30" y="268" font-size="10" font-weight="400" text-anchor="end" fill="#888888" dominant-baseline="middle">QUIT</text><text x="820" y="410" font-size="11" font-weight="400" text-anchor="end" fill="#3B7A57" dominant-baseline="middle">Green = safe / fail-safe</text><text x="820" y="425" font-size="11" font-weight="400" text-anchor="end" fill="#003262" dominant-baseline="middle">Blue = transitional</text><text x="820" y="440" font-size="11" font-weight="400" text-anchor="end" fill="#FDB515" dominant-baseline="middle">Gold = active policy</text></svg>

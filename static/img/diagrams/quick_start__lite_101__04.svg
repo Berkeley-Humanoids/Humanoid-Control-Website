@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 440"
+     width="880" height="440" font-family="ui-monospace, Menlo, Consolas, Courier, monospace"
+     font-size="13" fill="#111111" text-rendering="geometricPrecision">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#111111"/>
+    </marker>
+    <marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#888888"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="white"/>
+<text x="20" y="30" font-size="15" font-weight="700" text-anchor="start" fill="#111111" dominant-baseline="middle">MuJoCo bringup — single mujoco_sim process</text>
+<text x="20" y="48" font-size="11" font-weight="400" text-anchor="start" fill="#888888" dominant-baseline="middle">Physics + controller_manager + hardware plugin all live in one binary</text><rect x="40" y="80" width="800" height="280" rx="8" ry="8" fill="white" stroke="#888888" stroke-width="1" stroke-dasharray="5 3"/>
+<text x="52" y="96" font-size="11" font-weight="600" text-anchor="start" fill="#888888" dominant-baseline="middle">mujoco_sim process (mujoco_sim_ros2)</text><rect x="60" y="130" width="220" height="60" rx="6" ry="6" fill="#FFF6DF" stroke="#FDB515" stroke-width="1.5"/>
+<text x="170" y="151" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">MuJoCo viewer</text>
+<text x="170" y="168" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">(GLFW window)</text>
+<rect x="60" y="220" width="220" height="60" rx="6" ry="6" fill="#FFF6DF" stroke="#FDB515" stroke-width="1.5"/>
+<text x="170" y="241" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">Physics step</text>
+<text x="170" y="258" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">(500 Hz)</text>
+<rect x="330" y="130" width="230" height="60" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="445" y="151" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">MujocoRos2ControlPlugin</text>
+<text x="445" y="168" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">(physics plugin)</text>
+<rect x="330" y="220" width="230" height="60" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="445" y="241" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">controller_manager</text>
+<text x="445" y="258" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">(50 Hz)</text>
+<rect x="610" y="175" width="200" height="60" rx="6" ry="6" fill="#E7FFE7" stroke="#3B7A57" stroke-width="1.5"/>
+<text x="710" y="196" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">MujocoSystem</text>
+<text x="710" y="213" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">(SystemInterface)</text>
+<line x1="280" y1="250" x2="330" y2="250" stroke="#111111" stroke-width="1.4" marker-end="url(#arrow)"/><line x1="330" y1="160" x2="250" y2="160" stroke="#888888" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrow-grey)"/><line x1="440" y1="280" x2="440" y2="320" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="560" y1="250" x2="610" y2="220" stroke="#111111" stroke-width="1.4" marker-end="url(#arrow)"/><line x1="610" y1="195" x2="280" y2="245" stroke="#888888" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrow-grey)"/><rect x="398" y="189" width="84" height="18" rx="4" ry="4" fill="white" stroke="#888888" stroke-width="0.8"/>
+<text x="440" y="198" font-size="11" font-weight="400" text-anchor="middle" fill="#111111" dominant-baseline="middle">qfrc_applied</text><text x="440" y="305" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">controllers loaded as usual via pluginlib</text><rect x="80" y="380" width="200" height="40" rx="6" ry="6" fill="#EEEEEE" stroke="#888888" stroke-width="1.5"/>
+<text x="180" y="400" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">robot_state_publisher</text>
+<rect x="310" y="380" width="220" height="40" rx="6" ry="6" fill="#EEEEEE" stroke="#888888" stroke-width="1.5"/>
+<text x="420" y="400" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">controller spawners</text>
+<rect x="560" y="380" width="180" height="40" rx="6" ry="6" fill="#EEEEEE" stroke="#888888" stroke-width="1.5"/>
+<text x="650" y="400" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">mode_manager</text>
+<line x1="180" y1="380" x2="180" y2="290" stroke="#888888" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrow-grey)"/><rect x="120" y="331" width="120" height="18" rx="4" ry="4" fill="white" stroke="#888888" stroke-width="0.8"/>
+<text x="180" y="340" font-size="11" font-weight="400" text-anchor="middle" fill="#111111" dominant-baseline="middle">/robot_description</text><line x1="420" y1="380" x2="420" y2="290" stroke="#888888" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrow-grey)"/><line x1="650" y1="380" x2="540" y2="290" stroke="#888888" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrow-grey)"/><rect x="500" y="336" width="120" height="18" rx="4" ry="4" fill="white" stroke="#888888" stroke-width="0.8"/>
+<text x="560" y="345" font-size="11" font-weight="400" text-anchor="middle" fill="#111111" dominant-baseline="middle">/clock from MuJoCo</text></svg>
