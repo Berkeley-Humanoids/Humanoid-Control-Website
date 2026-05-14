@@ -104,6 +104,24 @@ ros2 topic hz /joint_states
 # average rate: 50.000
 ```
 
+:::tip["See it move"]
+Two optional live visualizers ride on top of `/joint_states` + `/robot_description`
+— add either flag to the launch you just ran (`real.launch.py` or
+`mujoco.launch.py`):
+
+```sh
+# Native rerun viewer (auto-spawns its own window):
+ros2 launch bar_bringup_lite mujoco.launch.py enable_rerun_viz:=true
+
+# Browser viewer at http://localhost:8080 (good for headless robot machines):
+ros2 launch bar_bringup_lite mujoco.launch.py enable_viser_viz:=true
+```
+
+Both can run simultaneously. Pip install once:
+`pip install rerun-sdk` and/or `pip install viser yourdfpy 'scipy>=1.13'`.
+Full reference: [Launch args → real.launch.py](../reference/launch_args.md#bar_bringup_litelaunchreallaunchpy).
+:::
+
 `mode_manager` publishes `/control_mode` (the current FSM state) at the same
 rate:
 

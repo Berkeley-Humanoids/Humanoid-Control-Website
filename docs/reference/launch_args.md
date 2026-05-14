@@ -32,7 +32,8 @@ instances, one per physical SocketCAN bus (`LiteLeftArm` claims CAN ids
 | `calibration_file`    | `<bar_bringup_lite share>/config/calibration.json` | Absolute path to the per-physical-robot zero-offset JSON. Pass `''` for identity calibration (only the URDF `direction` sign flip applies, no offset). See [Hardware specifications](../overview/hardware_specifications.md#bus-bring-up-checklist) for how to regenerate. |
 | `enable_mode_manager` | `true` | `false` skips spawning the FSM orchestrator. Used by `calibrate.launch.py` and for raw-debug bringups where the operator drives controllers directly via `ros2 control switch_controllers`. |
 | `enable_gamepad`      | `false` | `true` spawns `joy_node` so `mode_manager` can read `/joy`. Otherwise keyboard-only (and only when stdin is a TTY). |
-| `enable_rerun_viz`    | `false` | `true` spawns the `bar_bringup_lite rerun_viz` Python node. Requires `rerun-sdk` from pip. |
+| `enable_rerun_viz`    | `false` | `true` spawns the `bar_bringup_lite rerun_viz` Python node — native rerun viewer that subscribes `/robot_description` + `/joint_states` and renders the live kinematic chain. Requires `pip install rerun-sdk`. |
+| `enable_viser_viz`    | `false` | `true` spawns the `bar_bringup_lite viser_viz` Python node — browser-based viewer (served at `http://0.0.0.0:8080` by default). Same subscriptions as `rerun_viz`; the two can run simultaneously. Requires `pip install viser yourdfpy 'scipy>=1.13'` (the scipy floor avoids a numpy-2 binary-compat conflict with rerun-sdk). |
 
 The active-policy target is picked by the START button, not a launch
 arg: R1+A activates `remote_policy_controller` (out-of-process policy),

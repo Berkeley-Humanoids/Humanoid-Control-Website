@@ -201,8 +201,8 @@ Prime real-hardware bringup.
 | Executable | Purpose |
 |---|---|
 | `calibrate_robot` | Calibration observer — subscribes `/robot_description` + `/joint_states`, tracks per-joint (min, max), writes the homing-offset JSON on Ctrl+C. Driven by `calibrate.launch.py`. |
-| `rerun_viz` | Live URDF visualization via `rerun-sdk` (browser-based, optional dep). |
-| `viser_viz` | Same idea via `viser`. |
+| `rerun_viz` | Live URDF visualization in the **native** [rerun](https://rerun.io) viewer — auto-spawned subprocess by default, or `--connect host:port` to feed a remote one. Subscribes `/robot_description` (latched) and `/joint_states`; logs per-joint `Transform3D` to `/tf` at the tick rate. Uses `rerun.urdf.UrdfTree` for FK + mesh loading. Optional dep: `pip install rerun-sdk`. |
+| `viser_viz` | Same subscriptions and resolution pattern, rendering into a **browser** at `http://<host>:<port>` (default `0.0.0.0:8080`) via [viser](https://github.com/nerfstudio-project/viser). Friendlier for headless robot machines and SSH workflows. Uses `yourdfpy.URDF` + `viser.extras.ViserUrdf`. Optional dep: `pip install viser yourdfpy 'scipy>=1.13'`. |
 
 The `bar_simulation` package this used to live in was retired
 (2026-05-12): its launch glue moved into `bar_bringup_lite/launch/mujoco.launch.py`,
