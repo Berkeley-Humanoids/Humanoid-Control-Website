@@ -25,13 +25,18 @@ function HomepageHeader() {
         <div className={styles.buttons}>
           <Link
             className="button button--primary button--lg"
-            to="/quick_start/lite_101">
+            to="/getting_started/lite_101">
             Quick start →
           </Link>
           <Link
             className="button button--secondary button--lg"
-            to="/overview/intro">
+            to="/getting_started/intro">
             What is this?
+          </Link>
+          <Link
+            className="button button--secondary button--lg"
+            to="/reference/packages">
+            Reference
           </Link>
           <Link
             className="button button--secondary button--lg"

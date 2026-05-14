@@ -29,7 +29,7 @@ instances, one per physical SocketCAN bus (`LiteLeftArm` claims CAN ids
 |---|---|---|
 | `can_interface_left`  | `can0` | SocketCAN ifname for the **left arm** block (CAN ids 11..17). |
 | `can_interface_right` | `can1` | SocketCAN ifname for the **right arm** block (CAN ids 21..27). |
-| `calibration_file`    | `<bar_bringup_lite share>/config/calibration.json` | Absolute path to the per-physical-robot zero-offset JSON. Pass `''` for identity calibration (only the URDF `direction` sign flip applies, no offset). See [Hardware specifications](../overview/hardware_specifications.md#bus-bring-up-checklist) for how to regenerate. |
+| `calibration_file`    | `<bar_bringup_lite share>/config/calibration.json` | Absolute path to the per-physical-robot zero-offset JSON. Pass `''` for identity calibration (only the URDF `direction` sign flip applies, no offset). See [Hardware specs → Bus-bring-up checklist](./hardware_specs.md#bus-bring-up-checklist) for how to regenerate. |
 | `enable_mode_manager` | `true` | `false` skips spawning the FSM orchestrator. Used by `calibrate.launch.py` and for raw-debug bringups where the operator drives controllers directly via `ros2 control switch_controllers`. |
 | `enable_gamepad`      | `false` | `true` spawns `joy_node` so `mode_manager` can read `/joy`. Otherwise keyboard-only (and only when stdin is a TTY). |
 | `enable_rerun_viz`    | `false` | `true` spawns the `bar_bringup_lite rerun_viz` Python node — native rerun viewer that subscribes `/robot_description` + `/joint_states` and renders the live kinematic chain. Requires `pip install rerun-sdk`. |

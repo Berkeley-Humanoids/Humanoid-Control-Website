@@ -134,5 +134,5 @@ tick is `(t, t+1)` in the dataset, never `(t+1, t+1)`.
 
 - [`bar/RemotePolicyController`](controllers.md#barremotepolicycontroller)
   — the controller-side half of this pipeline.
-- [Software framework: Two parallel policy tiers](../overview/software_framework.md#two-parallel-policy-tiers)
+- [Architecture: Two parallel policy tiers](../concepts/architecture.md#two-parallel-policy-tiers)
   — how the in-process and out-of-process tiers relate.

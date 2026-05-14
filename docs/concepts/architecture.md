@@ -139,7 +139,7 @@ Concrete examples:
 
 - [`mode_manager` source](https://github.com/T-K-233/bar_ros2/blob/main/bar_controllers/src/mode_manager.cpp)
   — the FSM is ~150 lines of C++; readable in one sitting.
-- [bar_ros2 101](../quick_start/lite_101.md) — see all of this run end-to-end
+- [Lite 101](../getting_started/lite_101.md) — see all of this run end-to-end
   against mock hardware and MuJoCo.
 - [Controllers reference](../reference/controllers.md) — per-controller
   parameter tables.

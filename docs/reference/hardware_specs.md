@@ -21,7 +21,7 @@ exposes the right tf.
 Order matches the **canonical index** used by `bar_lite_controllers.yaml`, the
 C++ `MITState` struct, and the Python `bar_policy.ObservationManager`. Once a
 policy is trained against this order, it is frozen — see "Frozen schemas" in
-[Software framework](software_framework.md#frozen-schemas).
+[Architecture](../concepts/architecture.md#frozen-schemas).
 
 | Idx | Joint | CAN id | Bus | Model | Direction | Lower (rad) | Upper (rad) | Effort (Nm) | Current (A) | `K_p` | `K_d` |
 |---|---|---:|---|---|---:|---:|---:|---:|---:|---:|---:|
@@ -150,7 +150,7 @@ silicon and sim with no URDF interface-tag rewrites.
 
 ## Reference & next
 
-- [Software framework](software_framework.md) — how this hardware surface is
+- [Architecture](../concepts/architecture.md) — how this hardware surface is
   consumed by ros2_control and the mode FSM.
 - [bar_lite_controllers.yaml](https://github.com/T-K-233/bar_ros2/blob/main/bar_controllers/config/bar_lite_controllers.yaml)
   — the canonical 17-joint binding for every controller.

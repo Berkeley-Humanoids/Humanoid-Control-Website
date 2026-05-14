@@ -6,7 +6,7 @@ Five `controller_interface::ControllerInterface` plugins, one standalone
 
 ## FSM summary
 
-See the [Software framework](../overview/software_framework.md#five-mode-finite-state-machine)
+See [Concepts → Architecture](../concepts/architecture.md#five-mode-finite-state-machine)
 for the annotated version including safety-fault edges.
 
 ## Plugin-by-plugin

@@ -39,8 +39,12 @@ Everything else is shared.
 ![flowchart TB](/img/diagrams/overview__intro__01.svg)
 
 The two CAN buses on Lite are a **physical** split (one CAN-to-USB adapter per
-arm); `controller_manager` sees one flat 17-joint list. Prime adds a third path
-through `ethercat_driver_ros2` for the eRob side.
+arm), surfaced as **two `<ros2_control>` blocks** on the real-hardware path:
+`LiteLeftArm` claims CAN ids 11..17 on `can_interface_left`, `LiteRightArm`
+claims 21..27 on `can_interface_right`. The controller_manager runs both
+plugin instances concurrently and exposes a single flat 14-joint list to
+controllers — they don't see the split. Prime adds a third path through
+`ethercat_driver_ros2` for the eRob side.
 
 ## How the project is organized
 
@@ -68,7 +72,7 @@ tau = K_p (q_cmd - q) + K_d (q_dot_cmd - q_dot) + tau_ff
 This formula is identical in our Robstride firmware, in
 `mujoco_ros2_control::MujocoSystem`, and in any controller we write — so the
 same `update()` body works against silicon, MuJoCo, and `mock_components`. See
-[Software framework](software_framework.md) for the full ros2_control flow.
+[Architecture](../concepts/architecture.md) for the full ros2_control flow.
 
 ## Reference materials
 
@@ -92,9 +96,9 @@ list; the most influential are:
 
 ## Next
 
-- [Hardware specifications](hardware_specifications.md) — joint counts, effort
-  limits, transport details for Lite and Prime.
-- [Software framework](software_framework.md) — ros2_control flow, the 5-mode
+- [Hardware specifications](../reference/hardware_specs.md) — joint counts,
+  effort limits, transport details for Lite and Prime.
+- [Architecture](../concepts/architecture.md) — ros2_control flow, the 5-mode
   FSM, the in-process vs. out-of-process policy tiers.
-- [Quick start](../quick_start/installation.md) — install and run a Lite mock
+- [Installation](./installation.md) — install and run a Lite mock
   bringup in ~10 minutes.

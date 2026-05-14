@@ -8,14 +8,13 @@ const config: Config = {
   tagline: 'BAR humanoid low-level control stack',
   favicon: 'img/logo.svg',
 
-  // Production URL. Change to your real domain (or '/bar_ros2_docs/' if
-  // serving under a GitHub Pages sub-path).
-  url: 'https://bar-ros2-docs.example.invalid',
-  baseUrl: '/',
+  // Production URL for GitHub Pages project site.
+  url: 'https://t-k-233.github.io',
+  baseUrl: '/BAR-ROS2-Docs/',
 
-  // GitHub Pages deploy config (only used by `docusaurus deploy`).
   organizationName: 'T-K-233',
-  projectName: 'bar_ros2_docs',
+  projectName: 'BAR-ROS2-Docs',
+  trailingSlash: false,
 
   // Fail the build on broken internal links — same policy as VitePress.
   onBrokenLinks: 'throw',
@@ -57,21 +56,11 @@ const config: Config = {
         src: 'img/logo.svg',
       },
       items: [
-        {
-          to: '/overview/intro',
-          label: 'Overview',
-          position: 'left',
-        },
-        {
-          to: '/quick_start/installation',
-          label: 'Quick start',
-          position: 'left',
-        },
-        {
-          to: '/reference/packages',
-          label: 'Reference',
-          position: 'left',
-        },
+        {to: '/getting_started/intro', label: 'Getting started', position: 'left'},
+        {to: '/tutorials/',            label: 'Tutorials',       position: 'left'},
+        {to: '/how_to/',               label: 'How-to',          position: 'left'},
+        {to: '/concepts/',             label: 'Concepts',        position: 'left'},
+        {to: '/reference/packages',    label: 'Reference',       position: 'left'},
         {
           href: 'https://github.com/T-K-233/bar_ros2',
           label: 'GitHub',
@@ -83,18 +72,28 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          title: 'Getting started',
           items: [
-            {label: 'Introduction', to: '/overview/intro'},
-            {label: 'Hardware specs', to: '/overview/hardware_specifications'},
-            {label: 'Software framework', to: '/overview/software_framework'},
+            {label: 'Introduction',  to: '/getting_started/intro'},
+            {label: 'Installation',  to: '/getting_started/installation'},
+            {label: 'Lite 101',      to: '/getting_started/lite_101'},
           ],
         },
         {
-          title: 'Quick start',
+          title: 'Learn',
           items: [
-            {label: 'Installation', to: '/quick_start/installation'},
-            {label: 'bar_ros2 101', to: '/quick_start/lite_101'},
+            {label: 'Tutorials',     to: '/tutorials/'},
+            {label: 'How-to guides', to: '/how_to/'},
+            {label: 'Concepts',      to: '/concepts/'},
+          ],
+        },
+        {
+          title: 'Reference',
+          items: [
+            {label: 'Hardware specs',  to: '/reference/hardware_specs'},
+            {label: 'Packages',        to: '/reference/packages'},
+            {label: 'Controllers',     to: '/reference/controllers'},
+            {label: 'Launch args',     to: '/reference/launch_args'},
           ],
         },
         {

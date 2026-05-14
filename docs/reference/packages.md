@@ -65,7 +65,7 @@ combined block. Per-joint static config (`can_id`, `model`, `direction`,
 as `<param>` children only on the real-hardware path. Values mirror
 [`T-K-233/Lite-Lowlevel-Python`](https://github.com/T-K-233/Lite-Lowlevel-Python)'s
 `configs/bimanual.yaml`; see
-[Hardware specifications → Joint table](../overview/hardware_specifications.md#joint-table)
+[Hardware specifications → Joint table](./hardware_specs.md#joint-table)
 for the canonical values.
 
 ### `bar_hw_socketcan`
@@ -211,4 +211,4 @@ its `sim_overrides.yaml` moved into `bar_bringup_lite/config/`.
 ## External (vcs-imported, not in this repo)
 
 All four are pinned to specific commit SHAs in `bar.repos` — see the
-[installation page](../quick_start/installation.md#3-clone-and-import-dependencies).
+[installation page](../getting_started/installation.md#3-clone-and-import-dependencies).
