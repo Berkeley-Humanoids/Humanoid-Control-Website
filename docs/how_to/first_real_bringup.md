@@ -1,0 +1,156 @@
+# First real-hardware bringup
+
+Recipe for getting the physical Lite from "powered off in the corner"
+to "`/joint_states` flowing, motors compliant under `zero_torque`".
+Once those signals are green you've reached parity with the
+[Lite 101](../getting_started/lite_101.md) MuJoCo lesson — every
+subsequent how-to (calibrate, drive a joint, switch to STANDBY) builds
+on this baseline.
+
+This is **read-only on the silicon** — no `STANDBY` motion happens
+here. That's deliberate; verify everything compliant before commanding
+any pose.
+
+## Prerequisites
+
+- Workspace built (`colcon build --symlink-install` from `bar_ws/`).
+- USB-to-CAN adapters plugged into the workstation. Both arms' buses
+  are visible at `can0` and `can1` (typical) or whatever the host
+  assigned — `ip -br link show type can` to confirm.
+- A pre-existing `bar_bringup_lite/config/calibration.json` for this
+  physical robot. The bundled file works for the development robot;
+  if you're on a different unit, [calibrate first](./calibrate_zero_pose.md).
+- Robot **power is on** at the wall, but motors can be in any pose.
+
+## Step 1 — Bring the CAN buses up
+
+CAN interfaces drop to "DOWN" on a reboot. Bring both up at the
+Robstride bitrate:
+
+```bash
+sudo ip link set can0 down 2>/dev/null
+sudo ip link set can0 up type can bitrate 1000000
+sudo ip link set can1 down 2>/dev/null
+sudo ip link set can1 up type can bitrate 1000000
+
+ip -d link show can0   # expect "UP" and "ERROR-ACTIVE"
+ip -d link show can1   # same
+```
+
+If either interface refuses to come up, the adapter may be hung —
+unplug and replug the USB cable, then retry. (`ERROR-PASSIVE` is also
+acceptable; `BUS-OFF` means power-cycle the adapter.)
+
+## Step 2 — Confirm motors are alive
+
+A read-only scan before anything claims the bus:
+
+```bash
+source bar_ws/install/setup.bash
+
+ros2 run bar_hw_robstride robstride_discover --iface can0 --scan-to 32
+# Expect 7 actuators at ids 11..17
+
+ros2 run bar_hw_robstride robstride_discover --iface can1 --scan-to 32
+# Expect 7 actuators at ids 21..27
+```
+
+`robstride_discover` only sends `GetDeviceId`; no `Enable`, no MIT
+frames. Safe to run with whatever stack is up. **If you see ENOBUFS
+warnings**, the actuators aren't powered — see
+[Diagnose ENOBUFS](./diagnose_enobufs.md).
+
+## Step 3 — Launch the bringup
+
+```bash
+ros2 launch bar_bringup_lite real.launch.py
+```
+
+Default args: `can_interface_left:=can0 can_interface_right:=can1
+calibration_file:=<bundled> enable_mode_manager:=true enable_gamepad:=false`.
+
+Watch the launch logs for:
+
+```
+[ros2_control_node-1] Loaded hardware 'LiteLeftArm'  from plugin 'bar_hw_robstride/RobstrideSystem'
+[ros2_control_node-1] Loaded hardware 'LiteRightArm' from plugin 'bar_hw_robstride/RobstrideSystem'
+[ros2_control_node-1] SocketCanBus opened on 'can0'
+[ros2_control_node-1] SocketCanBus opened on 'can1'
+[ros2_control_node-1] Loaded calibration_file '...' (7/7 joints matched).
+[ros2_control_node-1] Loaded calibration_file '...' (7/7 joints matched).
+[ros2_control_node-1] Successful 'activate' of hardware 'LiteLeftArm'
+[ros2_control_node-1] Successful 'activate' of hardware 'LiteRightArm'
+[spawner-N] Configured and activated zero_torque_controller
+```
+
+Both bus components activated, both calibration files matched 7/7
+joints, `zero_torque_controller` is active. The motors should now be
+holding zero torque — fully back-drivable by hand.
+
+## Step 4 — Verify in a second terminal
+
+```bash
+source bar_ws/install/setup.bash
+
+# 14 joints reporting at the configured update rate
+ros2 control list_controllers
+# Expect: joint_state_broadcaster (active), zero_torque_controller (active),
+#         damping_controller / standby_controller / remote_policy_controller (inactive)
+
+ros2 topic hz /joint_states
+# average rate: 50.0 (± 0.2)
+
+ros2 topic echo --once /joint_states | head -5
+# header / 14 names / real-looking positions (NOT all 0.0 — that'd mean motors un-Enabled)
+
+ros2 topic echo --once /safety_status
+# level: 0    flags: 0    source: bar_hw_robstride/can0  (then a second one for can1)
+```
+
+The "all 0.0 positions" signal is the most useful early-warning: it
+means motors aren't sending status frames back, almost always because
+the Enable frame was dropped. Power cycle the actuators and relaunch.
+
+## Step 5 — Sanity-check the calibration
+
+Hand-rotate one arm a few degrees. The values in `ros2 topic echo
+/joint_states` should change in the expected direction and by a
+plausible magnitude (radians, not encoder ticks).
+
+If a joint reports positions far outside the URDF limits when you
+move it through its range, the `direction` or `homing_offset` is
+wrong for that joint — see [Calibrate the zero pose](./calibrate_zero_pose.md).
+
+## Step 6 — Shut down
+
+End in a known-safe state:
+
+```bash
+# In the launch terminal:
+Ctrl+C
+```
+
+`mode_manager` (if enabled) and every controller's `on_deactivate`
+runs, then `RobstrideSystem::on_deactivate` sends `Disable` to every
+motor. The bus goes quiet within a tick; `candump can0` will confirm.
+
+## Common boot-time failures
+
+| Log line | Likely cause | Fix |
+|---|---|---|
+| `Failed to open SocketCAN interface 'canN'` | Bus wasn't up at launch time | Step 1, then relaunch |
+| `Interface 'canN' is not up (flags=...)` | Same as above, caught by our SIOCGIFFLAGS guard | Same |
+| `Loaded calibration_file '...' (0/7 joints matched)` | JSON keys don't match URDF joint names | Inspect the file; common cause is editing it after a URDF rename |
+| `CAN write() returned -1 (errno=No buffer space available)` | Actuator power off (no ACKs → qdisc fills) | Power the motors |
+| `Failed to configure controller 'rl_policy_controller'` | Placeholder `observation_dim=0` in YAML | Already dropped from the inactive-spawner batch; if it reappears, drop it again |
+
+Wider diagnostics live in [Troubleshooting](../reference/troubleshooting.md).
+
+## What you can do next
+
+- [Calibrate the zero pose](./calibrate_zero_pose.md) if positions
+  look offset.
+- [Switch controllers manually](./switch_controllers_manually.md) to
+  exercise DAMPING / STANDBY without the gamepad.
+- [MuJoCo + full FSM walkthrough](../tutorials/mujoco_fsm_walk.md) to
+  walk the same flow with the FSM in the loop.

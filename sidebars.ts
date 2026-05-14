@@ -10,9 +10,6 @@ import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 // - How-to guides   : task-oriented recipes. Assume baseline familiarity.
 // - Concepts        : understanding-oriented. The "why" layer.
 // - Reference       : information-oriented. Dense, scannable, complete.
-//
-// Items are added to each category as the pages are written. Keep this file
-// in sync with docs/ — Docusaurus fails the build on missing doc ids.
 const sidebars: SidebarsConfig = {
   docs: [
     {
@@ -31,6 +28,10 @@ const sidebars: SidebarsConfig = {
       collapsed: true,
       items: [
         'tutorials/index',
+        'tutorials/drive_one_robstride',
+        'tutorials/mujoco_fsm_walk',
+        'tutorials/tracking_policy',
+        'tutorials/build_your_own_controller',
       ],
     },
     {
@@ -39,6 +40,16 @@ const sidebars: SidebarsConfig = {
       collapsed: true,
       items: [
         'how_to/index',
+        'how_to/first_real_bringup',
+        'how_to/calibrate_zero_pose',
+        'how_to/probe_can_bus',
+        'how_to/switch_controllers_manually',
+        'how_to/mit_slider_gui',
+        'how_to/live_viz',
+        'how_to/diagnose_enobufs',
+        'how_to/recover_from_fault',
+        'how_to/promote_python_to_cpp',
+        'how_to/add_new_joint',
       ],
     },
     {
@@ -48,6 +59,11 @@ const sidebars: SidebarsConfig = {
       items: [
         'concepts/index',
         'concepts/architecture',
+        'concepts/five_mode_fsm',
+        'concepts/mit_command_surface',
+        'concepts/calibration_math',
+        'concepts/safety_pipeline',
+        'concepts/frozen_schemas',
       ],
     },
     {
@@ -60,10 +76,13 @@ const sidebars: SidebarsConfig = {
         'reference/packages',
         'reference/messages',
         'reference/controllers',
+        'reference/manual_controllers',
         'reference/launch_args',
         'reference/policy_runner',
-        // remaining pages (manual_controllers, topics_services, cli_tools,
-        // urdf_args, troubleshooting) will land in Batch 4.
+        'reference/topics_services',
+        'reference/cli_tools',
+        'reference/urdf_args',
+        'reference/troubleshooting',
       ],
     },
   ],

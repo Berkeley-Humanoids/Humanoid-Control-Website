@@ -6,7 +6,20 @@ sidebar_label: Overview
 
 # Concepts
 
-Understanding-oriented background. Read these to learn *why* the system is
-shaped the way it is, not how to perform a specific task.
+Background reading. These pages discuss the *design* of `bar_ros2` —
+the architecture, the conventions, the trade-offs that decided which
+abstractions live where. Read these when you want to understand the
+project well enough to extend it (or argue with it).
 
-Start with [Architecture](./architecture.md). More pages are being written.
+If you're trying to get a specific job done, you probably want a
+[how-to guide](../how_to/index.md) or the [reference](../reference/packages.md).
+Concepts are for *understanding*, not for *doing*.
+
+| Page | What it explains |
+|---|---|
+| [Architecture](./architecture.md) | The big picture: `ros2_control` as the spine, the in-process vs. out-of-process policy split, the four orthogonal axes (robot / hardware tier / task / compute). |
+| [Five-mode FSM](./five_mode_fsm.md) | Why the operator surface is a state machine, what each mode is for, the transition rules and their gates. |
+| [MIT command surface](./mit_command_surface.md) | Why every joint exposes 5 command interfaces, the `τ = K·err + D·erṙ + ff` convention, how it makes silicon / MuJoCo / mock interchangeable. |
+| [Calibration math](./calibration_math.md) | The `direction` × `homing_offset` transform, where it lives (URDF + JSON), why it lives in the plugin and not the controller. |
+| [Safety pipeline](./safety_pipeline.md) | `SafetyStatus` flags, who publishes them, how `mode_manager` consumes them, the auto-DAMP fault path. |
+| [Frozen schemas](./frozen_schemas.md) | What "the schema is frozen once a policy depends on it" means in practice: joint order, message fields, command interfaces. |
