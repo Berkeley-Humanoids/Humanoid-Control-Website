@@ -7,7 +7,12 @@ topology** on Lite and Prime. The numbers here drive the joint limits in
 
 ## Lite humanoid
 
-Bimanual upper body, **17 actuated DOFs**:
+Bimanual upper body. The design intent is **17 actuated DOFs** (7 per arm + 3
+neck); the physical robot used for first bringup ships with **14 actuated
+DOFs** (no neck). Re-add the third `<ros2_control>` block in
+`lite.ros2_control.xacro` once the neck actuators are wired up — the URDF
+kinematic chain for the neck is unchanged, so `robot_state_publisher` already
+exposes the right tf.
 
 ![graph TD](/img/diagrams/overview__hardware_specifications__01.svg)
 
@@ -18,46 +23,77 @@ C++ `MITState` struct, and the Python `bar_policy.ObservationManager`. Once a
 policy is trained against this order, it is frozen — see "Frozen schemas" in
 [Software framework](software_framework.md#frozen-schemas).
 
-| Idx | Joint | Lower (rad) | Upper (rad) | Effort (Nm) | Velocity (rad/s) | Default `K_p` | Default `K_d` |
-|---|---|---:|---:|---:|---:|---:|---:|
-| 0 | `left_shoulder_pitch`  | −3.142 | 0.785 | 17.0 | 100 | 50.0 | 2.0 |
-| 1 | `left_shoulder_roll`   | −1.571 | 1.920 | 14.0 | 100 | 50.0 | 2.0 |
-| 2 | `left_shoulder_yaw`    | −1.571 | 1.571 | 14.0 | 100 | 50.0 | 2.0 |
-| 3 | `left_elbow_pitch`     | −2.356 | 0.000 | 14.0 | 100 | 50.0 | 2.0 |
-| 4 | `left_wrist_yaw`       | −1.571 | 1.571 |  5.5 | 100 | 50.0 | 2.0 |
-| 5 | `left_wrist_roll`      | −0.698 | 0.698 |  5.5 | 100 | 50.0 | 2.0 |
-| 6 | `left_wrist_pitch`     | −0.785 | 0.785 |  5.5 | 100 | 50.0 | 2.0 |
-| 7 | `right_shoulder_pitch` | −3.142 | 0.785 | 17.0 | 100 | 50.0 | 2.0 |
-| 8 | `right_shoulder_roll`  | −1.920 | 1.571 | 14.0 | 100 | 50.0 | 2.0 |
-| 9 | `right_shoulder_yaw`   | −1.571 | 1.571 | 14.0 | 100 | 50.0 | 2.0 |
-| 10 | `right_elbow_pitch`   | −2.356 | 0.000 | 14.0 | 100 | 50.0 | 2.0 |
-| 11 | `right_wrist_yaw`     | −1.571 | 1.571 |  5.5 | 100 | 50.0 | 2.0 |
-| 12 | `right_wrist_roll`    | −0.698 | 0.698 |  5.5 | 100 | 50.0 | 2.0 |
-| 13 | `right_wrist_pitch`   | −0.785 | 0.785 |  5.5 | 100 | 50.0 | 2.0 |
-| 14 | `neck_yaw`            | −0.785 | 0.785 | 10.0 | 100 | 30.0 | 1.0 |
-| 15 | `neck_roll`           | −0.524 | 0.524 | 10.0 | 100 | 30.0 | 1.0 |
-| 16 | `neck_pitch`          | −0.524 | 0.524 | 10.0 | 100 | 30.0 | 1.0 |
+| Idx | Joint | CAN id | Bus | Model | Direction | Lower (rad) | Upper (rad) | Effort (Nm) | Current (A) | `K_p` | `K_d` |
+|---|---|---:|---|---|---:|---:|---:|---:|---:|---:|---:|
+| 0 | `left_shoulder_pitch`  | 11 | can0 | rs-02 | −1 | −3.142 | 0.785 | 17.0 | 27 | 50.0 | 2.0 |
+| 1 | `left_shoulder_roll`   | 12 | can0 | rs-00 | −1 | −1.571 | 1.920 | 14.0 | 16 | 50.0 | 2.0 |
+| 2 | `left_shoulder_yaw`    | 13 | can0 | rs-00 | +1 | −1.571 | 1.571 | 14.0 | 16 | 50.0 | 2.0 |
+| 3 | `left_elbow_pitch`     | 14 | can0 | rs-00 | −1 | −2.356 | 0.000 | 14.0 | 16 | 50.0 | 2.0 |
+| 4 | `left_wrist_yaw`       | 15 | can0 | rs-05 | +1 | −1.571 | 1.571 |  4.0 | 14 | 50.0 | 2.0 |
+| 5 | `left_wrist_roll`      | 16 | can0 | rs-05 | −1 | −0.698 | 0.698 |  4.0 | 14 | 50.0 | 2.0 |
+| 6 | `left_wrist_pitch`     | 17 | can0 | rs-05 | −1 | −0.785 | 0.785 |  4.0 | 14 | 50.0 | 2.0 |
+| 7 | `right_shoulder_pitch` | 21 | can1 | rs-02 | +1 | −3.142 | 0.785 | 17.0 | 27 | 50.0 | 2.0 |
+| 8 | `right_shoulder_roll`  | 22 | can1 | rs-00 | −1 | −1.920 | 1.571 | 14.0 | 16 | 50.0 | 2.0 |
+| 9 | `right_shoulder_yaw`   | 23 | can1 | rs-00 | +1 | −1.571 | 1.571 | 14.0 | 16 | 50.0 | 2.0 |
+| 10 | `right_elbow_pitch`   | 24 | can1 | rs-00 | +1 | −2.356 | 0.000 | 14.0 | 16 | 50.0 | 2.0 |
+| 11 | `right_wrist_yaw`     | 25 | can1 | rs-05 | +1 | −1.571 | 1.571 |  4.0 | 14 | 50.0 | 2.0 |
+| 12 | `right_wrist_roll`    | 26 | can1 | rs-05 | +1 | −0.698 | 0.698 |  4.0 | 14 | 50.0 | 2.0 |
+| 13 | `right_wrist_pitch`   | 27 | can1 | rs-05 | −1 | −0.785 | 0.785 |  4.0 | 14 | 50.0 | 2.0 |
+
+(Neck rows omitted — once the neck is wired, the canonical convention is
+indices 14–16 = `neck_yaw`, `neck_roll`, `neck_pitch`, all rs-00-class with
+`K_p ≈ 30`, `K_d ≈ 1`.)
 
 :::tip[Where these numbers come from]
-Limits are ported from the upstream
-[`Berkeley-Humanoids/Robot-Descriptions/lite_dummy`](https://github.com/Berkeley-Humanoids/Robot-Descriptions/tree/main/robots/lite_dummy)
-`joint_properties.json` (Robstride spec). Default stiffness / damping reflects
-a conservative MIT-mode setting suitable for first activation; tune per
-deployment.
+Limits / models / directions are mirrored from
+[`T-K-233/Lite-Lowlevel-Python`](https://github.com/T-K-233/Lite-Lowlevel-Python)'s
+`configs/bimanual.yaml`. They appear in the URDF as `<param>` children on each
+`<joint>` and are consumed by `bar_hw_robstride/RobstrideSystem::on_init`.
+Default stiffness / damping reflects a conservative MIT-mode setting suitable
+for first activation; tune per deployment.
 :::
 
 ### Transports
 
-Lite uses **two SocketCAN buses** (CAN-to-USB adapters), one per arm. The neck
-shares a bus with one of the arms.
+Lite uses **two SocketCAN buses** (CAN-to-USB adapters), one per arm. Each
+bus is a separate `<ros2_control>` block in the URDF, each loading its own
+`bar_hw_robstride/RobstrideSystem` instance:
+
+| Block | Default ifname | CAN ids |
+|---|---|---|
+| `LiteLeftArm`  | `can_interface_left` (default `can0`) | 11..17 |
+| `LiteRightArm` | `can_interface_right` (default `can1`) | 21..27 |
 
 ![flowchart LR](/img/diagrams/overview__hardware_specifications__02.svg)
 
-:::warning[CAN id assignment is currently placeholder]
-`bar_description_lite/urdf/lite.ros2_control.xacro` assigns sequential CAN ids
-1..17 today. **Re-map these to your physical hardware** (DIP switches / vendor
-tool) before any real-hardware bringup. Tracked in TODOS.md.
-:::
+The controller_manager runs both plugin instances concurrently and exposes
+a single flat 14-joint list to controllers — they don't see the split.
+
+#### Bus-bring-up checklist
+
+```sh
+# 1. Bring up both buses at 1 Mbps.
+sudo ip link set can0 down 2>/dev/null
+sudo ip link set can0 up type can bitrate 1000000
+sudo ip link set can1 down 2>/dev/null
+sudo ip link set can1 up type can bitrate 1000000
+
+# 2. Read-only sanity scan — no Enable, no MIT.
+ros2 run bar_hw_robstride robstride_discover --iface can0 --scan-to 32
+ros2 run bar_hw_robstride robstride_discover --iface can1 --scan-to 32
+# Expect 7 + 7 = 14 actuators replying at ids 11..17 and 21..27.
+
+# 3. Calibrate the zero pose (once per physical robot).
+ros2 launch bar_bringup_lite calibrate.launch.py
+# Hand-sweep every joint to both extremes. Ctrl+C to write calibration.json.
+
+# 4. Real-hardware bringup.
+ros2 launch bar_bringup_lite real.launch.py
+```
+
+If `robstride_discover` reports `ENOBUFS` / TX-drop warnings, the actuator
+power is off (no ACKs → frames pile up in the kernel qdisc). Power the
+motors first.
 
 ### IMU
 

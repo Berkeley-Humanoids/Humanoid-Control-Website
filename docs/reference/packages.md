@@ -42,8 +42,11 @@ Layout (Lite shown):
 ```
 bar_description_lite/
 ├── urdf/
-│   ├── lite.urdf.xacro              # top-level, 17 joints
-│   └── lite.ros2_control.xacro      # 3-way plugin selector
+│   ├── lite.urdf.xacro              # top-level: kinematics for 14 arm joints
+│   │                                #  (neck links remain in the chain but
+│   │                                #   no <ros2_control> block claims them
+│   │                                #   until the neck hardware is wired up)
+│   └── lite.ros2_control.xacro      # 3-way plugin selector + per-joint static config
 ├── meshes/   *.stl                  # 18 visual meshes
 ├── mjcf/     lite.xml               # MuJoCo physics model
 ├── config/   view_lite.rviz         # RViz config
@@ -53,6 +56,17 @@ bar_description_lite/
 The xacro selects between **three hardware backends** via args:
 
 ![flowchart LR](/img/diagrams/reference__packages__02.svg)
+
+The real-hardware path emits **two `<ros2_control>` blocks** (`LiteLeftArm`
+on `can_interface_left` carrying CAN ids 11..17, `LiteRightArm` on
+`can_interface_right` carrying 21..27); sim and mock collapse into one
+combined block. Per-joint static config (`can_id`, `model`, `direction`,
+`lower_limit`, `upper_limit`, `torque_limit`, `current_limit`) is emitted
+as `<param>` children only on the real-hardware path. Values mirror
+[`T-K-233/Lite-Lowlevel-Python`](https://github.com/T-K-233/Lite-Lowlevel-Python)'s
+`configs/bimanual.yaml`; see
+[Hardware specifications → Joint table](../overview/hardware_specifications.md#joint-table)
+for the canonical values.
 
 ### `bar_hw_socketcan`
 
@@ -75,6 +89,38 @@ Both:
 - Export the **5 MIT-mode command interfaces** (`position`, `velocity`, `effort`, `stiffness`, `damping`).
 - Read `can_interface` (system-level) and per-joint `can_id` from URDF params.
 - Register via `pluginlib` against `hardware_interface::SystemInterface`.
+
+`bar_hw_robstride` additionally:
+
+- Reads per-joint **`model`** (one of `rs-00`..`rs-06` — drives the MIT-mode
+  scaling limits), **`direction`** (±1), **`lower_limit`** / **`upper_limit`**
+  (joint-frame rad clipping at command time), and **`torque_limit`** /
+  **`current_limit`** (Nm / A — opt-in firmware writes guarded by the
+  hardware-level `write_firmware_limits` param) from URDF `<param>` children.
+- Reads a system-level **`calibration_file`** (JSON,
+  `{joint_name: {homing_offset, direction, id}}`) at `on_configure` and
+  applies the standard convention at the bus boundary:
+  ```
+  read:  joint_pos    = direction * (raw_motor_pos - homing_offset)
+  write: raw_motor_pos = direction * joint_pos     + homing_offset
+         # velocity / effort: direction only, no offset
+  ```
+  Empty path = identity calibration (still applies `direction`). File format
+  is byte-for-byte compatible with
+  [`T-K-233/Lite-Lowlevel-Python`](https://github.com/T-K-233/Lite-Lowlevel-Python)'s
+  `calibration.json`.
+- Publishes a `bar_msgs/SafetyStatus` on `/safety_status` (TRANSIENT_LOCAL,
+  per-bus source field) with bit-flags for `BUS_OFF` / `RX_TIMEOUT` /
+  `TX_QUEUE_OVERRUN` / `MOTOR_FAULT` / `TEMPERATURE_LIMIT` / `INVALID_FRAME`.
+  `mode_manager` subscribes and auto-falls to DAMPING on any non-OK level.
+
+Ships three CLI executables alongside the plugin:
+
+| Executable | Purpose |
+|---|---|
+| `robstride_ping` | One-shot `GetDeviceId` ping at a specific id. Read-only. |
+| `robstride_discover` | Scan an id range across one bus and print everyone that answers. Read-only, no Enable. |
+| `mit_slider_gui` | Tk-Qt slider window publishing `Float64MultiArray` to `forward_command_controller/MultiInterfaceForwardCommandController`; manual command of position/velocity/effort/stiffness/damping per joint. |
 
 ### `bar_controllers`
 
@@ -140,8 +186,23 @@ Both launches:
 
 `bar_bringup_lite/config/sim_overrides.yaml` adds `use_sim_time:=true`
 on top of `bar_lite_controllers.yaml` for the MuJoCo path.
+`bar_bringup_lite/config/calibration.json` is the per-physical-robot zero
+offset that `bar_hw_robstride` applies at the bus boundary on the real path
+(see "Calibrating the zero pose" in the
+[README](https://github.com/T-K-233/bar_ros2#calibrating-the-zero-pose) or
+the `calibrate.launch.py` entry on the
+[Launch args](launch_args.md#bar_bringup_litelaunchcalibratelaunchpy) page).
 `bar_bringup_prime/config/ethercat.yaml` configures the IgH master for
 Prime real-hardware bringup.
+
+`bar_bringup_lite` also ships three operator-facing Python nodes
+(`ros2 run bar_bringup_lite ...`):
+
+| Executable | Purpose |
+|---|---|
+| `calibrate_robot` | Calibration observer — subscribes `/robot_description` + `/joint_states`, tracks per-joint (min, max), writes the homing-offset JSON on Ctrl+C. Driven by `calibrate.launch.py`. |
+| `rerun_viz` | Live URDF visualization via `rerun-sdk` (browser-based, optional dep). |
+| `viser_viz` | Same idea via `viser`. |
 
 The `bar_simulation` package this used to live in was retired
 (2026-05-12): its launch glue moved into `bar_bringup_lite/launch/mujoco.launch.py`,

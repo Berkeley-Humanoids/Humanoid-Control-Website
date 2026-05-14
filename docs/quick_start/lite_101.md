@@ -191,18 +191,18 @@ ros2 topic pub --once /remote_policy_controller/command \
       joint_names: ['left_shoulder_pitch', 'left_shoulder_roll', 'left_shoulder_yaw',
                     'left_elbow_pitch', 'left_wrist_yaw', 'left_wrist_roll', 'left_wrist_pitch',
                     'right_shoulder_pitch', 'right_shoulder_roll', 'right_shoulder_yaw',
-                    'right_elbow_pitch', 'right_wrist_yaw', 'right_wrist_roll', 'right_wrist_pitch',
-                    'neck_yaw', 'neck_roll', 'neck_pitch'],
+                    'right_elbow_pitch', 'right_wrist_yaw', 'right_wrist_roll', 'right_wrist_pitch'],
       position: [0.0, 0.5, 0, -0.5, 0, 0, 0,
-                 0.0, -0.5, 0, -0.5, 0, 0, 0,
-                 0, 0, 0],
-      velocity: [0,0,0,0,0,0,0, 0,0,0,0,0,0,0, 0,0,0],
-      effort:   [0,0,0,0,0,0,0, 0,0,0,0,0,0,0, 0,0,0],
-      stiffness:[50,50,50,50,50,50,50, 50,50,50,50,50,50,50, 30,30,30],
-      damping:  [2,2,2,2,2,2,2, 2,2,2,2,2,2,2, 1,1,1]}"
+                 0.0, -0.5, 0, -0.5, 0, 0, 0],
+      velocity: [0,0,0,0,0,0,0, 0,0,0,0,0,0,0],
+      effort:   [0,0,0,0,0,0,0, 0,0,0,0,0,0,0],
+      stiffness:[50,50,50,50,50,50,50, 50,50,50,50,50,50,50],
+      damping:  [2,2,2,2,2,2,2, 2,2,2,2,2,2,2]}"
 ```
 
-Both arms should bend their shoulder_roll and elbow_pitch joints.
+Both arms should bend their shoulder_roll and elbow_pitch joints. (Lite's
+neck joints aren't currently wired into the `<ros2_control>` block — if
+you re-enable them, append the three `neck_*` entries to every array.)
 
 :::tip[Stale-command behavior]
 After 100 ms with no new `MITAction`,

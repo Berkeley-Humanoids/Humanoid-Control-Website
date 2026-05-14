@@ -21,20 +21,50 @@ the URDF.
 
 ## `bar_bringup_lite/launch/real.launch.py`
 
-Real-hardware Lite bringup. Loads `bar_hw_robstride/RobstrideSystem` on
-the configured SocketCAN bus.
+Real-hardware Lite bringup. Loads **two** `bar_hw_robstride/RobstrideSystem`
+instances, one per physical SocketCAN bus (`LiteLeftArm` claims CAN ids
+11..17 on the left bus, `LiteRightArm` claims 21..27 on the right bus).
 
 | Arg | Default | Effect |
 |---|---|---|
-| `can_interface` | `can0` | SocketCAN ifname for the bus library. |
-| `enable_gamepad` | `false` | `true` spawns `joy_node` so `mode_manager` can read `/joy`. Otherwise keyboard-only (and only when stdin is a TTY). |
+| `can_interface_left`  | `can0` | SocketCAN ifname for the **left arm** block (CAN ids 11..17). |
+| `can_interface_right` | `can1` | SocketCAN ifname for the **right arm** block (CAN ids 21..27). |
+| `calibration_file`    | `<bar_bringup_lite share>/config/calibration.json` | Absolute path to the per-physical-robot zero-offset JSON. Pass `''` for identity calibration (only the URDF `direction` sign flip applies, no offset). See [Hardware specifications](../overview/hardware_specifications.md#bus-bring-up-checklist) for how to regenerate. |
+| `enable_mode_manager` | `true` | `false` skips spawning the FSM orchestrator. Used by `calibrate.launch.py` and for raw-debug bringups where the operator drives controllers directly via `ros2 control switch_controllers`. |
+| `enable_gamepad`      | `false` | `true` spawns `joy_node` so `mode_manager` can read `/joy`. Otherwise keyboard-only (and only when stdin is a TTY). |
+| `enable_rerun_viz`    | `false` | `true` spawns the `bar_bringup_lite rerun_viz` Python node. Requires `rerun-sdk` from pip. |
 
 The active-policy target is picked by the START button, not a launch
 arg: R1+A activates `remote_policy_controller` (out-of-process policy),
-R1+B activates `rl_policy_controller` (in-process RL). See
+R1+B activates `rl_policy_controller` (in-process RL — currently
+**not auto-spawned** because its placeholder `observation_dim=0` /
+`action_dim=0` config makes `on_configure` fail; load manually with
+`ros2 control load_controller` once a real metadata schema lands). See
 [Controllers → `mode_manager`](controllers.md#mode_manager-executable).
 
 Implicit on the xacro: `use_fake_hardware:=false use_sim:=false`.
+
+## `bar_bringup_lite/launch/calibrate.launch.py`
+
+Bundles `real.launch.py` with three overrides
+(`calibration_file:='' enable_mode_manager:='false' enable_gamepad:='false'`)
+and adds the `calibrate_robot` observer node. The plugin runs with identity
+calibration so `/joint_states` carries `direction × raw_motor_pos`, which is
+the frame the homing-offset formula expects.
+
+| Arg | Default | Effect |
+|---|---|---|
+| `can_interface_left`  | `can0` | Forwarded to `real.launch.py`. |
+| `can_interface_right` | `can1` | Forwarded to `real.launch.py`. |
+| `output` | `$PWD/calibration.json` | Path the calibration observer writes on Ctrl+C. After verifying, `mv` it over `bar_bringup_lite/config/calibration.json` to make it the default for the next `real.launch.py`. |
+| `sweep_threshold` | `0.5` | Minimum joint sweep (rad) below which the prior `homing_offset` is preserved instead of recomputed. Lets you re-calibrate one or two joints at a time without losing the others. |
+
+The observer reads per-joint static config (`direction`, `lower_limit`,
+`upper_limit`, `can_id`) from `/robot_description` — there's no parallel
+YAML config for it to drift against. Output JSON schema is byte-for-byte
+compatible with
+[`T-K-233/Lite-Lowlevel-Python`](https://github.com/T-K-233/Lite-Lowlevel-Python)'s
+`calibration.json`.
 
 ## `bar_bringup_lite/launch/mujoco.launch.py`
 
@@ -85,9 +115,11 @@ xacro directly (e.g. in a sim2sim eval harness):
 
 | Arg | Default | Effect |
 |---|---|---|
-| `use_fake_hardware` | `true` | Select `mock_components/GenericSystem` — only the **xacro layer** exposes this; no bundled launch uses it today. |
-| `use_sim` | `false` | **Wins over `use_fake_hardware`** — select `mujoco_ros2_control/MujocoSystem`. |
-| `can_interface` | `can0` | Emitted as a system-level `<param>` only when neither `use_sim` nor `use_fake_hardware` is true. |
+| `use_fake_hardware` | `true` | Select `mock_components/GenericSystem` — single combined `<ros2_control>` block. Only the **xacro layer** exposes this; no bundled launch uses it today. |
+| `use_sim` | `false` | **Wins over `use_fake_hardware`** — select `mujoco_ros2_control/MujocoSystem`, also single combined block. |
+| `can_interface_left`  | `can0` | Emitted as a system-level `<param>` on the `LiteLeftArm` block only on the real-hardware path. |
+| `can_interface_right` | `can1` | Same, for `LiteRightArm`. |
+| `calibration_file`    | `""`   | Passed verbatim as a `<param name="calibration_file">` on both real-hardware blocks. Empty = identity calibration. |
 
 ## Common combinations
 
@@ -98,8 +130,12 @@ ros2 launch bar_description_lite view_lite.launch.py
 # MuJoCo physics, /clock from sim time.
 ros2 launch bar_bringup_lite mujoco.launch.py
 
-# Real Lite, can0, gamepad. Press R1+A at STANDBY to start the remote policy.
+# Real Lite, both buses, gamepad. Press R1+A at STANDBY to start the remote policy.
 ros2 launch bar_bringup_lite real.launch.py \
-    can_interface:=can0 \
+    can_interface_left:=can0 \
+    can_interface_right:=can1 \
     enable_gamepad:=true
+
+# Calibrate the zero pose (writes ./calibration.json on Ctrl+C).
+ros2 launch bar_bringup_lite calibrate.launch.py
 ```
