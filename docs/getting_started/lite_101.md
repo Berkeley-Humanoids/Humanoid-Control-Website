@@ -146,8 +146,8 @@ ros2 launch bar_bringup_lite mujoco.launch.py enable_viser_viz:=true
 ```
 
 Both can run simultaneously. Pip install once: `pip install rerun-sdk`
-and/or `pip install viser yourdfpy 'scipy>=1.13'`. A dedicated *How-to →
-Live visualization* page is coming.
+and/or `pip install viser yourdfpy 'scipy>=1.13'`. See
+[How-to → Live visualization](../how_to/live_viz.md).
 :::
 
 ## Step 3 — Trigger a mode transition
@@ -178,9 +178,8 @@ With stiffness `K = 0` there's no position-restoring force. With damping
 `D` nonzero the joint resists velocity. The result: the robot is **soft
 under gravity** (push the arm and it moves) but **damped** (it doesn't
 oscillate). This is the state you transition into before powering down,
-before swapping a tool, or after any non-OK `SafetyStatus`. A
-*Concepts → Five-mode FSM* page is coming; meanwhile see
-[`bar_controllers` → DampingController](../reference/controllers.md#bardampingcontroller).
+before swapping a tool, or after any non-OK `SafetyStatus`. See
+[Concepts → Five-mode FSM](../concepts/five_mode_fsm.md).
 :::
 
 If gravity is on (it is by default in our MJCF) and you switched to
@@ -219,15 +218,13 @@ Four moving pieces, all worth recognising for the rest of the docs:
 
 Where to go from here, depending on what you want:
 
+- **I want to make the arm move on real hardware.**
+  → [How-to → First real-hardware bringup](../how_to/first_real_bringup.md).
+- **I want a hands-on look at the mode FSM, with the actual gamepad.**
+  → [Tutorials → MuJoCo + FSM walkthrough](../tutorials/mujoco_fsm_walk.md).
+- **I want to run a trained policy.**
+  → [Tutorials → Run a tracking policy](../tutorials/tracking_policy.md).
+- **I want one page that lists every command, every topic, every gamepad button.**
+  → [Reference → Quick reference](../reference/quick_reference.md).
 - **I want to understand the design rationale.**
   → [Concepts → Architecture](../concepts/architecture.md).
-- **I want the per-controller parameter reference.**
-  → [Reference → Controllers](../reference/controllers.md).
-- **I want the launch-arg reference.**
-  → [Reference → Launch args](../reference/launch_args.md).
-- **I want the per-package overview.**
-  → [Reference → Packages](../reference/packages.md).
-
-Three further pages are being written and will land here as they're ready:
-*How-to → First real-hardware bringup*, *Tutorials → MuJoCo + FSM walkthrough*,
-*Reference → Quick reference card*.
