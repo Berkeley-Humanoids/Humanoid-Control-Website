@@ -75,6 +75,7 @@ plugin).
 
 | Arg | Default | Effect |
 |---|---|---|
+| `scene` | `lite` | MJCF scene name. **`lite`** loads `bar_description_lite/mjcf/lite.xml` (robot only). **`lite_piano`** composes a runtime scene XML that `<include>`s the robot MJCF and `bar_piano/mjcf/piano.xml` (positioned per Pianist's `UdeDummyCfg`). Any other name is treated as `bar_description_lite/mjcf/<name>.xml`, so you can drop a static scene XML in that directory and select it without editing the launch file. |
 | `enable_gamepad` | `false` | Same as the real bringup. |
 
 Implicit:
@@ -87,6 +88,12 @@ Implicit:
 - `bar_bringup_lite/config/sim_overrides.yaml` is layered on top of
   `bar_controllers/config/bar_lite_controllers.yaml` so the real-hardware
   launch stays sim-time-free.
+- `scene:=lite_piano` writes the composed scene into
+  `<bar_description_lite share>/mjcf/_runtime_lite_piano.xml` so MuJoCo's
+  root-file-relative path resolution still finds the robot meshes via
+  `meshdir="../meshes/"`. The launch passes the absolute path to
+  `mujoco_sim` (which we patched to skip the `<package_share>/<rel>`
+  join when `model_file` is absolute).
 
 ## `bar_bringup_prime/launch/real.launch.py`
 
@@ -130,6 +137,9 @@ ros2 launch bar_description_lite view_lite.launch.py
 
 # MuJoCo physics, /clock from sim time.
 ros2 launch bar_bringup_lite mujoco.launch.py
+
+# MuJoCo physics with the portable piano in front of the robot.
+ros2 launch bar_bringup_lite mujoco.launch.py scene:=lite_piano
 
 # Real Lite, both buses, gamepad. Press R1+A at STANDBY to start the remote policy.
 ros2 launch bar_bringup_lite real.launch.py \

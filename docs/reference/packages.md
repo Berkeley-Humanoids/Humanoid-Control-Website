@@ -1,6 +1,6 @@
 # Packages
 
-The `bar_ros2` repo is a flat collection of 11 packages, organized by which
+The `bar_ros2` repo is a flat collection of 12 packages, organized by which
 robot(s) consume them and what role they play.
 
 ## At a glance
@@ -161,6 +161,51 @@ without observation-indexing drift.
 
 See [Policy runner](policy_runner.md) for the full ONNX metadata schema,
 launch args, and the dataset-resolution order.
+
+### `bar_piano`
+
+ament_python package owning everything piano-shaped — MJCF assets and MIDI
+replay node today, scoring + live-keyboard input later. The piano sits in
+its own package on purpose: the same MJCF must reach both sim
+(`mujoco_sim_ros2` via `bar_bringup_lite/launch/mujoco.launch.py
+scene:=lite_piano`) and a future real-piano bring-up that runs no robot
+description at all, so wiring it into `bar_description_lite` would have
+been the wrong shape.
+
+Layout:
+
+```
+bar_piano/
+├── bar_piano/
+│   ├── music_sequence.py          # Pianist .npz reader (88-key bool array)
+│   └── midi_replay_node.py        # publishes PianoKeyCommand at policy_dt
+├── launch/midi_replay.launch.py
+├── mjcf/piano.xml                 # portable piano model (88 keys)
+├── songs/                         # user .npz files (empty by default)
+└── package.xml / setup.py
+```
+
+The MIDI replay node mirrors Pianist's `KeyPressCommand` semantics: it
+holds a song loaded from a Pianist-format `.npz`, advances one song frame
+per `policy_dt` (with optional `song_speedup` for time-scaling), and
+publishes a `bar_msgs/PianoKeyCommand` containing the current 88-key bool
+state plus a `lookahead_steps × num_keys` future window at `skip_stride`
+stride. `loop:=true` wraps to frame 0 at the end of the song;
+`loop:=false` latches the final frame. The `.npz` schema is the same one
+the trainer writes (`pianist/music/music_sequence.py`), so a song
+debugged in training drives deployment without a separate conversion
+pass.
+
+The MJCF is a deliberate include-time *fragment*: no top-level `<compiler>`
+(would collide with the robot MJCF's `meshdir` declaration during a
+MuJoCo `<include>` merge), `limited="true"` baked into the key-joint
+defaults so the upstream `autolimits` attribute can be dropped, and the
+outer body positioned at `pos="0.5 0 -0.07"` to match Pianist's
+`UdeDummyCfg` ("dummy finger is shorter, so place the piano closer").
+
+Asset provenance: `mjcf/piano.xml` is a re-vendor of
+`Berkeley-Humanoids/Robot-Descriptions/robots/piano/mjcf/piano_dep20.xml`,
+the 20 cm depth variant that succeeds Pianist's `portable_piano`.
 
 ### `bar_bringup_lite` / `bar_bringup_prime`
 

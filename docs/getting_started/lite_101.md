@@ -16,10 +16,14 @@ why-behind-the-what, [Concepts](../concepts/index.md).
 
 Prerequisites: a built workspace, from the [previous page](./installation.md).
 
+Every command on this page runs through `pixi run` (or interactively
+inside `pixi shell`), so ROS 2 Jazzy and the colcon overlay are sourced
+for you automatically:
+
 ```sh
-cd ~/bar_ws
-source /opt/ros/jazzy/setup.bash
-source install/setup.bash
+cd bar_ws
+pixi shell                     # drops you into the env, or:
+# pixi run -- ros2 ...         # runs a single command inside it
 ```
 
 ## Step 1 — Visualize the URDF
@@ -29,6 +33,8 @@ The simplest possible launch: `robot_state_publisher` + a
 the kinematic chain.
 
 ```sh
+pixi run view
+# or, inside `pixi shell`:
 ros2 launch bar_description_lite view_lite.launch.py
 ```
 
@@ -145,8 +151,9 @@ ros2 launch bar_bringup_lite mujoco.launch.py enable_rerun_viz:=true
 ros2 launch bar_bringup_lite mujoco.launch.py enable_viser_viz:=true
 ```
 
-Both can run simultaneously. Pip install once: `pip install rerun-sdk`
-and/or `pip install viser yourdfpy 'scipy>=1.13'`. See
+Both can run simultaneously. No extra install step — the visualiser
+dependencies (`rerun-sdk`, `viser`, `yourdfpy`, `scipy`) ship in the
+pixi env. See
 [How-to → Live visualization](../how_to/live_viz.md).
 :::
 

@@ -96,6 +96,30 @@ Each hardware plugin owes a documented bit table. Until those land, treat
 `flags` as opaque-but-monotonic: same source + same flags = same fault class.
 :::
 
+## `PianoKeyCommand`
+
+Published by `bar_piano/midi_replay_node` (or any future MIDI source) and
+consumed by `bar_policy`'s `PianoKeyGoalTerm`. Mirrors the
+`(K+1, num_keys)` buffer that Pianist's `KeyPressCommand` maintains during
+training so a piano policy moves from sim to deployment without changing
+how the observation row is built.
+
+```
+std_msgs/Header header
+bool[] active                     # length == num_keys, current goal
+bool[] active_lookahead           # length == num_keys * lookahead_steps,
+                                  # row-major: index [k*num_keys + key]
+uint32 num_keys
+uint32 lookahead_steps
+uint32 song_frame                 # underlying song frame; 0 for live MIDI
+```
+
+Frozen once a trained piano policy depends on the schema (per the policy
+metadata contract in [Policy runner](policy_runner.md)). Default topic
+`/piano/key_command`; QoS is `RELIABLE` + `TRANSIENT_LOCAL` + `KEEP_LAST(1)`
+so a late-spawning policy runner latches on the most recent goal without
+waiting for the next tick.
+
 ## `VLAGoal` (stub)
 
 Goal description for a vision-language-action manipulation policy. The full
