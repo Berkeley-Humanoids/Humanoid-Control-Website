@@ -55,7 +55,7 @@ bar_description_lite/
 
 The xacro selects between **three hardware backends** via args:
 
-![flowchart LR](/img/diagrams/reference__packages__02.svg)
+![xacro 3-way hardware selector](/img/diagrams/reference__packages__01_xacro_selector.svg)
 
 The real-hardware path emits **two `<ros2_control>` blocks** (`LiteLeftArm`
 on `can_interface_left` carrying CAN ids 11..17, `LiteRightArm` on

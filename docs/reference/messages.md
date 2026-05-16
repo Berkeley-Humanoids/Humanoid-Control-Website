@@ -5,7 +5,7 @@ schema (changing the layout forces retraining).
 
 ## Topology
 
-![flowchart TB](/img/diagrams/reference__messages__01.svg)
+![bar_msgs pub/sub topology](/img/diagrams/reference__messages__01.svg)
 
 ## `MITAction`
 

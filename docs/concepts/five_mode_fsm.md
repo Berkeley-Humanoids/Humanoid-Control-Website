@@ -7,6 +7,8 @@ controller_manager's interface-claiming machinery enforces that
 mutual exclusion mechanically. `joint_state_broadcaster` is the
 always-on telemetry stream alongside whichever mode is active.
 
+![Five-mode FSM with joy bindings](/img/diagrams/concepts__five_mode_fsm__01.svg)
+
 ## Why a state machine
 
 Three reasons, all from operator UX:

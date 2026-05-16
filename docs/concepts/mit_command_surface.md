@@ -10,6 +10,8 @@ explains what those interfaces mean, how they combine into a single
 torque, and why the same convention is used across silicon and
 simulation.
 
+![MIT-mode hybrid command](/img/diagrams/reference__hardware_specs__03.svg)
+
 ## The five command interfaces
 
 | Interface | Symbol | Units | Meaning |

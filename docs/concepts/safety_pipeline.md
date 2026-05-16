@@ -10,6 +10,8 @@ they make sure that "the robot is in DAMPING within a tick of a
 fault" is the worst case, never "the robot is doing something
 unexpected and we didn't notice".
 
+![Safety pipeline: fault to DAMPING in ≤1 tick](/img/diagrams/concepts__safety_pipeline__01.svg)
+
 ## Layer 1 — Hardware plugins detect transport faults
 
 `RobstrideSystem`, `SitoSystem`, and the EtherCAT plugin observe

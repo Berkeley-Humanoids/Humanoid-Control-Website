@@ -7,6 +7,8 @@ title: Frozen schemas
 A few things in `bar_ros2` are described as **frozen**. This page
 explains which ones, why, and what to do when you want to change them.
 
+![Frozen schemas and their consumers](/img/diagrams/concepts__frozen_schemas__01.svg)
+
 ## What "frozen" means
 
 A schema is frozen when **changing it requires retraining (or

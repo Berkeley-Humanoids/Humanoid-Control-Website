@@ -36,7 +36,7 @@ Everything else is shared.
 
 ## System at a glance
 
-![flowchart TB](/img/diagrams/overview__intro__01.svg)
+![System at a glance](/img/diagrams/getting_started__intro__01.svg)
 
 The two CAN buses on Lite are a **physical** split (one CAN-to-USB adapter per
 arm), surfaced as **two `<ros2_control>` blocks** on the real-hardware path:
@@ -51,7 +51,7 @@ controllers — they don't see the split. Prime adds a third path through
 A single git repo at `T-K-233/bar_ros2`, a flat collection of ROS 2 packages
 (franka_ros2 / Universal_Robots_ROS2_Driver pattern):
 
-![flowchart LR](/img/diagrams/overview__intro__02.svg)
+![Package organization](/img/diagrams/getting_started__intro__02.svg)
 
 Notice that **`bar_controllers`, `bar_msgs`, and `bar_policy` have no
 robot-specific code** — everything robot-specific lives in `bar_description_*`

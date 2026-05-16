@@ -7,6 +7,8 @@ Once those signals are green you've reached parity with the
 subsequent how-to (calibrate, drive a joint, switch to STANDBY) builds
 on this baseline.
 
+![Lite real-hardware bringup sequence](/img/diagrams/how_to__first_real_bringup__01.svg)
+
 This is **read-only on the silicon** — no `STANDBY` motion happens
 here. That's deliberate; verify everything compliant before commanding
 any pose.

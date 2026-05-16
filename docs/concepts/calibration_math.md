@@ -8,6 +8,8 @@ How `bar_hw_robstride` maps between the raw encoder reading and the
 URDF joint frame, where the per-joint constants live, and why the
 calibration is split across two files.
 
+![Calibration math at the bus boundary](/img/diagrams/concepts__calibration_math__01.svg)
+
 ## The transform
 
 For every joint:

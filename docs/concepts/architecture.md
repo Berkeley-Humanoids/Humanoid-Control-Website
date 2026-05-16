@@ -5,13 +5,25 @@ This page describes **how the stack runs end-to-end at 50 Hz**: the
 controller is active, the in-process vs. out-of-process policy tiers, and the
 safety / fallback model.
 
+## Module dependency overview
+
+Before diving into the runtime, here's the static picture — which packages
+build against which:
+
+![Module dependency graph](/img/diagrams/concepts__architecture__03_module_deps.svg)
+
+Notice that `bar_controllers` does **not** `find_package(bar_hw_robstride)`.
+The plugin is loaded by `controller_manager` at launch via `pluginlib` — a
+runtime dep that doesn't appear in the static graph but is just as binding.
+The same applies to every `<plugin>` entry in a controller-manager YAML.
+
 ## The ros2_control cycle
 
 `ros2_control` is the integration spine. `controller_manager` owns the
 real-time loop. Every tick — 50 Hz by default for Lite — it performs three
 steps:
 
-![sequenceDiagram](/img/diagrams/overview__software_framework__01.svg)
+![ros2_control RT cycle](/img/diagrams/concepts__architecture__01_rt_cycle.svg)
 
 **Constraints inside each phase:**
 
@@ -25,6 +37,24 @@ The I/O thread in each hardware plugin (`bar_hw_socketcan::SocketCanBus`,
 `ethercat_driver_ros2`'s EtherLAB master thread) is **separate** from the
 controller-manager thread. RT-safety is preserved by making `read()` /
 `write()` allocation-free buffer swaps.
+
+### Where the data actually lives
+
+Zooming in on one tick — the path a CAN frame takes from the kernel into a
+controller's `update()` and back:
+
+![RT data pipeline](/img/diagrams/concepts__architecture__04_data_pipeline.svg)
+
+The dashed red line is the RT boundary. Anything that crosses it goes
+through a **lock-free SPSC ring** — the RT thread can read or stage
+frames without ever touching the kernel socket directly. The I/O
+thread does the blocking `epoll_wait` and decodes/encodes frames on
+its own pace.
+
+Calibration (`direction`, `homing_offset`) is applied **inside** the
+plugin's `read()` and `write()`, so every controller above sees joint
+frame, never the raw encoder. See [Calibration math](calibration_math.md)
+for the formula.
 
 :::tip[Why MIT-mode lives in the hardware plugin, not the controller]
 The torque computation
@@ -41,7 +71,7 @@ The whole control surface boils down to **one active controller at a time**,
 selected by `mode_manager`. `joint_state_broadcaster` runs alongside as the
 always-on state stream.
 
-![stateDiagram-v2](/img/diagrams/overview__software_framework__02.svg)
+![Five-mode FSM](/img/diagrams/concepts__five_mode_fsm__01.svg)
 
 Behavior per state:
 
@@ -71,7 +101,7 @@ plain `rclcpp::Node` that subscribes:
 The "active policy" mode comes in **two flavors** that share the exact same
 observation/action contract:
 
-![flowchart TB](/img/diagrams/overview__software_framework__04.svg)
+![Two policy tiers](/img/diagrams/concepts__architecture__02_policy_tiers.svg)
 
 **Key property**: the Python `ObservationManager` mirrors the C++ one
 structurally — same term names (`JointPositionTerm`, `JointVelocityTerm`,

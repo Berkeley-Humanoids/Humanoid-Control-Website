@@ -113,6 +113,14 @@ Logged at startup so you always know which one was used.
 
 ## Per-tick flow
 
+For piano tasks specifically, the full path looks like this:
+
+![Piano-task data flow](/img/diagrams/concepts__architecture__05_piano_data_flow.svg)
+
+`PianoKeyReferenceProvider` and `TrackingReferenceProvider` are
+interchangeable from the runner's perspective — the same per-tick
+ordering applies regardless of which one is plugged in.
+
 Each timer fire (at `policy_dt`):
 
 1. Build the observation: every `ObservationTerm.pack(state, slice)` runs

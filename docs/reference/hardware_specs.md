@@ -14,7 +14,7 @@ DOFs** (no neck). Re-add the third `<ros2_control>` block in
 kinematic chain for the neck is unchanged, so `robot_state_publisher` already
 exposes the right tf.
 
-![graph TD](/img/diagrams/overview__hardware_specifications__01.svg)
+![Lite kinematic tree](/img/diagrams/reference__hardware_specs__01.svg)
 
 ### Joint table
 
@@ -64,7 +64,7 @@ bus is a separate `<ros2_control>` block in the URDF, each loading its own
 | `LiteLeftArm`  | `can_interface_left` (default `can0`) | 11..17 |
 | `LiteRightArm` | `can_interface_right` (default `can1`) | 21..27 |
 
-![flowchart LR](/img/diagrams/overview__hardware_specifications__02.svg)
+![Lite CAN topology](/img/diagrams/reference__hardware_specs__02.svg)
 
 The controller_manager runs both plugin instances concurrently and exposes
 a single flat 14-joint list to controllers — they don't see the split.
@@ -129,7 +129,7 @@ Every actuator on both robots (and every sim system) implements a **hybrid
 position-velocity-torque command** that is the central abstraction of the
 project:
 
-![flowchart LR](/img/diagrams/overview__hardware_specifications__05.svg)
+![MIT-mode hybrid command](/img/diagrams/reference__hardware_specs__03.svg)
 
 Every controller in `bar_controllers` claims **all five** command interfaces,
 even when it only writes some of them (writing zero to the rest is the safe

@@ -77,7 +77,7 @@ interface inside that. From the controller's point of view nothing
 distinguishes this from real hardware — same 5 command interfaces, same
 3 state interfaces.
 
-![flowchart LR](/img/diagrams/quick_start__lite_101__04.svg)
+![mujoco_sim process](/img/diagrams/getting_started__lite_101__02_mujoco_internals.svg)
 
 Wait ~2 seconds, then in a **second terminal**:
 
@@ -99,7 +99,7 @@ remote_policy_controller  bar/RemotePolicyController                      inacti
 
 ### What just happened
 
-![sequenceDiagram](/img/diagrams/quick_start__lite_101__02.svg)
+![MuJoCo bringup spawn sequence](/img/diagrams/getting_started__lite_101__01_mujoco_spawn.svg)
 
 `zero_torque_controller` is active as the **safe startup default**: it
 claims all 5 command interfaces on every joint and writes 0 to all of
