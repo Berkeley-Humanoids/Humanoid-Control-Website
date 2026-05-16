@@ -134,12 +134,59 @@ The `pixi.toml` at `bar_ws/pixi.toml` defines every named task:
 | `pixi run build-pkg <name>` | targeted rebuild of one package. |
 | `pixi run test` | colcon test, BAR-owned packages only. |
 | `pixi run test-results` | colcon test-result --verbose. |
-| `pixi run launch-mujoco` | Lite MuJoCo bringup. |
-| `pixi run launch-mujoco-piano` | same with the portable piano scene. |
-| `pixi run launch-real` | Lite real-hardware bringup. |
+| `pixi run sim` | Lite MuJoCo bringup (alias: `launch-mujoco`). |
+| `pixi run sim-piano` | same with the portable piano scene (alias: `launch-mujoco-piano`). |
+| `pixi run real` | Lite real-hardware bringup (alias: `launch-real`). |
 | `pixi run view` | `view_lite` RViz inspection. |
-| `pixi run calibrate` | calibration bringup (Ctrl+C writes `calibration.json`). |
+| `pixi run calibrate` | calibration bringup (Ctrl+C writes `calibration.yaml`). |
+| `pixi run setup-realtime` | grant RT scheduling capability to `ros2_control_node`. Once per machine, see below. |
 | `pixi run clean` | wipe `build/`, `install/`, `log/`. |
+
+## 7. Real-time scheduling setup (recommended)
+
+By default the controller_manager logs `Could not enable FIFO RT
+scheduling policy: Operation not permitted` on every launch — it tries
+to bring its 50 Hz tick onto `SCHED_FIFO` priority 50 but lacks the
+capability. The result is best-effort scheduling on `SCHED_OTHER`,
+which is fine for sim but introduces jitter on real Robstride
+hardware.
+
+```sh
+pixi run setup-realtime
+```
+
+This one-time setup:
+
+1. Runs `setcap cap_sys_nice+ep` on the `ros2_control_node` binary so
+   it can call `sched_setscheduler(SCHED_FIFO, ...)` without being
+   root.
+2. Writes `/etc/security/limits.d/99-bar-realtime.conf` granting
+   `rtprio 99` + `memlock unlimited` to all users. Log out + back in
+   for the new limits to take effect for your shell.
+3. Writes `/etc/sysctl.d/99-bar-realtime.conf` setting
+   `kernel.sched_rt_runtime_us = -1` so RT tasks aren't throttled to
+   95 % of a 1-second period (the default would starve a hot 50 Hz
+   loop).
+
+After running it, verify with:
+
+```sh
+pixi run real
+# expect NO "Could not enable FIFO RT scheduling policy" log line.
+
+ps -eLo pid,tid,class,rtprio,comm | grep ros2_control_node
+# expect: class FF (FIFO), rtprio 50.
+```
+
+:::info[PREEMPT_RT kernel]
+For hard real-time guarantees you also want a PREEMPT_RT kernel. On
+Ubuntu 24.04 the simplest path is the `linux-generic-rt` package from
+the `ppa:rt-kernel-team/ppa` PPA (or build from
+`kernel.org/pub/linux/kernel/projects/rt/`). The `setup-realtime` task
+above warns if it doesn't detect `PREEMPT_RT` in `uname -v` but does
+not install the kernel — that's a deliberate one-time decision the
+operator makes per machine.
+:::
 
 ## Next
 
