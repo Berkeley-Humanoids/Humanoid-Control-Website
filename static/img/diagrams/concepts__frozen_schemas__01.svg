@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 480"
+     width="920" height="480" font-family="ui-monospace, Menlo, Consolas, Courier, monospace"
+     font-size="13" fill="#111111" text-rendering="geometricPrecision">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#111111"/>
+    </marker>
+    <marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#888888"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="white"/>
+<text x="20" y="30" font-size="15" font-weight="700" text-anchor="start" fill="#111111" dominant-baseline="middle">Frozen schemas</text>
+<text x="20" y="48" font-size="11" font-weight="400" text-anchor="start" fill="#888888" dominant-baseline="middle">Changing these requires retraining every policy that depends on them</text><rect x="40" y="70" width="380" height="380" rx="8" ry="8" fill="#EEEEEE" stroke="#888888" stroke-width="1" stroke-dasharray="5 3"/>
+<text x="52" y="86" font-size="11" font-weight="600" text-anchor="start" fill="#888888" dominant-baseline="middle">Schema</text><rect x="460" y="70" width="420" height="380" rx="8" ry="8" fill="#EEEEEE" stroke="#888888" stroke-width="1" stroke-dasharray="5 3"/>
+<text x="472" y="86" font-size="11" font-weight="600" text-anchor="start" fill="#888888" dominant-baseline="middle">Who locks in when you ship</text><rect x="60" y="90" width="340" height="70" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="230" y="117" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">bar_msgs/MITCommand</text>
+<text x="230" y="135" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">fields name + order</text><text x="490" y="110" font-size="11" font-weight="400" text-anchor="start" fill="#111111" dominant-baseline="middle">RemotePolicyController (subscriber)</text><text x="490" y="128" font-size="11" font-weight="400" text-anchor="start" fill="#111111" dominant-baseline="middle">bar_policy.ActionMapper (publisher)</text><text x="490" y="146" font-size="11" font-weight="400" text-anchor="start" fill="#111111" dominant-baseline="middle">every trained ONNX (action_joint_names)</text><rect x="60" y="180" width="340" height="70" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="230" y="207" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">Joint order in YAML</text>
+<text x="230" y="225" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">controllers.yaml `joints:` list</text><text x="490" y="200" font-size="11" font-weight="400" text-anchor="start" fill="#111111" dominant-baseline="middle">RLPolicyController obs index</text><text x="490" y="218" font-size="11" font-weight="400" text-anchor="start" fill="#111111" dominant-baseline="middle">ObservationManager term layout</text><text x="490" y="236" font-size="11" font-weight="400" text-anchor="start" fill="#111111" dominant-baseline="middle">URDF `<ros2_control>` block order</text><rect x="60" y="270" width="340" height="70" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="230" y="297" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">MITState (POD + dataclass)</text>
+<text x="230" y="315" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">field names, types, units</text><text x="490" y="290" font-size="11" font-weight="400" text-anchor="start" fill="#111111" dominant-baseline="middle">C++ controllers (read state_interfaces)</text><text x="490" y="308" font-size="11" font-weight="400" text-anchor="start" fill="#111111" dominant-baseline="middle">Python ObservationManager (mirror)</text><text x="490" y="326" font-size="11" font-weight="400" text-anchor="start" fill="#111111" dominant-baseline="middle">trained policy observation_term_names</text><rect x="60" y="360" width="340" height="70" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<text x="230" y="387" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">ObservationTerm.scale / default</text>
+<text x="230" y="405" font-size="11" font-weight="400" text-anchor="middle" fill="#888888" dominant-baseline="middle">per-joint, per-term constants</text><text x="490" y="380" font-size="11" font-weight="400" text-anchor="start" fill="#111111" dominant-baseline="middle">every ONNX trained against this scale</text><text x="490" y="398" font-size="11" font-weight="400" text-anchor="start" fill="#111111" dominant-baseline="middle">regression would require recalibration</text><text x="60" y="470" font-size="11" font-weight="400" text-anchor="start" fill="#888888" dominant-baseline="middle">Edits to anything in the left column = a new ONNX export + a sim2real re-verification pass.</text></svg>
