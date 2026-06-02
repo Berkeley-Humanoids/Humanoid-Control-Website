@@ -40,4 +40,5 @@ and now have a concrete task in mind. How-tos skip the pedagogy that
 | Guide | Use it when |
 |---|---|
 | [Run and extend an in-process policy](./promote_python_to_cpp.md) | You have a trained `.onnx` and want to ship it via the launch-time `prepare` step into the in-process C++ `RLPolicyController` (System 0) — or you need to add a new observation term or task. |
+| [Talk to bar_ros2 from Python](./talk_to_bar_ros2_from_python.md) | You want a host-side Python process (gravity-comp, VLA, data tool) to publish/subscribe `bar_msgs` over DDS with no `rclpy` — via `lite_sdk2` + the generated `bar_msgs_dds` types. |
 | [Add a new joint to the URDF](./add_new_joint.md) | A new actuator goes on the robot. You need to wire it into the URDF, controllers YAML, and `calibration.yaml`. |

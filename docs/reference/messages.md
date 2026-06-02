@@ -6,6 +6,13 @@ messages. The live piano key state is **not** a custom message — it
 travels as a stock `std_msgs/Float32MultiArray` on `/piano/key_state`,
 which keeps `bar_controllers` free of any `pianist_msgs` dependency.
 
+:::note[Off-ROS consumers]
+Tier-3 (non-`rclpy`) clients get these types from
+[`bar_msgs_dds`](packages.md#bar_msgs_dds) — generated from the same `.msg`
+and wire-compatible — usually via the `lite_sdk2` SDK. See
+[Talk to bar_ros2 from Python](../how_to/talk_to_bar_ros2_from_python.md).
+:::
+
 ## Topology
 
 ![bar_msgs pub/sub topology](/img/diagrams/reference__messages__01.svg)

@@ -50,6 +50,7 @@ const sidebars: SidebarsConfig = {
         'how_to/diagnose_enobufs',
         'how_to/recover_from_fault',
         'how_to/promote_python_to_cpp',
+        'how_to/talk_to_bar_ros2_from_python',
         'how_to/add_new_joint',
         'how_to/use_pixi_tasks',
       ],

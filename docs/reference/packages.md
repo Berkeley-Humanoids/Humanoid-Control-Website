@@ -6,7 +6,8 @@ cloned side-by-side under `bar_ws/src/`:
 - **[`T-K-233/bar_ros2`](https://github.com/T-K-233/bar_ros2)** —
   12 packages making up the unified low-level control surface (URDF,
   controllers including in-process ONNX inference, hardware plugins, the
-  launch-time policy-prep tool, both Lite and Prime bringups). No
+  launch-time policy-prep tool, both Lite and Prime bringups), plus a
+  pip-only `bar_msgs_dds` package for off-ROS (Tier-3) clients. No
   task-specific code.
 - **[`T-K-233/pianist_ros2`](https://github.com/T-K-233/pianist_ros2)** —
   4 packages implementing the **piano playing** task on top of
@@ -53,6 +54,26 @@ Custom ROS 2 interfaces. Once a trained policy depends on one, it is **frozen**.
 | `SafetyStatus` | every hardware plugin / controller → `/safety_status`. Per-bus `source` field; bitmask in `flags`. |
 
 See [Messages reference](messages.md) for full schemas.
+
+### `bar_msgs_dds`
+
+**Not a colcon package** — a pip package (`COLCON_IGNORE`d) that gives
+Tier-3 / off-ROS clients the `bar_msgs` types without `rclpy`. Its
+`codegen/emit.py` parses `bar_msgs/msg/*.msg` with ROS's own
+`rosidl_adapter` and emits `cyclonedds` `IdlStruct` dataclasses to a
+committed `_generated.py`, baking in the rmw type-name mangling
+(`pkg::msg::dds_::Name_`) and the `rt/` topic convention. It is **types +
+wire conventions only** — no participant/transport.
+
+| Aspect | Detail |
+|---|---|
+| Regenerate | `pixi run gen-dds` (needs `rosidl_adapter`, i.e. the ROS env) |
+| Guard | `pixi run test-dds` (drift) + a CDR wire round-trip test |
+| Runtime dep | `cyclonedds` only — no `rosidl`/`idlc` for consumers |
+| Generated types | `MITCommand`, `ControlMode`, `SafetyStatus`, `StandbyState` + borrowed `std_msgs/Header`, `builtin_interfaces/Time`, `sensor_msgs/JointState` |
+
+The `lite_sdk2` SDK builds its publisher/subscriber layer on top. See
+[Talk to bar_ros2 from Python](../how_to/talk_to_bar_ros2_from_python.md).
 
 ### `bar_description_lite` / `bar_description_prime`
 

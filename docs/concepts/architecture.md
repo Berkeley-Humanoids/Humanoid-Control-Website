@@ -195,9 +195,13 @@ matching the training-time convention.
 sources that *should* live out-of-process: it subscribes to `MITCommand`
 over DDS and writes the bus, with arrival-time staleness gating. Today
 that is the gravity-compensation runner (`Lite-Gravity-Compensation` —
-raw CycloneDDS, no `rclpy`); next it is VLA / manipulation. These are
-System 1/2: slower, deliberative, and tolerant of the latency the DDS
-hop adds.
+raw CycloneDDS, no `rclpy`); next it is VLA / manipulation. Such a client
+does not hand-write the message types: [`bar_msgs_dds`](../reference/packages.md#bar_msgs_dds)
+generates wire-compatible `cyclonedds` types from `bar_msgs/msg/*.msg`, and
+the `lite_sdk2` SDK wraps them in a publisher/subscriber layer — see
+[Talk to bar_ros2 from Python](../how_to/talk_to_bar_ros2_from_python.md).
+These are System 1/2: slower, deliberative, and tolerant of the latency the
+DDS hop adds.
 
 `MITState` is a **code-level** schema (a `bar::MITState` POD in
 `bar_common`) — not a published topic. Observations are assembled

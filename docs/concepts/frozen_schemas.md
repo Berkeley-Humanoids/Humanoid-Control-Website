@@ -77,6 +77,12 @@ Five parallel arrays + names. The arrays are indexed in the same
 canonical joint order above. Adding a field breaks parsers; renaming
 a field breaks everything.
 
+Off-ROS (Tier-3) clients don't hand-mirror this struct: `bar_msgs_dds`
+**generates** the wire-compatible `cyclonedds` type from this `.msg` via
+`pixi run gen-dds`, so the wire form follows the schema automatically. That
+makes `bar_msgs_dds` one more frozen-schema consumer to regenerate on any
+change (see [the change drill](#how-to-change-a-frozen-schema)).
+
 ### 3. The 5 MIT command interface names
 
 ```
@@ -143,16 +149,22 @@ refactor.
 The drill, in order:
 
 1. **Write down what depends on it.** Every trained policy, every
-   subscriber, every rosbag from the past.
+   subscriber, every rosbag from the past — and, for `bar_msgs`, the
+   generated `bar_msgs_dds` mirror that every Tier-3 (non-`rclpy`) client
+   consumes via `lite_sdk2`.
 2. **Stage the change** — branch + commit + describe in the PR
    exactly which schemas move and why.
 3. **Bump a version**. For `bar_msgs`, that's the message's
    `package.xml` version + a deprecation period (parallel old +
    new field, or a v2 message type, for at least one release).
-4. **Retrain every trained policy** against the new schema.
+4. **Regenerate the Tier-3 mirror.** Run `pixi run gen-dds` to re-emit
+   `bar_msgs_dds/_generated.py` from the new `.msg`, and commit it. CI
+   re-runs the emitter (`pixi run test-dds`) plus a CDR wire round-trip
+   test, failing on an uncommitted diff or a changed field layout.
+5. **Retrain every trained policy** against the new schema.
    Document the (old → new) mapping for anyone whose checkpoint
    isn't being retrained.
-5. **Land everything together.** A half-landed schema change is the
+6. **Land everything together.** A half-landed schema change is the
    silent-skew failure mode — old policy loading against new
    message types and silently mis-indexing.
 
