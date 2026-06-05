@@ -31,6 +31,7 @@ const sidebars: SidebarsConfig = {
         'tutorials/drive_one_robstride',
         'tutorials/mujoco_fsm_walk',
         'tutorials/tracking_policy',
+        'tutorials/run_gravity_compensation',
         'tutorials/build_your_own_controller',
       ],
     },

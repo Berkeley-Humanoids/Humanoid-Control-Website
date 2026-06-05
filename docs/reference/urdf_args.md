@@ -19,8 +19,18 @@ Declared in `bar_description_lite/urdf/lite.urdf.xacro`:
 | `use_fake_hardware` | `true` | Select `mock_components/GenericSystem` — single combined `<ros2_control>` block. Only the **xacro layer** exposes this; no bundled launch uses it today. |
 | `use_sim` | `false` | **Wins over `use_fake_hardware`** — select `mujoco_ros2_control/MujocoSystem`, single combined block. |
 | `mode` | `arms` | `arms` (14 joints) or `arms_neck` (17 joints). Selects which `<ros2_control>` block(s) the xacro emits. |
-| `hardware_config` | `""` | Path to a YAML carrying the per-machine bus + joint mapping. The launches set this; ad-hoc xacro calls usually leave it empty. |
+| `can_interface_left` | `can0` | SocketCAN interface for the **left** arm (real-hardware path only). |
+| `can_interface_right` | `can1` | SocketCAN interface for the **right** arm (real-hardware path only). |
 | `calibration_file`    | `""` | Absolute path to the per-physical-robot calibration YAML. Empty = identity calibration. |
+
+:::note[`hardware_config` is a *launch* arg, not a xacro arg]
+The xacro takes the two bus names directly (`can_interface_left` /
+`can_interface_right`). `hardware_config` is a **launch** argument
+([Reference → Launch args](./launch_args.md)): `real.launch.py` reads the
+`buses:` section of that YAML and passes the resulting ifnames into the
+two xacro args above. You only set `hardware_config` when launching, not
+when driving xacro by hand.
+:::
 
 The xacro selects between three plugin paths based on these:
 
@@ -42,7 +52,7 @@ blocks:
 <ros2_control name="LiteLeftArm" type="system">
   <hardware>
     <plugin>bar_robstride/RobstrideSystem</plugin>
-    <param name="can_interface">can0</param>             <!-- from hardware_config YAML -->
+    <param name="can_interface">${can_interface_left}</param>   <!-- can_interface_left arg -->
     <param name="calibration_file">${calibration_file}</param>
   </hardware>
   <!-- 7 <joint> blocks, ids 11..17 -->
@@ -51,7 +61,7 @@ blocks:
 <ros2_control name="LiteRightArm" type="system">
   <hardware>
     <plugin>bar_robstride/RobstrideSystem</plugin>
-    <param name="can_interface">can1</param>             <!-- from hardware_config YAML -->
+    <param name="can_interface">${can_interface_right}</param>  <!-- can_interface_right arg -->
     <param name="calibration_file">${calibration_file}</param>
   </hardware>
   <!-- 7 <joint> blocks, ids 21..27 -->
@@ -156,7 +166,7 @@ xacro $(ros2 pkg prefix bar_description_lite)/share/bar_description_lite/urdf/li
 xacro $(ros2 pkg prefix bar_description_lite)/share/bar_description_lite/urdf/lite.urdf.xacro \
     use_fake_hardware:=false use_sim:=false \
     mode:=arms \
-    hardware_config:=$(ros2 pkg prefix bar_bringup_lite)/share/bar_bringup_lite/config/lite_hardware.yaml \
+    can_interface_left:=can0 can_interface_right:=can1 \
     calibration_file:=/abs/path/to/calibration.yaml \
     > /tmp/lite_real.urdf
 ```

@@ -34,9 +34,11 @@ dependencies = [
 uv sync     # or: pip install "lite_sdk2 @ git+https://github.com/Berkeley-Humanoids/Lite-SDK2.git"
 ```
 
-For local development across the workspace, point the dependency at the in-tree
-checkouts via `[tool.uv.sources]` (see the `Lite-Gravity-Compensation`
-`pyproject.toml` for the pattern).
+For local cross-repo development you can point either dependency at an in-tree
+checkout via a `[tool.uv.sources]` path override in your **own** `pyproject.toml`.
+Keep such overrides out of any package you *publish*: when a package is consumed
+from git, uv rebases a relative path source onto that package's git origin, which
+breaks resolution for downstream consumers.
 
 ## 2. Subscribe to robot state
 

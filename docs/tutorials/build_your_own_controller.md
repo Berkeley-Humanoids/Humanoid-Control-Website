@@ -1,6 +1,6 @@
 ---
 title: Build your own controller plugin
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 # Tutorial: Build your own controller plugin
