@@ -113,5 +113,5 @@ list; the most influential are:
   effort limits, transport details for Lite and Prime.
 - [Architecture](../concepts/architecture.md) — ros2_control flow, the 5-mode
   FSM, and the in-process System 0 policy tier.
-- [Installation](./installation.md) — install and run a Lite mock
-  bringup in ~10 minutes.
+- [Installation](./installation.md) — install the prebuilt packages from the
+  `bar-robotics` channel in ~2 minutes, or build from source.
