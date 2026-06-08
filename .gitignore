@@ -15,3 +15,7 @@ build/
 
 # TypeScript
 *.tsbuildinfo
+
+# Python (helper scripts under scripts/)
+__pycache__/
+*.pyc

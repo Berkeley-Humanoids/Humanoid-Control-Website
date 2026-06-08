@@ -22,8 +22,9 @@ that page is the recipe, this is the lesson.
 - 20 minutes
 - A working workspace build (the bringup side)
 - The [`Lite-Gravity-Compensation`](https://github.com/Berkeley-Humanoids/Lite-Gravity-Compensation)
-  demo, checked out as a **sibling** of `bar_ws` (so both live under the
-  same `BAR-Lowlevel-System-WS` parent)
+  demo, checked out **anywhere outside `bar_ws`** (it's a standalone
+  Tier-3 project with its own `uv` environment — it only needs to reach
+  the robot's DDS bus, not the colcon workspace)
 - [`uv`](https://docs.astral.sh/uv/) on PATH for the demo's own env
 - No real hardware required — the whole lesson runs in MuJoCo
 

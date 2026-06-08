@@ -51,7 +51,7 @@ training and deployment cannot drift independently.
 
 | Module | Responsibility |
 |---|---|
-| `OnnxPolicy` | onnxruntime **C++** session. Single-step inference, shape contract `float32 (1, N) -> float32 (1, M)`. (Opt-in: needs `ros-jazzy-onnxruntime-vendor`; else falls back to `PlaceholderPolicy`.) |
+| `OnnxPolicy` | onnxruntime **C++** session. Single-step inference, shape contract `float32 (1, N) -> float32 (1, M)`. (Opt-in: needs the conda `onnxruntime-cpp` package, pinned in `pixi.toml`; else falls back to `PlaceholderPolicy`.) |
 | `ObservationManager` | Resolves each name in `observation_names` to a term via three-stage lookup — built-in proprioception → reference provider → topic-fed extern — and packs them into a preallocated buffer each tick (no allocation / no string work in the hot loop). Owns reference lifecycle (`reset` on activation, `step` after each `record_action`). |
 | `ReferenceProvider` (`McapTrackingReference` / `McapPianoReference`) | Loads the `.mcap` whole at `on_configure`; integer-indexes per tick to serve `motion_body_pos_b` / `motion_body_ori_b` (tracking) or `target_keys` / `target_keys_future` / `progress` (piano). |
 | `ActionMapper` | `pos = default + action * scale` per action joint, scattered into the full articulation; undriven joints (not in `action_joint_names`) pinned to `position=0` with the policy's `K`/`D`. |
@@ -202,7 +202,7 @@ Inside `RLPolicyController::update()` — no process boundary, no DDS hop:
    `.mcap` provider, and any topic-fed extern (e.g. `/piano/key_state`).
 2. **Run inference.** `OnnxPolicy` runs the forward pass on the flat
    observation vector (or `PlaceholderPolicy` returns zeros when
-   `onnxruntime-vendor` isn't built in).
+   `onnxruntime-cpp` isn't built in).
 3. **Map the action.** `ActionMapper` computes
    `pos = default + action * scale` per action joint, scatters it across
    the full articulation, and writes the five MIT command interfaces with

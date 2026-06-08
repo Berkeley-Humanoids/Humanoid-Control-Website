@@ -63,6 +63,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'concepts/index',
         'concepts/architecture',
+        'concepts/workspace_and_environment',
         'concepts/five_mode_fsm',
         'concepts/mit_command_surface',
         'concepts/calibration_math',
@@ -87,6 +88,7 @@ const sidebars: SidebarsConfig = {
         'reference/cli_tools',
         'reference/urdf_args',
         'reference/troubleshooting',
+        'reference/reference_map',
       ],
     },
   ],

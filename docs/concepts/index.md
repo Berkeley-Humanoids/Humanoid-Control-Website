@@ -18,6 +18,7 @@ Concepts are for *understanding*, not for *doing*.
 | Page | What it explains |
 |---|---|
 | [Architecture](./architecture.md) | The big picture: `ros2_control` as the spine, the in-process System 0 policy tier, the orthogonal axes (robot / hardware tier / task). |
+| [Workspace & environment](./workspace_and_environment.md) | The three-tier code model (ROS / tooling / Tier-3 DDS), why pixi + RoboStack, and the config-repo + monorepo version-control split. |
 | [Five-mode FSM](./five_mode_fsm.md) | Why the operator surface is a state machine, what each mode is for, the transition rules and their gates. |
 | [MIT command surface](./mit_command_surface.md) | Why every joint exposes 5 command interfaces, the `τ = K·err + D·erṙ + ff` convention, how it makes silicon / MuJoCo / mock interchangeable. |
 | [Calibration math](./calibration_math.md) | The `direction` × `homing_offset` transform, where it lives (URDF + YAML), why it lives in the plugin and not the controller. |

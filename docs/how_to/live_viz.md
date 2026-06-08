@@ -48,7 +48,7 @@ local timeline scrubbing on a workstation with a display.
 
 `real.launch.py` itself does **not** spawn the viewers — visualisers
 are host-side by deployment policy. See
-[AGENTS.md §"Deployment topology"](https://github.com/T-K-233/BAR-Lowlevel-System-WS/blob/main/AGENTS.md#deployment-topology)
+[Architecture → deployment topology](../concepts/architecture.md)
 for the rationale.
 
 ## Run standalone (any bringup, single-machine sim/dev)

@@ -180,7 +180,7 @@ modules live alongside the controllers in this package:
 
 | Module | Responsibility |
 |---|---|
-| `OnnxPolicy` | onnxruntime C++ single-step inference. **Opt-in** (`ros-jazzy-onnxruntime-vendor`); falls back to `PlaceholderPolicy` (zeros) when not built in. |
+| `OnnxPolicy` | onnxruntime C++ single-step inference. **Opt-in** (conda `onnxruntime-cpp`, pinned in `pixi.toml`); falls back to `PlaceholderPolicy` (zeros) when not built in. |
 | `ObservationManager` | Resolves each `observation_names` term — built-in proprioception → reference provider → topic-fed extern — into a preallocated buffer per tick. |
 | `ReferenceProvider` (`McapTrackingReference` / `McapPianoReference`) | Loads the policy's `.mcap` motion bag whole at `on_configure` (via `rosbag2_cpp`) and integer-indexes it per tick. |
 | `ActionMapper` | `pos = default + action * scale`, scattered across the full articulation; undriven joints pinned to `position=0` with the policy's `K`/`D`. |

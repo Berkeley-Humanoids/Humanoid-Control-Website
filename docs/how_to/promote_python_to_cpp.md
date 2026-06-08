@@ -107,12 +107,11 @@ ros2 service call /bar/mode/start_locomotion std_srvs/srv/Trigger
 ```
 
 :::tip[onnxruntime is opt-in]
-`OnnxPolicy` (onnxruntime C++) is only compiled in when
-`ros-jazzy-onnxruntime-vendor` is present. Without it the controller
-loads `PlaceholderPolicy` instead, which emits **zero actions** — the
-policy "runs" but does nothing. Add `ros-jazzy-onnxruntime-vendor` to
-`pixi.toml` to get real inference. The startup log line tells you which
-backend is active.
+`OnnxPolicy` (onnxruntime C++) is only compiled in when onnxruntime is
+found at build time — the conda `onnxruntime-cpp` package, already pinned
+in `pixi.toml`. Without it the controller loads `PlaceholderPolicy`
+instead, which emits **zero actions** — the policy "runs" but does
+nothing. The startup log line tells you which backend is active.
 :::
 
 ## Add a new observation term or task

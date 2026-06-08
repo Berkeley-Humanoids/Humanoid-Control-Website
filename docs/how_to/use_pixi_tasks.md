@@ -19,7 +19,7 @@ own.
 *not* inside `bar_ros2` or `pianist_ros2`. That's intentional — the
 file pins ROS 2 Jazzy, the colcon toolchain, every Python dep, and
 the activation script that auto-sources `install/setup.bash`. Those
-are workspace concerns; both submodules consume them.
+are workspace concerns; both `bar_ros2` and `pianist_ros2` consume them.
 
 :::tip[Why have aliases at all]
 A single `pixi run launch-mujoco` is shorter than

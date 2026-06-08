@@ -114,8 +114,9 @@ ONNX `custom_metadata_map` — they are not hand-written:
 | `observation_dim`, `action_dim` | `int` | ONNX I/O sizes. |
 
 :::tip[ONNX runtime is opt-in]
-`OnnxPolicy` (onnxruntime C++) is built only when
-`ros-jazzy-onnxruntime-vendor` is present. Without it the controller falls
+`OnnxPolicy` (onnxruntime C++) is built only when onnxruntime is found at
+build time — the conda `onnxruntime-cpp` package, pinned in `pixi.toml`.
+Without it the controller falls
 back to `PlaceholderPolicy` (zeros) — useful for smoke-testing the FSM and
 the observation/reference plumbing without a real inference dependency.
 The contract (`PolicyMetadata` → overlay) is identical either way. See

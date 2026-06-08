@@ -45,16 +45,27 @@ The installer drops a single binary at `~/.pixi/bin/pixi` and adds it to
 your shell rc. Restart your shell (or `source ~/.bashrc`) so `pixi`
 resolves.
 
-## 2. Clone the workspace
+## 2. Clone the workspace and sources
+
+`bar_ws` is a thin, **config-only** repo: it tracks the pixi environment
+and the workspace tasks, and gitignores `src/`. The first-party code lives
+in separate repos that you clone into `src/` yourself (third-party deps are
+pulled later, in step 4).
 
 ```sh
-git clone --recurse-submodules https://github.com/T-K-233/BAR-Lowlevel-System-WS.git
-cd BAR-Lowlevel-System-WS/bar_ws
+# the config-only workspace
+git clone https://github.com/T-K-233/bar-ros2-project.git bar_ws
+cd bar_ws
+
+# first-party sources into src/ (gitignored by bar_ws)
+git clone https://github.com/T-K-233/bar_ros2.git      src/bar_ros2
+git clone https://github.com/T-K-233/pianist_ros2.git  src/pianist_ros2   # optional: piano task
 ```
 
-`--recurse-submodules` brings in both `src/bar_ros2` and
-`src/pianist_ros2` (the piano-task sibling repo). If you forgot it
-on the initial clone: `git submodule update --init --recursive`.
+`src/bar_ros2` is the package monorepo (required); `src/pianist_ros2`
+is the optional piano-task sibling — skip it if you don't need piano.
+Don't hand-clone the `mujoco_*` / `ethercat_driver_ros2` dependencies;
+`vcs import` pulls those in step 4.
 
 ## 3. Resolve the environment
 
@@ -147,9 +158,8 @@ bar_msgs
 bar_policy
 ```
 
-The 4 `pianist_ros2` packages (piano-task sibling repo, already
-side-by-side under `src/` because the workspace recursed both
-submodules):
+The 4 `pianist_ros2` packages (present only if you cloned the
+piano-task sibling repo into `src/pianist_ros2` in step 2):
 
 ```
 pianist_assets
