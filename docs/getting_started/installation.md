@@ -75,9 +75,16 @@ channels = [
 platforms = ["linux-64", "linux-aarch64"]
 
 [dependencies]
-# Pulls the whole Lite bringup: bar_controllers (ONNX-enabled), bar_msgs,
-# bar_description_lite, bar_robstride, bar_socketcan, bar_common, ...
+# ROS 2 CLI + launch + runtime (ros2 launch / run / pkg). The bar packages
+# declare their library deps but not the CLI tooling, so pull a ROS base
+# yourself. Use ros-jazzy-desktop instead if you want the RViz-based
+# `view` / `viz` launches.
+ros-jazzy-ros-base = "*"
+# The whole Lite bringup: bar_controllers (ONNX-enabled), bar_msgs,
+# bar_description_lite, bar_robstride, bar_socketcan, bar_common, bar_policy.
 ros-jazzy-bar-bringup-lite = "*"
+# Optional: the `bar` diagnostic CLI (run via `ros2 run bar_cli bar ...`).
+ros-jazzy-bar-cli = "*"
 ```
 
 `bar-robotics` is listed **first** so `ros-jazzy-bar-*` resolves from there, with
@@ -87,6 +94,14 @@ definitions, or `ros-jazzy-bar-controllers` to build a node against the
 controller interfaces. The full set is on the
 [Packages reference](../reference/packages.md).
 
+:::note[Pull a ROS base alongside the bar packages]
+`ros-jazzy-bar-bringup-lite` pulls its own library dependencies, but **not** the
+`ros2 launch` / `ros2 run` / `ros2 pkg` command-line tooling — those live in
+`ros-jazzy-ros-base` (or `ros-jazzy-desktop`). Without a ROS base, `ros2 launch`
+fails with `invalid choice: 'launch'`. The from-source workspace gets this from
+`ros-jazzy-desktop`; a prebuilt project adds it explicitly, as above.
+:::
+
 ### 2. Resolve and run
 
 ```sh
@@ -95,15 +110,17 @@ pixi run ros2 launch bar_bringup_lite real.launch.py
 ```
 
 `pixi install` downloads the prebuilt `ros-jazzy-bar-*` binaries plus the
-RoboStack ROS core — no build step. Everything the package ships (launch files,
-URDFs, meshes, controller YAMLs, the `bar` CLI) lands on `PATH` / the ament
-index, so plain `ros2 launch …` / `ros2 run …` / `bar …` work inside
-`pixi shell` (or via `pixi run …`).
+RoboStack ROS core — no build step. Everything the packages ship (launch files,
+URDFs, meshes, controller YAMLs, console executables) lands on the ament index,
+so `ros2 launch …` / `ros2 run …` work inside `pixi shell` (or via
+`pixi run …`). The `bar` diagnostic CLI is a package executable — run it as
+`ros2 run bar_cli bar …`.
 
 ```sh
 pixi shell
-ros2 pkg list | grep '^bar_'         # the bar_* packages you pulled in
-bar bus discover --iface can0 --scan-to 32   # read-only CAN scan, e.g.
+ros2 pkg list | grep '^bar_'                              # the bar_* packages you pulled in
+ros2 launch bar_bringup_lite real.launch.py --show-args   # dry-parse the launch (no hardware)
+ros2 run bar_cli bar bus discover --iface can0 --scan-to 32   # read-only CAN scan, e.g.
 ```
 
 :::note[What the channel ships today]
