@@ -5,14 +5,14 @@ title: URDF / xacro args
 # URDF / xacro args
 
 Full surface of the xacro arguments and per-joint URDF parameters
-that `bar_description_lite` exposes. The launch files
+that `lite_description` (the `lite_dummy` variant) exposes. The launch files
 ([Reference → Launch args](./launch_args.md)) wrap these — usually
 you'll only touch them directly when driving xacro from a script or
 extending the URDF.
 
 ## Top-level xacro arguments
 
-Declared in `bar_description_lite/urdf/lite.urdf.xacro`:
+Declared in `lite_description/robots/lite_dummy/xacro/lite_dummy.urdf.xacro`:
 
 | Arg | Default | Effect |
 |---|---|---|
@@ -86,7 +86,7 @@ Inside the `<hardware>` element of each `<ros2_control>` block:
 
 ## Per-joint `<param>`s (real-hardware path)
 
-Inside each `<joint>` element. The `lite_joint` xacro macro emits
+Inside each `<joint>` element. The `lite_dummy_joint` xacro macro emits
 these only when `use_sim` and `use_fake_hardware` are both false —
 mock / sim plugins ignore unknown joint params so the macro keeps
 the URDF clean there.
@@ -153,17 +153,17 @@ Run these inside `pixi shell` (so `xacro` / `ros2 pkg` are on PATH):
 cd bar_ws && pixi shell
 
 # Mock / RViz path
-xacro $(ros2 pkg prefix bar_description_lite)/share/bar_description_lite/urdf/lite.urdf.xacro \
+xacro $(ros2 pkg prefix lite_description)/share/lite_description/robots/lite_dummy/xacro/lite_dummy.urdf.xacro \
     use_fake_hardware:=true \
     > /tmp/lite_mock.urdf
 
 # MuJoCo path
-xacro $(ros2 pkg prefix bar_description_lite)/share/bar_description_lite/urdf/lite.urdf.xacro \
+xacro $(ros2 pkg prefix lite_description)/share/lite_description/robots/lite_dummy/xacro/lite_dummy.urdf.xacro \
     use_sim:=true \
     > /tmp/lite_sim.urdf
 
 # Real-hardware path
-xacro $(ros2 pkg prefix bar_description_lite)/share/bar_description_lite/urdf/lite.urdf.xacro \
+xacro $(ros2 pkg prefix lite_description)/share/lite_description/robots/lite_dummy/xacro/lite_dummy.urdf.xacro \
     use_fake_hardware:=false use_sim:=false \
     mode:=arms \
     can_interface_left:=can0 can_interface_right:=can1 \

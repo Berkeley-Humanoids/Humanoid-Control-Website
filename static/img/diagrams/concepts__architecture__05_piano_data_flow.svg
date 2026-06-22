@@ -20,8 +20,8 @@
 <text x="300" y="156" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">MusicSequence</text>
 <text x="300" y="173" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">(numpy bool[F,K])</text>
 <rect x="410" y="130" width="170" height="70" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
-<text x="495" y="156" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">bar_piano/</text>
-<text x="495" y="173" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">midi_replay</text>
+<text x="495" y="156" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">pianist_policy</text>
+<text x="495" y="173" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">song replay</text>
 <rect x="610" y="130" width="200" height="70" rx="6" ry="6" fill="#FFF6DF" stroke="#FDB515" stroke-width="1.5"/>
 <text x="710" y="156" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">/piano/key_command</text>
 <text x="710" y="173" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">TRANSIENT_LOCAL</text>

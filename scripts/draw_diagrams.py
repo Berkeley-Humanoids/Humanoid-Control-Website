@@ -267,7 +267,7 @@ def d_intro_01_system() -> None:
     s.append(Box(460, 250, 100, 50, "bar_policy",
                  fill=GOLD_FILL, stroke=GOLD).render())
     s.append(Box(340, 320, 220, 60,
-                 ["bar_hw_robstride", "(SocketCAN)"],
+                 ["bar_robstride", "(SocketCAN)"],
                  fill=GREEN_FILL, stroke=GREEN).render())
 
     # Robot
@@ -328,15 +328,15 @@ def d_intro_02_packages() -> None:
 
     # Shared column
     pkg(40, 90, "bar_common", "RT helpers, MITState POD")
-    pkg(40, 144, "bar_msgs", "MITAction, ControlMode, ...")
+    pkg(40, 144, "bar_msgs", "MITCommand, ControlMode, ...")
     pkg(40, 198, "bar_controllers", "5 mode-FSM + mode_manager")
     pkg(40, 252, "bar_policy", "ONNX runner + LeRobot ref")
-    pkg(40, 306, "bar_hw_socketcan", "SocketCAN bus library")
+    pkg(40, 306, "bar_socketcan", "SocketCAN bus library")
 
     # Lite column
-    pkg(345, 110, "bar_description_lite", "URDF + xacro + meshes",
+    pkg(345, 110, "lite_description", "URDF + xacro + meshes",
         fill=GREEN_FILL, stroke=GREEN)
-    pkg(345, 180, "bar_hw_robstride", "Robstride SystemInterface",
+    pkg(345, 180, "bar_robstride", "Robstride SystemInterface",
         fill=GREEN_FILL, stroke=GREEN)
     pkg(345, 250, "bar_bringup_lite", "launch + controllers YAML",
         fill=GREEN_FILL, stroke=GREEN)
@@ -344,12 +344,12 @@ def d_intro_02_packages() -> None:
     # Prime column
     pkg(645, 110, "bar_description_prime", "URDF + EtherCAT PDO",
         fill=RED_FILL, stroke=RED)
-    pkg(645, 180, "bar_hw_sito", "Sito SystemInterface",
+    pkg(645, 180, "bar_sito", "Sito SystemInterface",
         fill=RED_FILL, stroke=RED)
     pkg(645, 250, "bar_bringup_prime", "+ ethercat.yaml",
         fill=RED_FILL, stroke=RED)
 
-    # Arrows: bar_hw_robstride -> bar_hw_socketcan
+    # Arrows: bar_robstride -> bar_socketcan
     s.append(arrow(345, 202, 290, 320, color=GREY))
     s.append(arrow(645, 202, 290, 320, color=GREY))
     # bringup_lite -> description_lite + hw_robstride + controllers + policy
@@ -478,7 +478,7 @@ def d_hw_can_layout() -> None:
     s.append(arrow(590, 155, 640, 155, label="CAN @ 1 Mbit"))
 
     s.append(text(450, 310,
-                  "On real hardware the bar_hw_robstride plugin owns both buses; "
+                  "On real hardware the bar_robstride plugin owns both buses; "
                   "from the controller's perspective the 17 joints are one flat list.",
                   size=11, anchor="middle", fill=GREY))
 
@@ -877,7 +877,7 @@ def d_xacro_3way() -> None:
     s.append(arrow(460, 215, 490, 200, label="true"))
 
     # No -> real
-    s.append(Box(490, 280, 230, 60, "bar_hw_robstride/", sub="RobstrideSystem",
+    s.append(Box(490, 280, 230, 60, "bar_robstride/", sub="RobstrideSystem",
                  fill=RED_FILL, stroke=RED).render())
     s.append(arrow(370, 240, 490, 305, label="false"))
 
@@ -917,7 +917,7 @@ def d_msgs_pubsub() -> None:
     pub(350, 100, "/standby_controller/state", GREEN)
     pub(350, 160, "/control_mode", GREEN)
     pub(350, 220, "/safety_status", GREEN)
-    pub(350, 280, "~/command (MITAction)", GREEN)
+    pub(350, 280, "~/command (MITCommand)", GREEN)
 
     pub(680, 100, "mode_manager", GOLD)
     pub(680, 160, "diagnostics / log", GREY)
@@ -978,7 +978,7 @@ def d_arch_module_deps() -> None:
                  fill=BLUE_FILL, stroke=BLUE).render())
     s.append(Box(310, 95, 200, 40, "bar_bringup_prime", sub="(scaffold)",
                  fill=BLUE_FILL, stroke=BLUE).render())
-    s.append(Box(550, 95, 190, 40, "bar_piano", sub="MIDI replay",
+    s.append(Box(550, 95, 190, 40, "pianist_policy", sub="piano key-state",
                  fill=GOLD_FILL, stroke=GOLD).render())
 
     # Controllers + policies
@@ -990,22 +990,22 @@ def d_arch_module_deps() -> None:
                  fill=GOLD_FILL, stroke=GOLD).render())
 
     # Hardware plugins + description
-    s.append(Box(70, 305, 200, 50, "bar_hw_robstride",
+    s.append(Box(70, 305, 200, 50, "bar_robstride",
                  sub="RobstrideSystem",
                  fill=GREEN_FILL, stroke=GREEN).render())
-    s.append(Box(310, 305, 200, 50, "bar_hw_sito",
+    s.append(Box(310, 305, 200, 50, "bar_sito",
                  sub="(stub)",
                  fill=GREEN_FILL, stroke=GREEN).render())
-    s.append(Box(550, 305, 190, 50, "bar_description_lite",
+    s.append(Box(550, 305, 190, 50, "lite_description",
                  sub="URDF/xacro/MJCF",
                  fill=GREY_FILL, stroke=GREY).render())
 
     # Foundations
-    s.append(Box(70, 425, 200, 50, "bar_hw_socketcan",
+    s.append(Box(70, 425, 200, 50, "bar_socketcan",
                  sub="bus library + I/O thread",
                  fill=GREEN_FILL, stroke=GREEN).render())
     s.append(Box(310, 425, 200, 50, "bar_msgs",
-                 sub="MITAction, ControlMode, ...",
+                 sub="MITCommand, ControlMode, ...",
                  fill=GREY_FILL, stroke=GREY).render())
     s.append(Box(550, 425, 190, 50, "bar_common",
                  sub="MITState POD, RT helpers",
@@ -1034,7 +1034,7 @@ def d_arch_module_deps() -> None:
     dep(150, 135, 170, 305)                    # -> hw_robstride
     dep(210, 135, 600, 305)                    # -> description_lite
     dep(230, 135, 360, 425)                    # -> msgs (transitive but shown)
-    # bar_piano -> bar_msgs only
+    # pianist_policy -> bar_msgs only
     dep(620, 135, 400, 425, color=GREY)
     # bar_policy -> bar_msgs + bar_common
     dep(380, 245, 380, 425)
@@ -1061,7 +1061,7 @@ def d_arch_module_deps() -> None:
     s.append(text(60, 545, "Dashed arrow = runtime dep only (pluginlib)",
                   size=11, anchor="start", fill=GREY))
     s.append(text(60, 570,
-                  "Note: bar_controllers does NOT find_package(bar_hw_robstride) — "
+                  "Note: bar_controllers does NOT find_package(bar_robstride) — "
                   "the plugin is loaded by controller_manager at launch.",
                   size=11, anchor="start", fill=GREY))
 
@@ -1273,7 +1273,7 @@ def d_safety_pipeline() -> None:
                  fill=GREY_FILL, stroke=GREY).render())
     s.append(Box(380, 230, 200, 40, "flags: uint32 bit mask",
                  fill=GREY_FILL, stroke=GREY).render())
-    s.append(Box(380, 290, 200, 40, "source: 'bar_hw_robstride/can0'",
+    s.append(Box(380, 290, 200, 40, "source: 'bar_robstride/can0'",
                  fill=GREY_FILL, stroke=GREY).render())
     s.append(Box(380, 360, 200, 50,
                  ["/safety_status", "(TRANSIENT_LOCAL)"],
@@ -1314,7 +1314,7 @@ def d_safety_pipeline() -> None:
 
 
 def d_piano_data_flow() -> None:
-    """Piano-task data flow: .npz to MITAction."""
+    """Piano-task data flow: .npz to MITCommand."""
     W, H = 1040, 460
     s = [header(W, H)]
     s.append(title(20, 30, "Piano-task data flow",
@@ -1327,7 +1327,7 @@ def d_piano_data_flow() -> None:
         (220, 130, 160, 70,
          ["MusicSequence", "(numpy bool[F,K])"], GREEN_FILL, GREEN),
         (410, 130, 170, 70,
-         ["bar_piano/", "midi_replay"], BLUE_FILL, BLUE),
+         ["pianist_policy", "song replay"], BLUE_FILL, BLUE),
         (610, 130, 200, 70,
          ["/piano/key_command", "TRANSIENT_LOCAL"], GOLD_FILL, GOLD),
         (840, 130, 180, 70,
@@ -1345,7 +1345,7 @@ def d_piano_data_flow() -> None:
         (700, 280, 180, 60,
          ["PolicyActionDecoder", "+ ActionMapper"], GOLD_FILL, GOLD),
         (920, 280, 100, 60,
-         ["MITAction"], BLUE_FILL, BLUE),
+         ["MITCommand"], BLUE_FILL, BLUE),
     ]
     for x, y, w, h, label, fill, stroke in boxes2:
         s.append(Box(x, y, w, h, label, fill=fill, stroke=stroke).render())
@@ -1373,7 +1373,7 @@ def d_piano_data_flow() -> None:
     s.append(label_pill(675, 295, "action"))
     s.append(label_pill(900, 295, "joints"))
 
-    # MITAction -> RemotePolicyController
+    # MITCommand -> RemotePolicyController
     s.append(Box(870, 380, 150, 50,
                  ["Remote", "PolicyController"],
                  fill=BLUE_FILL, stroke=BLUE).render())
@@ -1400,7 +1400,7 @@ def d_frozen_schemas() -> None:
     s.append(group_box(460, 70, 420, 380, "Who locks in when you ship"))
 
     rows = [
-        ("bar_msgs/MITAction",
+        ("bar_msgs/MITCommand",
          "fields name + order",
          ["RemotePolicyController (subscriber)",
           "bar_policy.ActionMapper (publisher)",

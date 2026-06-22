@@ -83,7 +83,7 @@ projects. Three properties make it the right primitive:
 
 The five command interfaces and three state interfaces are declared
 per-joint inside each `<ros2_control>` block. From
-`bar_description_lite/urdf/lite.ros2_control.xacro`:
+`lite_description/robots/lite_dummy/xacro/lite_dummy.ros2_control.xacro`:
 
 ```xml
 <joint name="${name}">

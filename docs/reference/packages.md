@@ -75,21 +75,26 @@ wire conventions only** — no participant/transport.
 The `lite_sdk2` SDK builds its publisher/subscriber layer on top. See
 [Talk to bar_ros2 from Python](../how_to/talk_to_bar_ros2_from_python.md).
 
-### `bar_description_lite` / `bar_description_prime`
+### `lite_description` (external) / `bar_description_prime`
 
-URDF / xacro / meshes / `<ros2_control>` blocks.
+URDF / xacro / meshes / `<ros2_control>` blocks. **Lite's description is no longer
+in `bar_ros2`** — it lives in the external, CAD-generated
+[`lite_description`](https://github.com/Berkeley-Humanoids/Lite-Description) repo
+(bar deploys the `lite_dummy` variant), pulled in via `bar.repos`. It is
+**asset-only**: the RViz inspector (`view_lite.launch.py` + `view_lite.rviz`) now
+lives in `bar_bringup_lite`. `bar_description_prime` is still an in-tree stub.
 
-Layout (Lite shown):
+Layout (Lite shown, inside the `lite_description` repo):
 
 ```
-bar_description_lite/
-├── urdf/
-│   ├── lite.urdf.xacro              # top-level kinematics (mode-aware: 14 or 17 joints)
-│   └── lite.ros2_control.xacro      # 3-way plugin selector + per-joint static config
-├── meshes/   *.stl                  # visual meshes
-├── mjcf/     lite.xml               # MuJoCo physics model
-├── config/   view_lite.rviz         # RViz config
-└── launch/   view_lite.launch.py    # standalone visualization
+lite_description/robots/lite_dummy/
+├── xacro/
+│   ├── lite_dummy.urdf.xacro          # top-level assembly: args + includes + instantiation
+│   ├── lite_dummy.ros2_control.xacro  # 3-way plugin selector + per-joint static config
+│   └── lite_dummy.description.xacro   # kinematics macro (base_link, mesh_root)
+├── urdf/   lite_dummy.urdf            # flat URDF — the generated kinematic hub
+├── mjcf/   lite_dummy.xml             # MuJoCo physics model
+└── meshes/visual/   *.stl             # visual meshes
 ```
 
 The xacro selects between **three hardware backends** via args:

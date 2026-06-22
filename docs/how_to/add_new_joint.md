@@ -15,11 +15,20 @@ Five files in three packages:
 
 | File | Purpose |
 |---|---|
-| `bar_description_lite/urdf/lite.urdf.xacro` | Kinematic chain: link, joint axis, limits, mass, mesh |
-| `bar_description_lite/urdf/lite.ros2_control.xacro` | `<ros2_control>` block — which CAN bus, model, direction, command/state interfaces |
-| `bar_description_lite/mjcf/lite.xml` | MuJoCo model (if you want sim parity) |
+| `lite_description/robots/lite_dummy/xacro/lite_dummy.urdf.xacro` | Kinematic chain: link, joint axis, limits, mass, mesh |
+| `lite_description/robots/lite_dummy/xacro/lite_dummy.ros2_control.xacro` | `<ros2_control>` block — which CAN bus, model, direction, command/state interfaces |
+| `lite_description/robots/lite_dummy/mjcf/lite_dummy.xml` | MuJoCo model (if you want sim parity) |
 | `bar_controllers/config/bar_lite_controllers.yaml` | `joints:` list for every controller + per-joint K/D / standby pose entries |
 | `bar_bringup_lite/config/calibration.yaml` | `homing_offset` for the new joint (created via [Calibrate the zero pose](./calibrate_zero_pose.md)) |
+
+> **Heads-up — the Lite description is generated.** The three `lite_description`
+> files above are build artifacts of the external
+> [`Lite-Description`](https://github.com/Berkeley-Humanoids/Lite-Description) repo,
+> produced from Onshape CAD. The canonical way to add a joint is to edit
+> `robots/lite_dummy/cad/*` there, run `robot-assets-generate lite_dummy`, and bump
+> the `lite_description` pin in `bar.repos` — **not** to hand-edit the committed
+> `xacro` / `urdf` / `mjcf`. The steps below describe the URDF changes the
+> generator ultimately produces.
 
 ## Step 1 — Add the link + joint to `lite.urdf.xacro`
 
@@ -53,16 +62,16 @@ separate `can_interface_neck`).
 The neck case wants a third block:
 
 ```xml
-<xacro:macro name="lite_neck_joints" params="use_fake_hardware use_sim">
-  <xacro:lite_joint name="neck_yaw"   can_id="31" model="rs-00" direction="1"
+<xacro:macro name="lite_dummy_neck_joints" params="use_fake_hardware use_sim">
+  <xacro:lite_dummy_joint name="neck_yaw"   can_id="31" model="rs-00" direction="1"
                     lower_limit="-0.785" upper_limit="0.785"
                     torque_limit="10" current_limit="14"
                     use_fake_hardware="${use_fake_hardware}" use_sim="${use_sim}"/>
-  <xacro:lite_joint name="neck_roll"  can_id="32" model="rs-00" direction="1"
+  <xacro:lite_dummy_joint name="neck_roll"  can_id="32" model="rs-00" direction="1"
                     lower_limit="-0.524" upper_limit="0.524"
                     torque_limit="10" current_limit="14"
                     use_fake_hardware="${use_fake_hardware}" use_sim="${use_sim}"/>
-  <xacro:lite_joint name="neck_pitch" can_id="33" model="rs-00" direction="1"
+  <xacro:lite_dummy_joint name="neck_pitch" can_id="33" model="rs-00" direction="1"
                     lower_limit="-0.524" upper_limit="0.524"
                     torque_limit="10" current_limit="14"
                     use_fake_hardware="${use_fake_hardware}" use_sim="${use_sim}"/>
@@ -76,7 +85,7 @@ macro inside the existing combined block.
 Verify the URDF expands cleanly (inside `pixi shell`):
 
 ```bash
-xacro $(ros2 pkg prefix bar_description_lite)/share/bar_description_lite/urdf/lite.urdf.xacro \
+xacro $(ros2 pkg prefix lite_description)/share/lite_description/robots/lite_dummy/xacro/lite_dummy.urdf.xacro \
     use_fake_hardware:=false use_sim:=false calibration_file:='' \
     > /tmp/expanded.urdf
 ```

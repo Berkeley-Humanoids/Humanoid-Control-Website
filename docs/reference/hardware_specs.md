@@ -44,13 +44,16 @@ policy is trained against this order, it is frozen — see "Frozen schemas" in
 `neck_pitch`, all rs-00-class with `K_p ≈ 30`, `K_d ≈ 1`.)
 
 :::tip[Where these numbers come from]
-Per-joint static config (CAN id, model, direction, position limits, torque
-cap, current cap) is the **single source of truth** in
-[`bar_description_lite/urdf/lite.ros2_control.xacro`](https://github.com/T-K-233/bar_ros2/blob/main/bar_description_lite/urdf/lite.ros2_control.xacro).
-Each value appears once, as a xacro arg on the `lite_joint` macro call:
+Per-joint hardware facts (CAN id, model, direction, torque cap, current cap)
+live in the CAD input
+[`robots/lite_dummy/cad/ros2_control.json`](https://github.com/Berkeley-Humanoids/Lite-Description/blob/main/robots/lite_dummy/cad/ros2_control.json);
+position limits come from the URDF (also from CAD). The generator expands both
+into the `<param>`s of the **generated** `lite_dummy.ros2_control.xacro` — each
+value appears as a xacro arg on a `lite_dummy_joint` macro call (don't hand-edit
+the generated file):
 
 ```xml
-<xacro:lite_joint name="left_shoulder_pitch" can_id="11" model="rs-02" direction="-1"
+<xacro:lite_dummy_joint name="left_shoulder_pitch" can_id="11" model="rs-02" direction="-1"
                   lower_limit="-3.141592653589793" upper_limit="0.7853981633974483"
                   torque_limit="17" current_limit="27"
                   use_fake_hardware="${use_fake_hardware}" use_sim="${use_sim}"/>
@@ -62,7 +65,7 @@ xacro expands those into `<param>` children on the `<joint>` element, which
 the Robstride parameter IDs `0x700B` and `0x7018` — same writes the upstream
 `T-K-233/Lite-Lowlevel-Python`'s `humanoid_control/control.py` performs).
 Initial values were mirrored from that repo's `configs/bimanual.yaml`; if
-upstream retunes, edit them here in lockstep.
+upstream retunes, edit `ros2_control.json` and regenerate (see below).
 
 Default stiffness / damping reflects a conservative MIT-mode setting suitable
 for first activation; tune per deployment.
@@ -76,25 +79,31 @@ them, regardless of what a policy publishes. They're an upper bound, not a
 target. Lower them when bringing up a new policy on the bench; raise them
 once the motion envelope is verified.
 
-**Edit-rebuild loop**:
+**Edit-rebuild loop** — the caps live in the CAD input, so the retune happens in
+the `lite_description` repo and flows back through `bar.repos`:
 
-1. Open `bar_description_lite/urdf/lite.ros2_control.xacro`.
-2. Find the `<xacro:lite_joint name="<joint>" …>` call for the joint you
-   want to retune (one per arm in `lite_left_arm_joints` /
-   `lite_right_arm_joints` macros).
-3. Edit the `torque_limit="…"` (N·m, float) and / or `current_limit="…"`
-   (A, float) attributes in place.
-4. Rebuild and re-launch:
+1. In the `lite_description` repo, edit the joint's `torque_limit` (N·m, float)
+   and / or `current_limit` (A, float) in `robots/lite_dummy/cad/ros2_control.json`.
+2. Regenerate the xacro: `uv run robot-assets-generate lite_dummy --only xacro`.
+3. Commit + push; bump the `lite_description` pin in `bar_ros2`'s `bar.repos`
+   (keep the buildfarm's in sync).
+4. Re-import, rebuild, and re-launch:
 
    ```sh
    cd <workspace>/bar_ws
    pixi shell
-   colcon build --symlink-install --packages-select bar_description_lite
+   pixi run setup        # vcs import — pulls the regenerated lite_description
+   colcon build --symlink-install --packages-select lite_description
    # If a bringup is already running, Ctrl+C it first — the firmware-side
    # caps are written on the `on_activate` transition, so an already-
    # activated plugin won't pick up the new value until the next bringup.
    ros2 launch bar_bringup_lite real.launch.py
    ```
+
+   For a throwaway bench experiment, edit the caps directly in the vcs-imported
+   `src/lite_description/.../lite_dummy.ros2_control.xacro` and `colcon build` —
+   but that copy is overwritten on the next `pixi run setup`, so fold any keeper
+   change back into `ros2_control.json` upstream.
 
 5. Confirm in the bringup log that the new value flowed through:
 

@@ -35,7 +35,7 @@ The simplest possible launch: `robot_state_publisher` + a
 the kinematic chain.
 
 ```sh
-ros2 launch bar_description_lite view_lite.launch.py
+ros2 launch bar_bringup_lite view_lite.launch.py
 ```
 
 What you'll see:
@@ -225,7 +225,7 @@ Four moving pieces, all worth recognising for the rest of the docs:
 
 | Piece | What it does |
 |---|---|
-| **URDF** (`bar_description_lite`) | Kinematic + dynamic description. Same file across mock / sim / real — the `<ros2_control>` `<plugin>` is the only difference. |
+| **URDF** (`lite_description`) | Kinematic + dynamic description. Same file across mock / sim / real — the `<ros2_control>` `<plugin>` is the only difference. |
 | **`controller_manager`** | Hosts the hardware plugin + every controller. The "tick loop" of the system. Update rate 50 Hz here. |
 | **Mode-FSM controllers** (`bar_controllers`) | Five plugins, one active at a time. `zero_torque` (safe default), `damping` (compliant fail-safe), `standby` (interpolate to a pose), `rl_policy` (in-process ONNX — the System 0 learned-policy tier), `remote_policy` (System 1/2 external-command ingress for non-real-time `MITCommand` sources). |
 | **MuJoCo / Robstride** (the simulation / real backend) | Where the MIT torque actually gets applied. Same five command interfaces in both. |

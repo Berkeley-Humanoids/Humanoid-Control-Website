@@ -249,7 +249,7 @@ The shipping configuration is a **two-machine tethered split**. The
 same colcon workspace is installed (and built from the same pixi lock
 file) on both machines; each launch boots only the subset of nodes
 that belongs on its side. Single-machine sim/dev paths
-(`bar_bringup_lite/mujoco.launch.py`, `bar_description_lite/view_lite.launch.py`,
+(`bar_bringup_lite/mujoco.launch.py`, `bar_bringup_lite/view_lite.launch.py`,
 `bar_bringup_lite/calibrate.launch.py`) are unaffected — they
 collapse both sides into one process tree.
 
