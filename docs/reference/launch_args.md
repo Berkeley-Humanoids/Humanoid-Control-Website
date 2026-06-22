@@ -10,13 +10,13 @@ bundled launch enables that path.
 Launches live in two repos:
 
 - `bar_ros2` ships the Lite + Prime control-plane bringups (`bar_bringup_lite`,
-  `bar_bringup_prime`), the URDF inspector (`bar_description_lite`),
+  `bar_bringup_prime`), the URDF inspector (`bar_bringup_lite`),
   and the policy prepare-and-load launches (`bar_policy`).
 - `pianist_ros2` ships piano-task-specific launches: scene composition
   (`pianist_bringup`), the piano prepare-and-load launch, and the USB-MIDI
   driver (both `pianist_policy`).
 
-## `bar_description_lite/launch/view_lite.launch.py`
+## `bar_bringup_lite/launch/view_lite.launch.py`
 
 URDF inspector — no controller_manager, no physics.
 
@@ -108,14 +108,14 @@ plugin).
 |---|---|---|
 | `mode` | `arms` | Same as the real bringup. `arms` (14 joints) or `arms_neck` (17 joints). |
 | `hardware_config` | `<bundled lite_hardware.yaml>` | Same as the real bringup; the bus mapping is unused in MuJoCo but the joint list is read. |
-| `scene` | `lite` | MJCF scene basename under `bar_description_lite/mjcf/`. Default `lite` (robot only). Task packages from sibling repos (e.g. `pianist_ros2`'s `pianist_bringup`) compose their own runtime scene XML and override this arg with their composed-file basename. |
+| `scene` | `lite_dummy` | MJCF scene basename under `lite_description/robots/lite_dummy/mjcf/`. Default `lite_dummy` (robot only). Task packages from sibling repos (e.g. `pianist_ros2`'s `pianist_bringup`) compose their own runtime scene XML and override this arg with their composed-file basename. |
 | `enable_gamepad` | `true` | Same hard-fail-on-missing-`/dev/input/js*` behaviour as the real bringup. |
 
 Implicit:
 
 - The xacro is invoked with `use_sim:=true`. **`use_sim` wins over
   `use_fake_hardware`** in the xacro's `<plugin>` selector — see the
-  decision tree in [Packages](packages.md#bar_description_lite--bar_description_prime).
+  decision tree in [Packages](packages.md#lite_description-external--bar_description_prime).
 - Every node runs with `use_sim_time:=true`. Time advances at MuJoCo's
   pace via `/clock`.
 - `bar_bringup_lite/config/sim_overrides.yaml` is layered on top of
@@ -204,7 +204,7 @@ apart.
 
 MuJoCo bringup for the piano task. Composes the Lite robot and the
 piano MJCF into one scene file (`_runtime_lite_piano.xml`) inside
-`bar_description_lite`'s MJCF share dir, then delegates to
+`lite_description`'s `robots/lite_dummy/mjcf/` share dir, then delegates to
 `bar_bringup_lite/mujoco.launch.py` with `scene:=_runtime_lite_piano`.
 Also spawns the `piano_state_bridge` sim-side bridge so
 `/piano/key_state` exists on the sim path.
@@ -217,7 +217,7 @@ Also spawns the `piano_state_bridge` sim-side bridge so
 
 `scene:=` is **not** exposed — `pianist_bringup` controls that internally.
 
-## xacro args (`bar_description_lite/urdf/lite.urdf.xacro`)
+## xacro args (`lite_description/robots/lite_dummy/xacro/lite_dummy.urdf.xacro`)
 
 The launch args ultimately feed these xacro args. Useful when driving
 xacro directly (e.g. in a sim2sim eval harness):
@@ -241,7 +241,7 @@ robot involved, no tether):
 
 ```sh
 # Drag joints in RViz, no controllers.
-ros2 launch bar_description_lite view_lite.launch.py
+ros2 launch bar_bringup_lite view_lite.launch.py
 
 # MuJoCo physics, /clock from sim time.
 ros2 launch bar_bringup_lite mujoco.launch.py

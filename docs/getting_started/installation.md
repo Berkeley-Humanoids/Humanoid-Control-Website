@@ -81,7 +81,7 @@ platforms = ["linux-64", "linux-aarch64"]
 # `view` / `viz` launches.
 ros-jazzy-ros-base = "*"
 # The whole Lite bringup: bar_controllers (ONNX-enabled), bar_msgs,
-# bar_description_lite, bar_robstride, bar_socketcan, bar_common, bar_policy.
+# lite_description, bar_robstride, bar_socketcan, bar_common, bar_policy.
 ros-jazzy-bar-bringup-lite = "*"
 # Optional: the `bar` diagnostic CLI (run via `ros2 run bar_cli bar ...`).
 ros-jazzy-bar-cli = "*"
@@ -227,7 +227,7 @@ ros2 control list_hardware_interfaces 2>/dev/null \
     || echo "(no controller_manager running yet — expected)"
 ```
 
-The 12 `bar_ros2` packages:
+The 11 `bar_ros2` packages (Lite's `lite_description` comes separately, via `bar.repos`):
 
 ```
 bar_bringup_lite
@@ -235,7 +235,6 @@ bar_bringup_prime
 bar_cli
 bar_common
 bar_controllers
-bar_description_lite
 bar_description_prime
 bar_robstride
 bar_sito

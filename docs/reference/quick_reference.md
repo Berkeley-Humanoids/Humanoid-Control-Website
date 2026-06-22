@@ -23,7 +23,7 @@ Grouped by which machine they run on. See
 for the split rationale. Launches come from two repos:
 
 - `bar_ros2` ships the Lite + Prime bringups (`bar_bringup_lite`,
-  `bar_bringup_prime`), the description viewer (`bar_description_lite`),
+  `bar_bringup_prime`), the description viewer (`bar_bringup_lite`),
   and the policy prepare-and-load launch (`bar_policy`).
 - `pianist_ros2` ships the piano-task launches (`pianist_bringup`
   composes a Lite + piano MuJoCo scene; `pianist_policy` prepares the
@@ -33,7 +33,7 @@ for the split rationale. Launches come from two repos:
 
 ```bash
 # Drag joints in RViz — no controllers, no physics
-ros2 launch bar_description_lite view_lite.launch.py
+ros2 launch bar_bringup_lite view_lite.launch.py
 
 # MuJoCo sim — full controller stack, /clock from sim time
 ros2 launch bar_bringup_lite mujoco.launch.py

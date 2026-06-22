@@ -102,7 +102,7 @@ per-`/lite/joint_states` callback + a tf update.
 
 | Symptom | Cause |
 |---|---|
-| Window opens but robot is blank / collapsed | Mesh `package://` URLs not resolving. Make sure `bar_description_lite`'s install is on `AMENT_PREFIX_PATH` (pixi activation does this automatically once you `pixi shell` into `bar_ws/`). |
+| Window opens but robot is blank / collapsed | Mesh `package://` URLs not resolving. Make sure `lite_description`'s install is on `AMENT_PREFIX_PATH` (pixi activation does this automatically once you `pixi shell` into `bar_ws/`). |
 | `rerun_viz` says `ModuleNotFoundError: No module named 'rerun'` | The pixi env wasn't entered — run `cd bar_ws && pixi shell` first, then `ros2 run bar_bringup_lite rerun_viz`. |
 | `viser_viz` complains about a missing `scipy` symbol | Stale env. Re-run `pixi install` to resync against `pixi.lock`. |
 | Browser at `:8080` shows "this site can't be reached" | `viser_viz` not running — start it via `ros2 launch bar_bringup_lite viz.launch.py` (default viewer is `viser`), or wrong host in the URL. |

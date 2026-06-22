@@ -53,7 +53,7 @@ extra arguments after the alias are forwarded unchanged.
 
 | Alias | Equivalent | Side |
 |---|---|---|
-| `pixi run view` | `ros2 launch bar_description_lite view_lite.launch.py` | dev — URDF inspector |
+| `pixi run view` | `ros2 launch bar_bringup_lite view_lite.launch.py` | dev — URDF inspector |
 | `pixi run launch-mujoco` | `ros2 launch bar_bringup_lite mujoco.launch.py` | dev — full Lite controller stack in MuJoCo |
 | `pixi run launch-real` | `ros2 launch bar_bringup_lite real.launch.py` | robot — real-hardware Lite bringup |
 | `pixi run launch-viz` | `ros2 launch bar_bringup_lite viz.launch.py` | host — live URDF + joint-state viewer (`viewer:=viser\|rerun`) |
