@@ -43,6 +43,7 @@ const sidebars: SidebarsConfig = {
         'how_to/index',
         'how_to/first_real_bringup',
         'how_to/calibrate_zero_pose',
+        'how_to/calibrate_prime_erob',
         'how_to/probe_can_bus',
         'how_to/switch_controllers_manually',
         'how_to/mit_slider_gui',
