@@ -164,8 +164,51 @@ controller is misbehaving, deactivate it and replace with
 `zero_torque`. Otherwise raise `txqueuelen` as a workaround while you
 diagnose.
 
+## Prime eRob bringup takes ~70 s with repeated `0xA000` faults
+
+**Diagnosis**: the eRob reach EtherCAT OP one at a time (~7 s each), and
+`0xA000` (EtherCAT communication error) faults cycle until the domain is
+complete.
+
+**Why**: a slave reaches OP only after the master's DC drift compensation
+converges, which is cycle-count bound. The ICube `ethercat_driver` `on_activate`
+bring-up loop paced its `update()` at the 50 Hz control rate, so convergence
+took ~7 s per slave; the faults are collateral (each joining slave briefly
+starves the others' output watchdog).
+
+**Fix**: a local patch to the ICube `ethercat_driver_ros2` (pinned by `bar.repos`)
+runs the bring-up loop at 1 kHz, independent of `control_frequency`. Bringup drops
+to ~13.6 s with zero faults, no steady-state change. See [Prime hybrid actuation](../concepts/prime_hybrid_actuation.md).
+
+## Prime mode switch propagates slowly across the arm (one joint at a time)
+
+**Diagnosis**: the right arm gets its new stiffness/damping seconds after the
+left on a mode change.
+
+**Why**: the eRob loop gains are written by acyclic SDO, and in OP each transfer
+is cycle-gated (~120 ms). Writing 3 objects to 10 slaves in ring order is ~3.6 s,
+right arm last.
+
+**Fix**: keep `parallel_sdo` enabled (the default) on `erob_impedance_manager` —
+concurrent per-slave writes pipeline through the IgH master to ~0.46 s, all
+slaves within ~40 ms. See [Prime hybrid actuation](../concepts/prime_hybrid_actuation.md).
+
+## Prime eRob faults `4616` immediately on enable
+
+**Diagnosis**: CiA402 Fault state (statusword `4616`) right after activation; on
+Prime this is the DC-sync / comms family.
+
+**Why**: usually `control_frequency` does not equal the controller_manager
+`update_rate`. SYNC0 is driven from the CM loop, so a mismatch means the
+distributed clock never locks.
+
+**Fix**: `real.launch.py` derives `control_frequency` from the controllers YAML
+`update_rate` so they cannot diverge; if you set it by hand, keep them equal
+(50 Hz). Read the live error with `ethercat upload -pN 0x603F 0`.
+
 ## Cross-references
 
+- **Hybrid actuation, PD conversion, eRob/Sito impedance**: [Prime hybrid actuation](../concepts/prime_hybrid_actuation.md)
 - **Boot-time bringup checks**: [First real-hardware bringup → Common boot-time failures](../how_to/first_real_bringup.md#common-boot-time-failures)
 - **Calibration drift**: [Calibrate the zero pose](../how_to/calibrate_zero_pose.md)
 - **Bus / qdisc nitty-gritty**: [Diagnose ENOBUFS](../how_to/diagnose_enobufs.md)
