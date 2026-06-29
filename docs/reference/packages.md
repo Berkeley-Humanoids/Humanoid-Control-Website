@@ -75,14 +75,14 @@ wire conventions only** — no participant/transport.
 The `lite_sdk2` SDK builds its publisher/subscriber layer on top. See
 [Talk to bar_ros2 from Python](../how_to/talk_to_bar_ros2_from_python.md).
 
-### `lite_description` (external) / `bar_description_prime`
+### `lite_description` / `prime_description` (external)
 
 URDF / xacro / meshes / `<ros2_control>` blocks. **Lite's description is no longer
 in `bar_ros2`** — it lives in the external, CAD-generated
 [`lite_description`](https://github.com/Berkeley-Humanoids/Lite-Description) repo
 (bar deploys the `lite_dummy` variant), pulled in via `bar.repos`. It is
 **asset-only**: the RViz inspector (`view_lite.launch.py` + `view_lite.rviz`) now
-lives in `bar_bringup_lite`. `bar_description_prime` is still an in-tree stub.
+lives in `bar_bringup_lite`. Prime's description likewise lives in the external [`prime_description`](https://github.com/T-K-233/Prime-Description) repo (bar deploys the `prime_dummy` variant, which also carries the hybrid eRob+Sito `<ros2_control>`).
 
 Layout (Lite shown, inside the `lite_description` repo):
 

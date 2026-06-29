@@ -193,11 +193,13 @@ Bimanual with EtherCAT-driven eRob actuators in the arms and SocketCAN-driven
 Sito actuators for auxiliary joints, running concurrently in the same
 `controller_manager`.
 
-:::info[Prime URDF is not yet imported]
-The Prime mechanical CAD has not been finalized at the time of writing.
-`bar_description_prime` is a placeholder package; `bar_lite_controllers.yaml`
-binds 17 real joints, but `bar_prime_controllers.yaml` is still
-`["__placeholder__"]`. Joint specs below are projections, not commitments.
+:::info[Prime description is external + hardware-validated]
+The Prime description now lives in the external CAD-generated
+[`prime_description`](https://github.com/T-K-233/Prime-Description) repo — bar
+deploys the `prime_dummy` variant via `bar.repos` — with the **waist dropped**
+(rigid torso, **14 actuated DoF**). `bar_prime_controllers.yaml` binds the real
+14-joint set (no longer a placeholder). The joint specs below were early
+projections; cross-check against `prime_description` + `prime_hardware.yaml`.
 :::
 
 ### Projected joint topology
