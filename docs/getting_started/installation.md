@@ -235,7 +235,6 @@ bar_bringup_prime
 bar_cli
 bar_common
 bar_controllers
-bar_description_prime
 bar_robstride
 bar_sito
 bar_socketcan

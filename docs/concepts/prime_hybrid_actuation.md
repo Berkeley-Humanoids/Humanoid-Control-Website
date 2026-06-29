@@ -35,7 +35,7 @@ arm 5-9) and the CAN bus carries **4 Sito** wrists (ids `0x16/0x17/0x26/0x27`).
 All Prime eRob are **50:1** gear. The single source of truth for this mapping
 is `bar_bringup_prime/config/prime_hardware.yaml` (`buses`, `joints.all_joints`,
 `joints.erob_slaves`, `joints.mit_joints`); the per-joint bus assignment is
-emitted by `bar_description_prime/urdf/prime.ros2_control.xacro`.
+emitted by `prime_description` (`robots/prime_dummy/xacro/prime_dummy.ros2_control.xacro`).
 
 Note the **kinematic order** in `all_joints` (shoulder pitch/roll/yaw, elbow,
 wrist roll/pitch/yaw) is not the **ring order** — `wrist_yaw` is eRob position

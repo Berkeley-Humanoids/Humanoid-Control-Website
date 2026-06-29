@@ -115,7 +115,7 @@ Implicit:
 
 - The xacro is invoked with `use_sim:=true`. **`use_sim` wins over
   `use_fake_hardware`** in the xacro's `<plugin>` selector — see the
-  decision tree in [Packages](packages.md#lite_description-external--bar_description_prime).
+  decision tree in [Packages](packages.md#lite_description--prime_description-external).
 - Every node runs with `use_sim_time:=true`. Time advances at MuJoCo's
   pace via `/clock`.
 - `bar_bringup_lite/config/sim_overrides.yaml` is layered on top of
