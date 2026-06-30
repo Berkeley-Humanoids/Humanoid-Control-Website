@@ -68,7 +68,7 @@ A single git repo at `Berkeley-Humanoids/humanoid_control`, a flat collection of
 
 Notice that **`humanoid_controllers`, `humanoid_control_msgs`, and `humanoid_control_policy` have no
 robot-specific code** — everything robot-specific lives in `humanoid_control_description_*`
-or `humanoid_control_bringup_*`.
+or `humanoid_bringup_*`.
 
 ## Design rationale (one-paragraph version)
 
