@@ -19,7 +19,7 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 50, 98, 0.10);
 
   /* Accent color used by tip admonitions, hover states. */
-  --bar-accent: #FDB515;
+  --hc-accent: #FDB515;
 }
 
 [data-theme='dark'] {
@@ -58,7 +58,7 @@ code, pre, .token {
 }
 
 /* Custom container the homepage uses for the hero accent on inline code. */
-.bar-mermaid-caption {
+.hc-mermaid-caption {
   text-align: center;
   font-size: 0.85rem;
   color: var(--ifm-color-emphasis-600);

@@ -10,7 +10,7 @@ tests, or just verifying the underlying controller_manager service.
 This how-to walks the mode FSM via direct `ros2 control` calls.
 
 :::note[No gamepad? This is your mode-switch path.]
-BAR ships **no keyboard control** for the FSM — `mode_manager` reacts to a
+humanoid_control ships **no keyboard control** for the FSM — `mode_manager` reacts to a
 gamepad (`/joy`) only. On a dev or headless host without one, the
 `ros2 control` calls on this page **are** the supported way to drive modes
 by hand. (There used to be a planned `termios` keyboard reader; it was

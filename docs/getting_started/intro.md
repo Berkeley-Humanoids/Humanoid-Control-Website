@@ -1,7 +1,7 @@
 # Introduction
 
 `humanoid_control` is the unified low-level control stack for the **Berkeley Architecture
-Research (BAR)** humanoid robots. It runs on **ROS 2 Jazzy under PREEMPT_RT**
+Research (humanoid_control)** humanoid robots. It runs on **ROS 2 Jazzy under PREEMPT_RT**
 (shipped via the [RoboStack](https://robostack.github.io) conda channel and
 pixi, no system-wide ROS install required) and targets two robots with **as
 much shared code as possible**.

@@ -52,7 +52,7 @@ const config: Config = {
     navbar: {
       title: 'humanoid_control',
       logo: {
-        alt: 'BAR humanoid logo',
+        alt: 'humanoid_control logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -104,7 +104,7 @@ const config: Config = {
               href: 'https://github.com/Berkeley-Humanoids/humanoid_control',
             },
             {
-              label: 'Berkeley Architecture Research',
+              label: 'Berkeley Humanoids',
               href: 'https://github.com/Berkeley-Humanoids',
             },
           ],
