@@ -34,6 +34,8 @@ const config: Config = {
           editUrl:
             'https://github.com/Berkeley-Humanoids/Humanoid-Control-Website/tree/main/',
           routeBasePath: '/',
+          showLastUpdateTime: true,
+          showLastUpdateAuthor: true,
         },
         blog: false,
         theme: {
@@ -69,7 +71,7 @@ const config: Config = {
       ],
     },
     footer: {
-      style: 'dark',
+      style: 'light',
       links: [
         {
           title: 'Getting started',
