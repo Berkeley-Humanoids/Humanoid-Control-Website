@@ -30,9 +30,9 @@
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.05em;
-  color: var(--bar-accent, #FDB515);
+  color: var(--hc-accent, #FDB515);
   padding: 0.15rem 0.5rem;
-  border: 1px solid var(--bar-accent, #FDB515);
+  border: 1px solid var(--hc-accent, #FDB515);
   border-radius: 4px;
   background: rgba(253, 181, 21, 0.08);
 }

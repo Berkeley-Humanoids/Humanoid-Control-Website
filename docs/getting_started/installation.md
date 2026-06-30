@@ -1,6 +1,6 @@
 # Installation
 
-There are two ways to get BAR onto your machine:
+There are two ways to get humanoid_control onto your machine:
 
 - **Install the prebuilt packages (recommended)** — pull the `ros-jazzy-humanoid-control-*`
   conda packages straight from the [`berkeley-humanoids`](https://prefix.dev/channels/berkeley-humanoids)
@@ -19,7 +19,7 @@ every developer machine and on the Jetson.
 
 | Item | Required | Reason |
 |---|---|---|
-| 64-bit Linux | yes | BAR targets `linux-64` / `linux-aarch64`. macOS and Windows are not supported (SocketCAN + PREEMPT_RT are Linux-only). |
+| 64-bit Linux | yes | humanoid_control targets `linux-64` / `linux-aarch64`. macOS and Windows are not supported (SocketCAN + PREEMPT_RT are Linux-only). |
 | pixi ≥ 0.30 | yes | manages every other dependency |
 | Display server | for sim | `mujoco_sim` opens a GLFW window (source build only, today) |
 | PREEMPT_RT kernel | recommended | hard real-time guarantees on real hardware |
@@ -51,22 +51,22 @@ shell rc. Restart your shell (or `source ~/.bashrc`) so `pixi` resolves.
 
 ## Install the prebuilt packages (recommended)
 
-The BAR packages are published as conda packages on the
+The humanoid_control packages are published as conda packages on the
 [`berkeley-humanoids`](https://prefix.dev/channels/berkeley-humanoids) channel and rebuilt by
 the buildfarm on every release. You consume them like any other dependency.
 
 ### 1. Create a project and add the channel
 
 ```sh
-pixi init bar-app
-cd bar-app
+pixi init humanoid-control-app
+cd humanoid-control-app
 ```
 
-Open `bar-app/pixi.toml` and set the channels + the package(s) you want:
+Open `humanoid-control-app/pixi.toml` and set the channels + the package(s) you want:
 
 ```toml
 [workspace]
-name = "bar-app"
+name = "humanoid-control-app"
 channels = [
   "https://prefix.dev/berkeley-humanoids",
   "https://prefix.dev/robostack-jazzy",
@@ -212,7 +212,7 @@ colcon build --symlink-install --packages-skip-regex 'ethercat.*|humanoid_contro
 
 `pixi shell` sources the conda env and `humanoid_control_ws/install/setup.bash` once it
 exists, so `ros2`, `colcon`, and every console script land on `PATH`. The build
-covers the Lite path (every BAR + Pianist package plus the three `mujoco_*`
+covers the Lite path (every humanoid_control + Pianist package plus the three `mujoco_*`
 deps). `--symlink-install` means edits to launch / config / Python files are
 picked up without rebuilding. After the first successful build the install
 overlay is on `AMENT_PREFIX_PATH` automatically — pixi's `[activation]` block

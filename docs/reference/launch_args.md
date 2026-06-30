@@ -1,6 +1,6 @@
 # Launch args
 
-Every BAR bringup follows the same vocabulary. Each robot ships **two
+Every humanoid_control bringup follows the same vocabulary. Each robot ships **two
 parallel launches** — `real.launch.py` for silicon, `mujoco.launch.py` for
 MuJoCo physics. Operators pick the *launch file* rather than flipping a
 `use_fake_hardware` flag on a single one. The xacro still accepts

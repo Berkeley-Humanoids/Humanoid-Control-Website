@@ -11,7 +11,7 @@ parameters. The cheat sheet you print or pin to a second monitor.
 Every link points at the page with the full details.
 
 All commands below assume you've entered the workspace env (e.g.
-`cd humanoid_control_ws && pixi shell`) so `ros2`, `colcon`, and the BAR console
+`cd humanoid_control_ws && pixi shell`) so `ros2`, `colcon`, and the humanoid_control console
 scripts are on `PATH`. Looking for one-line aliases (`pixi run
 launch-mujoco`, `pixi run build`, …)?  See
 [How-to → Workspace shortcuts with pixi](../how_to/use_pixi_tasks.md).
