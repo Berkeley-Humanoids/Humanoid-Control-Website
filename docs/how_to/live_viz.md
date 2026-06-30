@@ -32,13 +32,13 @@ Inside the workspace env (`cd humanoid_control_ws && pixi shell`):
 
 ```bash
 # Default — viser, browser at http://localhost:8080
-ros2 launch humanoid_control_bringup_lite viz.launch.py
+ros2 launch humanoid_bringup_lite viz.launch.py
 
 # Native rerun window instead
-ros2 launch humanoid_control_bringup_lite viz.launch.py viewer:=rerun
+ros2 launch humanoid_bringup_lite viz.launch.py viewer:=rerun
 
 # Multi-robot or non-Lite — override the topic
-ros2 launch humanoid_control_bringup_lite viz.launch.py joint_state_topic:=/<owner>/joint_states
+ros2 launch humanoid_bringup_lite viz.launch.py joint_state_topic:=/<owner>/joint_states
 ```
 
 `viewer:=` mirrors mjlab's `--viewer` flag so the same vocabulary
@@ -58,8 +58,8 @@ instead of the launch wrapper. `ROS_DOMAIN_ID` matching is on you —
 these talk to whatever's already on the local domain.
 
 ```bash
-ros2 run humanoid_control_bringup_lite rerun_viz
-ros2 run humanoid_control_bringup_lite viser_viz
+ros2 run humanoid_bringup_lite rerun_viz
+ros2 run humanoid_bringup_lite viser_viz
 ```
 
 Both work against any bringup that publishes `/robot_description`
@@ -103,15 +103,15 @@ per-`/lite/joint_states` callback + a tf update.
 | Symptom | Cause |
 |---|---|
 | Window opens but robot is blank / collapsed | Mesh `package://` URLs not resolving. Make sure `lite_description`'s install is on `AMENT_PREFIX_PATH` (pixi activation does this automatically once you `pixi shell` into `humanoid_control_ws/`). |
-| `rerun_viz` says `ModuleNotFoundError: No module named 'rerun'` | The pixi env wasn't entered — run `cd humanoid_control_ws && pixi shell` first, then `ros2 run humanoid_control_bringup_lite rerun_viz`. |
+| `rerun_viz` says `ModuleNotFoundError: No module named 'rerun'` | The pixi env wasn't entered — run `cd humanoid_control_ws && pixi shell` first, then `ros2 run humanoid_bringup_lite rerun_viz`. |
 | `viser_viz` complains about a missing `scipy` symbol | Stale env. Re-run `pixi install` to resync against `pixi.lock`. |
-| Browser at `:8080` shows "this site can't be reached" | `viser_viz` not running — start it via `ros2 launch humanoid_control_bringup_lite viz.launch.py` (default viewer is `viser`), or wrong host in the URL. |
+| Browser at `:8080` shows "this site can't be reached" | `viser_viz` not running — start it via `ros2 launch humanoid_bringup_lite viz.launch.py` (default viewer is `viser`), or wrong host in the URL. |
 | Joints visible in `ros2 topic echo /lite/joint_states` but not moving in viewer | TF buffer staleness — restart the viewer; the URDF subscription may have been late to the latched message. |
 
 ## See also
 
-- `rerun_viz` source: [`humanoid_control_bringup_lite/scripts/rerun_viz.py`](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_control_bringup_lite/scripts/rerun_viz.py)
-- `viser_viz` source: [`humanoid_control_bringup_lite/scripts/viser_viz.py`](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_control_bringup_lite/scripts/viser_viz.py)
-- `viz.launch.py` source: [`humanoid_control_bringup_lite/launch/viz.launch.py`](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_control_bringup_lite/launch/viz.launch.py)
+- `rerun_viz` source: [`humanoid_bringup_lite/scripts/rerun_viz.py`](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_bringup_lite/scripts/rerun_viz.py)
+- `viser_viz` source: [`humanoid_bringup_lite/scripts/viser_viz.py`](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_bringup_lite/scripts/viser_viz.py)
+- `viz.launch.py` source: [`humanoid_bringup_lite/launch/viz.launch.py`](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_bringup_lite/launch/viz.launch.py)
 - [Reference → Launch args](../reference/launch_args.md) — the
   `viz.launch.py` arg table (`viewer`, `joint_state_topic`).

@@ -81,7 +81,7 @@ platforms = ["linux-64", "linux-aarch64"]
 # `view` / `viz` launches.
 ros-jazzy-ros-base = "*"
 # The whole Lite bringup: humanoid_controllers (ONNX-enabled), humanoid_control_msgs,
-# lite_description, humanoid_control_robstride, humanoid_control_socketcan, humanoid_control_common, humanoid_control_policy.
+# lite_description, humanoid_devices_robstride, humanoid_drivers_socketcan, humanoid_control_common, humanoid_control_policy.
 ros-jazzy-humanoid-control-bringup-lite = "*"
 # Optional: the `hc` diagnostic CLI (run via `ros2 run humanoid_control_cli hc ...`).
 ros-jazzy-humanoid-control-cli = "*"
@@ -106,7 +106,7 @@ fails with `invalid choice: 'launch'`. The from-source workspace gets this from
 
 ```sh
 pixi install
-pixi run ros2 launch humanoid_control_bringup_lite real.launch.py
+pixi run ros2 launch humanoid_bringup_lite real.launch.py
 ```
 
 `pixi install` downloads the prebuilt `ros-jazzy-humanoid-control-*` binaries plus the
@@ -119,7 +119,7 @@ so `ros2 launch …` / `ros2 run …` work inside `pixi shell` (or via
 ```sh
 pixi shell
 ros2 pkg list | grep '^humanoid_control_'                              # the humanoid_control_* packages you pulled in
-ros2 launch humanoid_control_bringup_lite real.launch.py --show-args   # dry-parse the launch (no hardware)
+ros2 launch humanoid_bringup_lite real.launch.py --show-args   # dry-parse the launch (no hardware)
 ros2 run humanoid_control_cli hc bus discover --iface can0 --scan-to 32   # read-only CAN scan, e.g.
 ```
 
@@ -198,7 +198,7 @@ colcon build fails with a clear CMake error — add the dep to `pixi.toml`'s
 
 :::warning[Optional: skip the EtherCAT path]
 `ethercat_driver_ros2` links `libethercat`, which has no conda recipe. The
-default build below skips `ethercat.*` and `humanoid_control_bringup_prime` so Lite bringup
+default build below skips `ethercat.*` and `humanoid_bringup_prime` so Lite bringup
 works on any host. To enable Prime, install the IgH EtherLAB master from source
 on the host, then drop the `--packages-skip-regex` filter.
 :::
@@ -207,7 +207,7 @@ on the host, then drop the `--packages-skip-regex` filter.
 
 ```sh
 pixi shell
-colcon build --symlink-install --packages-skip-regex 'ethercat.*|humanoid_control_bringup_prime'
+colcon build --symlink-install --packages-skip-regex 'ethercat.*|humanoid_bringup_prime'
 ```
 
 `pixi shell` sources the conda env and `humanoid_control_ws/install/setup.bash` once it
@@ -230,14 +230,14 @@ ros2 control list_hardware_interfaces 2>/dev/null \
 The 11 `humanoid_control` packages (Lite's `lite_description` comes separately, via `bar.repos`):
 
 ```
-humanoid_control_bringup_lite
-humanoid_control_bringup_prime
+humanoid_bringup_lite
+humanoid_bringup_prime
 humanoid_control_cli
 humanoid_control_common
 humanoid_controllers
-humanoid_control_robstride
-humanoid_control_sito
-humanoid_control_socketcan
+humanoid_devices_robstride
+humanoid_devices_sito
+humanoid_drivers_socketcan
 humanoid_control_msgs
 humanoid_control_policy
 ```

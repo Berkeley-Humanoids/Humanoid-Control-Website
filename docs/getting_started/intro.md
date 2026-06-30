@@ -68,7 +68,7 @@ A single git repo at `Berkeley-Humanoids/humanoid_control`, a flat collection of
 
 Notice that **`humanoid_controllers`, `humanoid_control_msgs`, and `humanoid_control_policy` have no
 robot-specific code** — everything robot-specific lives in `humanoid_control_description_*`
-or `humanoid_control_bringup_*`.
+or `humanoid_bringup_*`.
 
 ## Design rationale (one-paragraph version)
 
@@ -97,7 +97,7 @@ list; the most influential are:
   decomposition pattern and `industrial_ci` workflow.
 - **[legged_control2](https://qiayuanl.github.io/legged_control2_doc/overview.html)**
   — two-tier hardware factoring (bus library / per-actuator-family plugin)
-  that we mirror for `humanoid_control_socketcan` / `humanoid_control_robstride` / `humanoid_control_sito`.
+  that we mirror for `humanoid_drivers_socketcan` / `humanoid_devices_robstride` / `humanoid_devices_sito`.
 - **[mujoco_ros2_control](https://github.com/qiayuanl/mujoco_ros2_control)** —
   the MuJoCo ↔ ros2_control bridge whose `MujocoSystem` plugin we consume.
 - **[franka_ros2](https://github.com/frankarobotics/franka_ros2)** — the flat
@@ -105,7 +105,7 @@ list; the most influential are:
 - **[Universal_Robots_ROS2_Driver](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver)**
   — gold-standard `ros2_control` hardware integration. The
   `Universal_Robots_Client_Library` / `ur_robot_driver` split mirrors our
-  `humanoid_control_socketcan` / `humanoid_control_robstride` split.
+  `humanoid_drivers_socketcan` / `humanoid_devices_robstride` split.
 
 ## Next
 

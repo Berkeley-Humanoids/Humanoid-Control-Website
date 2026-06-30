@@ -231,7 +231,7 @@ ros2 control list_controller_types | grep Hello
 
 ```bash
 # Bring up Lite with the FSM disabled so we can hand-load:
-ros2 launch humanoid_control_bringup_lite mujoco.launch.py enable_mode_manager:=false
+ros2 launch humanoid_bringup_lite mujoco.launch.py enable_mode_manager:=false
 ```
 
 In another terminal, load the controller via the CLI (inside

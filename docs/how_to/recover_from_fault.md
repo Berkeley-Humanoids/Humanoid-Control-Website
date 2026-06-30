@@ -18,7 +18,7 @@ pixi shell
 ros2 topic echo /safety_status
 # level: 2     # 0=OK, 1=WARNING, 2=FAULT, 3=CRITICAL
 # flags: 8     # bitmask
-# source: humanoid_control_robstride/can0
+# source: humanoid_devices_robstride/can0
 # message: ""
 ```
 

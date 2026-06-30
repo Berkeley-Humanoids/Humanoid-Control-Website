@@ -25,7 +25,7 @@ subscribes, or serves. Use this page to find "who publishes X" or
 | Topic | Type | QoS | Publisher | When present |
 |---|---|---|---|---|
 | `/control_mode` | `humanoid_control_msgs/ControlMode` | RELIABLE depth 10 | `mode_manager` | When `enable_mode_manager:=true` (default for `real.launch.py` / `mujoco.launch.py`). 50 Hz. |
-| `/safety_status` | `humanoid_control_msgs/SafetyStatus` | RELIABLE TRANSIENT_LOCAL depth 1 | every hardware plugin | Per-bus (`humanoid_control_robstride/can0`, `humanoid_control_robstride/can1` for Lite). Published only on change. |
+| `/safety_status` | `humanoid_control_msgs/SafetyStatus` | RELIABLE TRANSIENT_LOCAL depth 1 | every hardware plugin | Per-bus (`humanoid_devices_robstride/can0`, `humanoid_devices_robstride/can1` for Lite). Published only on change. |
 | `/standby_controller/state` | `humanoid_control_msgs/StandbyState` | RELIABLE TRANSIENT_LOCAL depth 1 | `humanoid_control/StandbyController` (when active) | Carries `is_finished` — the gate for `START_*` intents. |
 | `/joy` | `sensor_msgs/Joy` | SENSOR_DATA | `joy_node` | When `enable_gamepad:=true` (default). The launch hard-fails on missing `/dev/input/js*`. |
 

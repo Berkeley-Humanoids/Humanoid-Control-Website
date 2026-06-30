@@ -12,8 +12,8 @@ for finding and fixing the root cause.
 ## The symptom
 
 ```
-[humanoid_control_socketcan]: CAN write() returned -1 (errno=No buffer space available) for id=0x017FFF0B
-[humanoid_control_socketcan]: CAN write() returned -1 (errno=No buffer space available) for id=0x017FFF15
+[humanoid_drivers_socketcan]: CAN write() returned -1 (errno=No buffer space available) for id=0x017FFF0B
+[humanoid_drivers_socketcan]: CAN write() returned -1 (errno=No buffer space available) for id=0x017FFF15
 ...
 ```
 
@@ -25,7 +25,7 @@ cd humanoid_control_ws && pixi shell
 ros2 topic echo /safety_status
 # level: 2     # FAULT
 # flags: 4     # FLAG_TX_QUEUE_OVERRUN = 1 << 2
-# source: humanoid_control_robstride/can0
+# source: humanoid_devices_robstride/can0
 ```
 
 ## Why it happens

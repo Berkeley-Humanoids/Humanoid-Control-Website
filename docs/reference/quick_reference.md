@@ -22,8 +22,8 @@ Grouped by which machine they run on. See
 [Concepts → Architecture → Deployment topology](../concepts/architecture.md#deployment-topology)
 for the split rationale. Launches come from two repos:
 
-- `humanoid_control` ships the Lite + Prime bringups (`humanoid_control_bringup_lite`,
-  `humanoid_control_bringup_prime`), the description viewer (`humanoid_control_bringup_lite`),
+- `humanoid_control` ships the Lite + Prime bringups (`humanoid_bringup_lite`,
+  `humanoid_bringup_prime`), the description viewer (`humanoid_bringup_lite`),
   and the policy prepare-and-load launch (`humanoid_control_policy`).
 - `pianist_ros2` ships the piano-task launches (`pianist_bringup`
   composes a Lite + piano MuJoCo scene; `pianist_policy` prepares the
@@ -33,32 +33,32 @@ for the split rationale. Launches come from two repos:
 
 ```bash
 # Drag joints in RViz — no controllers, no physics
-ros2 launch humanoid_control_bringup_lite view_lite.launch.py
+ros2 launch humanoid_bringup_lite view_lite.launch.py
 
 # MuJoCo sim — full controller stack, /clock from sim time
-ros2 launch humanoid_control_bringup_lite mujoco.launch.py
+ros2 launch humanoid_bringup_lite mujoco.launch.py
 
 # Lite + piano in MuJoCo (pianist_bringup composes the scene, spawns piano_state_bridge)
 ros2 launch pianist_bringup mujoco.launch.py
 
 # Calibrate the zero pose (writes ./calibration.yaml on Ctrl+C)
-ros2 launch humanoid_control_bringup_lite calibrate.launch.py
+ros2 launch humanoid_bringup_lite calibrate.launch.py
 ```
 
 ### Robot onboard computer (real bringup)
 
 ```bash
 # Real Lite — both buses, two ros2_control blocks, gamepad + mode_manager
-ros2 launch humanoid_control_bringup_lite real.launch.py
+ros2 launch humanoid_bringup_lite real.launch.py
 
 # Real Lite, no gamepad attached (drive the FSM via /humanoid_control/mode/* services)
-ros2 launch humanoid_control_bringup_lite real.launch.py enable_gamepad:=false
+ros2 launch humanoid_bringup_lite real.launch.py enable_gamepad:=false
 
 # Gamepad enumerated as js1 (multiple controllers plugged into the Jetson)
-ros2 launch humanoid_control_bringup_lite real.launch.py joy_dev:=/dev/input/js1
+ros2 launch humanoid_bringup_lite real.launch.py joy_dev:=/dev/input/js1
 
 # Real Lite, no FSM (raw debug / calibration)
-ros2 launch humanoid_control_bringup_lite real.launch.py enable_mode_manager:=false
+ros2 launch humanoid_bringup_lite real.launch.py enable_mode_manager:=false
 ```
 
 `real.launch.py` boots the real-time control plane only — visualisers
@@ -85,9 +85,9 @@ ros2 launch pianist_policy midi_keyboard_driver.launch.py
 ### Operator workstation (host side of the tether)
 
 ```bash
-# Live URDF + /lite/joint_states viewer (humanoid_control_bringup_lite)
-ros2 launch humanoid_control_bringup_lite viz.launch.py                  # viser, http://0.0.0.0:8080
-ros2 launch humanoid_control_bringup_lite viz.launch.py viewer:=rerun    # native rerun window
+# Live URDF + /lite/joint_states viewer (humanoid_bringup_lite)
+ros2 launch humanoid_bringup_lite viz.launch.py                  # viser, http://0.0.0.0:8080
+ros2 launch humanoid_bringup_lite viz.launch.py viewer:=rerun    # native rerun window
 ```
 
 Both machines must share `ROS_DOMAIN_ID`. Full surface:
@@ -109,7 +109,7 @@ ip -d link show can1
 
 ## Diagnostic CLIs
 
-These are the `hc` (humanoid_control_cli) verbs — equivalent `ros2 run humanoid_control_robstride …`
+These are the `hc` (humanoid_control_cli) verbs — equivalent `ros2 run humanoid_devices_robstride …`
 invocations are listed in [CLI tools](./cli_tools.md).
 
 ```bash
@@ -124,7 +124,7 @@ hc bus ping --iface can0 --id 11
 hc motor slider
 
 # Live URDF + /lite/joint_states viewers (single-machine sim/dev shortcuts;
-# on the tethered host, prefer `ros2 launch humanoid_control_bringup_lite viz.launch.py`)
+# on the tethered host, prefer `ros2 launch humanoid_bringup_lite viz.launch.py`)
 hc viz viser                            # browser at :8080
 hc viz rerun                            # native rerun window
 ```

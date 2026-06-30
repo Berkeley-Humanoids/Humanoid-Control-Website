@@ -33,7 +33,7 @@ EtherCAT, through the IgH master); two — the distal wrist roll/pitch — are
 So the EtherCAT ring carries **10 eRob** (positions 0-9, left arm 0-4, right
 arm 5-9) and the CAN bus carries **4 Sito** wrists (ids `0x16/0x17/0x26/0x27`).
 All Prime eRob are **50:1** gear. The single source of truth for this mapping
-is `humanoid_control_bringup_prime/config/prime_hardware.yaml` (`buses`, `joints.all_joints`,
+is `humanoid_bringup_prime/config/prime_hardware.yaml` (`buses`, `joints.all_joints`,
 `joints.erob_slaves`, `joints.mit_joints`); the per-joint bus assignment is
 emitted by `prime_description` (`robots/prime_dummy/xacro/prime_dummy.ros2_control.xacro`).
 
@@ -54,7 +54,7 @@ constant (read each joint's model off its label; see the eRob manual §25.2):
 
 The 1.5% `Kt` difference is negligible in practice; the **gear ratio** would
 be the real lever, but every Prime eRob is 50:1, so a single conversion
-serves all of them. `humanoid_control_bringup_prime/config/prime_hardware.yaml` can still
+serves all of them. `humanoid_bringup_prime/config/prime_hardware.yaml` can still
 override `Kt`/gear per joint (`joints.erob_kt` / `joints.erob_gear`) if a model
 ever differs.
 
@@ -63,7 +63,7 @@ ever differs.
 `real.launch.py` expands the xacro with `use_fake_hardware:=false use_sim:=false`,
 which emits **two concurrent `ros2_control` blocks** — `PrimeEtherCATSide`
 (`ethercat_driver/EthercatDriver`, the 10 eRob) and `PrimeSitoCAN`
-(`humanoid_control_sito/SitoSystem`, the 4 Sito wrists). One `controller_manager` runs them
+(`humanoid_devices_sito/SitoSystem`, the 4 Sito wrists). One `controller_manager` runs them
 together and exposes a flat 14-joint list to the mode controllers. The sim path
 (`mujoco.launch.py`) collapses both into one `MujocoSystem` block but presents
 the identical 14 joints, so the shared controllers run unchanged.
@@ -96,7 +96,7 @@ differently — and that difference is the heart of the Prime control story.
 The Sito firmware runs the MIT law directly. The host sends the desired
 position, velocity, and feedforward torque in a command frame, and `Kp`/`Kd`
 in a separate gains frame. Conversions (in
-`humanoid_control_devices/humanoid_control_sito/include/humanoid_control_sito/sito_protocol.hpp`, TA40-50):
+`humanoid_devices/humanoid_devices_sito/include/humanoid_devices_sito/sito_protocol.hpp`, TA40-50):
 
 ```
 position_counts = q_cmd  · 65536 / (2π)        # 16-bit encoder, MOTOR side
@@ -132,7 +132,7 @@ are not PDO-mappable, so they cannot be a per-tick command interface):
 | `0x2381:02` | velocity loop integral (held at 0 for clean impedance) |
 | `0x2383`    | "Bus Regulation of PID" gate — `1` = use bus-written gains, `0` = factory |
 
-The SI-to-register conversion (`humanoid_control_bringup_prime/scripts/erob_impedance_manager.py`,
+The SI-to-register conversion (`humanoid_bringup_prime/scripts/erob_impedance_manager.py`,
 `erob_gains()`), validated exactly against the ZeroErr derivation:
 
 ```
@@ -186,7 +186,7 @@ fixed mode impedance and track position in CSP.
 
 ## The eRob impedance manager
 
-`humanoid_control_bringup_prime/scripts/erob_impedance_manager.py` is the bridge between the
+`humanoid_bringup_prime/scripts/erob_impedance_manager.py` is the bridge between the
 mode FSM and the eRob loop gains. It subscribes to `/control_mode` and, on each
 transition, converts that mode's `(kp, kd)` to loop-gain registers and writes
 them over the EtherLab `ethercat download` CLI. (It uses the CLI, not the

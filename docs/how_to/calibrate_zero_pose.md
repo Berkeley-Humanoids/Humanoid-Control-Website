@@ -1,6 +1,6 @@
 # Calibrate the zero pose
 
-Per-physical-robot recipe: regenerate `humanoid_control_bringup_lite/config/calibration.yaml`
+Per-physical-robot recipe: regenerate `humanoid_bringup_lite/config/calibration.yaml`
 so the URDF's joint zero matches your robot's encoder zero. Run this
 once per robot (after assembly, after a motor swap, or after a hard
 mechanical reset).
@@ -39,7 +39,7 @@ Full math: [Concepts → Calibration math](../concepts/calibration_math.md).
 ```bash
 cd ~/humanoid_control_ws
 pixi shell
-ros2 launch humanoid_control_bringup_lite calibrate.launch.py
+ros2 launch humanoid_bringup_lite calibrate.launch.py
 ```
 
 `calibrate.launch.py` includes `real.launch.py` with three overrides:
@@ -120,15 +120,15 @@ joint. That's a URDF bug, not a calibration one — fix the
 ## Step 4 — Promote the file
 
 ```bash
-cp ./calibration.yaml src/humanoid_control/humanoid_control_bringup_lite/config/calibration.yaml
+cp ./calibration.yaml src/humanoid_control/humanoid_bringup_lite/config/calibration.yaml
 ```
 
 That copies into the source tree. Next `colcon build` will pick it
 up; or because the launch resolves the file via `FindPackageShare`,
-just rebuild `humanoid_control_bringup_lite` to refresh the install share:
+just rebuild `humanoid_bringup_lite` to refresh the install share:
 
 ```bash
-colcon build --symlink-install --packages-select humanoid_control_bringup_lite
+colcon build --symlink-install --packages-select humanoid_bringup_lite
 ```
 
 ## Step 5 — Verify
@@ -136,7 +136,7 @@ colcon build --symlink-install --packages-select humanoid_control_bringup_lite
 Relaunch the normal real bringup (without the calibration override):
 
 ```bash
-ros2 launch humanoid_control_bringup_lite real.launch.py
+ros2 launch humanoid_bringup_lite real.launch.py
 ```
 
 Watch for the per-bus calibration-load log:
@@ -169,14 +169,14 @@ Adjust the threshold if 0.5 rad is too generous (e.g. for joints with
 < 1 rad total range):
 
 ```bash
-ros2 launch humanoid_control_bringup_lite calibrate.launch.py sweep_threshold:=0.2
+ros2 launch humanoid_bringup_lite calibrate.launch.py sweep_threshold:=0.2
 ```
 
 ## See also
 
 - [Concepts → Calibration math](../concepts/calibration_math.md) — the
   formula derivation and why it's split URDF + YAML.
-- [Reference → Launch args](../reference/launch_args.md#humanoid_control_bringup_litelaunchcalibratelaunchpy)
+- [Reference → Launch args](../reference/launch_args.md#humanoid_bringup_litelaunchcalibratelaunchpy)
   — the `output` and `sweep_threshold` args.
 - The `calibrate_robot` source is ~250 lines in
-  [`humanoid_control_bringup_lite/scripts/calibrate_robot.py`](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_control_bringup_lite/scripts/calibrate_robot.py).
+  [`humanoid_bringup_lite/scripts/calibrate_robot.py`](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_bringup_lite/scripts/calibrate_robot.py).

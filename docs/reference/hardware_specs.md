@@ -60,7 +60,7 @@ the generated file):
 ```
 
 xacro expands those into `<param>` children on the `<joint>` element, which
-`humanoid_control_robstride/RobstrideSystem::on_init` reads (and, for `torque_limit` /
+`humanoid_devices_robstride/RobstrideSystem::on_init` reads (and, for `torque_limit` /
 `current_limit`, also writes to the actuator firmware at `on_activate` via
 the Robstride parameter IDs `0x700B` and `0x7018` — same writes the upstream
 `T-K-233/Lite-Lowlevel-Python`'s `humanoid_control/control.py` performs).
@@ -97,7 +97,7 @@ the `lite_description` repo and flows back through `bar.repos`:
    # If a bringup is already running, Ctrl+C it first — the firmware-side
    # caps are written on the `on_activate` transition, so an already-
    # activated plugin won't pick up the new value until the next bringup.
-   ros2 launch humanoid_control_bringup_lite real.launch.py
+   ros2 launch humanoid_bringup_lite real.launch.py
    ```
 
    For a throwaway bench experiment, edit the caps directly in the vcs-imported
@@ -108,12 +108,12 @@ the `lite_description` repo and flows back through `bar.repos`:
 5. Confirm in the bringup log that the new value flowed through:
 
    ```
-   [humanoid_control_robstride] Wrote torque_limit=15.0 to can_id=11 (left_shoulder_pitch)
-   [humanoid_control_robstride] Wrote current_limit=20.0 to can_id=11 (left_shoulder_pitch)
+   [humanoid_devices_robstride] Wrote torque_limit=15.0 to can_id=11 (left_shoulder_pitch)
+   [humanoid_devices_robstride] Wrote current_limit=20.0 to can_id=11 (left_shoulder_pitch)
    ```
 
 **No separate calibration step.** Unlike `homing_offset` (per-physical-robot,
-lives in `humanoid_control_bringup_lite/config/calibration.yaml`), torque and current
+lives in `humanoid_bringup_lite/config/calibration.yaml`), torque and current
 caps are per-robot-tuning — same value on every Lite physical instance,
 versioned alongside the URDF. If you want to A/B-test caps across
 deployments without editing source, set up two checked-out branches of
@@ -138,8 +138,8 @@ authoritative for what's *on the bus*, not just what's *in this process*.
 
 Lite uses **two SocketCAN buses** (CAN-to-USB adapters), one per arm. Each
 bus is a separate `<ros2_control>` block in the URDF, each loading its own
-`humanoid_control_robstride/RobstrideSystem` instance. The default bus names come from
-`humanoid_control_bringup_lite/config/lite_hardware.yaml`, which the launch passes through
+`humanoid_devices_robstride/RobstrideSystem` instance. The default bus names come from
+`humanoid_bringup_lite/config/lite_hardware.yaml`, which the launch passes through
 to xacro as the `hardware_config:=` arg:
 
 | Block | Default ifname | CAN ids |
@@ -168,11 +168,11 @@ hc bus discover --iface can1 --scan-to 32
 # Expect 7 + 7 = 14 actuators replying at ids 11..17 and 21..27.
 
 # 3. Calibrate the zero pose (once per physical robot).
-ros2 launch humanoid_control_bringup_lite calibrate.launch.py
+ros2 launch humanoid_bringup_lite calibrate.launch.py
 # Hand-sweep every joint to both extremes. Ctrl+C to write calibration.yaml.
 
 # 4. Real-hardware bringup.
-ros2 launch humanoid_control_bringup_lite real.launch.py
+ros2 launch humanoid_bringup_lite real.launch.py
 ```
 
 If `hc bus discover` reports `ENOBUFS` / TX-drop warnings, the actuator
@@ -206,7 +206,7 @@ projections; cross-check against `prime_description` + `prime_hardware.yaml`.
 
 Prime is unique in that **two `<ros2_control>` blocks coexist** in its URDF —
 one binds `ethercat_driver/EthercatDriver`, the other binds
-`humanoid_control_sito/SitoSystem`. The controller_manager runs both concurrently;
+`humanoid_devices_sito/SitoSystem`. The controller_manager runs both concurrently;
 controllers see a single flat joint list regardless of which bus carries them.
 
 ## MIT-mode command convention
@@ -240,5 +240,5 @@ silicon and sim with no URDF interface-tag rewrites.
   consumed by ros2_control and the mode FSM.
 - [humanoid_control_lite_controllers.yaml](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_controllers/config/humanoid_control_lite_controllers.yaml)
   — the canonical 17-joint binding for every controller.
-- [`humanoid_control_robstride/include/humanoid_control_robstride/robstride_system.hpp`](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_control_devices/humanoid_control_robstride/include/humanoid_control_robstride/robstride_system.hpp)
+- [`humanoid_devices_robstride/include/humanoid_devices_robstride/robstride_system.hpp`](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_devices/humanoid_devices_robstride/include/humanoid_devices_robstride/robstride_system.hpp)
   — the SystemInterface implementation for the Lite hardware path.
