@@ -76,6 +76,58 @@ hard-fails when the resolved `joy_dev` path is missing.
    the FSM via the `/humanoid_control/mode/*` `std_srvs/Trigger` services
    instead.
 
+## Gamepad is connected and `cat /dev/input/js0` shows data, but `/joy` never publishes
+
+**Diagnosis**: `joy_node` comes up and registers a `/joy` publisher but
+emits **zero messages**, so `mode_manager` never sees a button — even
+though the pad is paired and `cat /dev/input/js0` streams bytes when you
+press it.
+
+**Why**: the ROS 2 `joy` node is **SDL2-based**, and SDL2 reads
+joysticks through the **evdev** interface (`/dev/input/event*`), *not*
+the legacy joystick interface (`/dev/input/js*`). Those are different
+device nodes with different permissions:
+
+- `jsN` is usually world-readable (`other::r--`) — so `cat
+  /dev/input/jsN` works for any user and makes the pad *look* fine.
+- `eventN` is `root:input crw-rw----` with **no world read**. Access is
+  granted only to `root`, the **`input` group**, and — via a `uaccess`
+  ACL — whoever owns the **active local login seat** (normally the GUI
+  user, *not* an SSH session).
+
+So when you launch over SSH or with no desktop session, your user is
+neither in `input` nor the seat owner → SDL2 can't open `eventN` → no
+joystick → `/joy` stays silent. It often "worked yesterday" because you
+were sitting at the desktop then and the seat ACL covered you.
+
+Confirm it — find your pad's `eventN` via `/dev/input/by-id/`
+(`...-event-joystick -> ../eventN`):
+
+```bash
+getfacl -p /dev/input/event5
+#   user:gdm:rw-   group::rw- (input)   other::---     <- granted to gdm, not you
+[ -r /dev/input/event5 ] && echo CAN-READ || echo NO-READ-PERM
+id | grep -q '(input)' && echo in-input-group || echo NOT-in-input-group
+```
+
+**Fix**: add your user to the `input` group — persistent across reboots
+and independent of the GUI seat:
+
+```bash
+sudo usermod -aG input "$USER"
+```
+
+Then **start a fresh login** for it to take effect (new terminal / new
+SSH session, or reboot). Verify `id` now lists `input`, relaunch, and
+`ros2 topic hz /joy` should show ~20 Hz while you hold a button.
+
+This is distinct from the `joy_dev` error above: there the device path
+is *missing*; here it *exists and reads fine with `cat`*, and only the
+SDL2/evdev permission is wrong.
+
+**Headless / CI**: skip the pad with `enable_gamepad:=false` and drive
+the FSM via the `/humanoid_control/mode/*` `std_srvs/Trigger` services instead.
+
 ## ENOBUFS / "Network is down" warnings during bringup
 
 **Diagnosis**: kernel TX qdisc full, frames being dropped at write
@@ -144,6 +196,45 @@ entirely, the hardware plugin probably threw during `on_init` /
 - `humanoid_devices_robstride` was rebuilt with an ABI-incompatible bump but
   the .so wasn't reinstalled. `colcon build --symlink-install --packages-select humanoid_devices_robstride`.
 
+## Controllers fail to load/configure on a fresh `controller_manager`, and a reboot doesn't help
+
+**Diagnosis**: a **second `controller_manager` on the same
+`ROS_DOMAIN_ID`** — often on *another machine* on the LAN — is colliding
+with yours over DDS. Hardware initializes fine ("Successful
+initialization/activation of hardware"); only the controller spawners
+fail ("Controller already loaded", "Failed to configure"), and rebooting
+*your* robot changes nothing.
+
+**Why**: every `controller_manager` defaults to the node name
+`/controller_manager`. Two of them on one domain are two nodes sharing a
+name and the same services, so spawner service calls hit the wrong CM or
+get duplicate responses. When the other CM lives on a different machine,
+rebooting yours can't fix it — the collider is still there. The default
+domain (`0`) makes this easy to hit in a shared lab where several people
+run bringups at once. Telltale sign: the *hardware* logs are all green
+and only the controller-loading step misbehaves.
+
+**Fix**: give the robot its own domain, and use the same value on every
+machine that must see it (viz, teleop):
+
+```toml
+# workspace pixi.toml — every `pixi run` / `pixi shell` inherits this,
+# including non-interactive SSH sessions (unlike a ~/.bashrc export).
+[activation.env]
+ROS_DOMAIN_ID = "5"
+```
+
+Then confirm exactly one CM is visible:
+
+```bash
+pixi run -- printenv ROS_DOMAIN_ID         # same value on every machine
+ros2 node list | grep controller_manager   # must print exactly one
+```
+
+Coordinate the number with whoever owns domain allocation in your lab so
+two robots don't collide, and never run two `controller_manager`
+instances on one domain.
+
 ## DDS discovery fails between launches and `ros2 topic ...`
 
 **Diagnosis**: `ROS_DOMAIN_ID` mismatch, or two `ros2 launch …`
@@ -151,7 +242,9 @@ instances running on the same domain on the same machine.
 
 **Fix**: `echo $ROS_DOMAIN_ID` in both terminals. They must match (or
 both unset = domain 0). If two launches are colliding, pick distinct
-domains via `ROS_DOMAIN_ID=N` in each.
+domains via `ROS_DOMAIN_ID=N` in each. If the symptom is specifically
+*controllers* failing on an otherwise-healthy bringup, it's the
+cross-machine CM collision above, not a plain discovery miss.
 
 ## ENOBUFS warnings *while a controller is active* (not boot)
 
@@ -163,6 +256,58 @@ sustained time. Usually a programming bug in a custom controller
 controller is misbehaving, deactivate it and replace with
 `zero_torque`. Otherwise raise `txqueuelen` as a workaround while you
 diagnose.
+
+## `pixi`, `curl`, or HTTPS `git clone` fail with TLS "certificate is not yet valid"
+
+**Diagnosis**: the system clock is wrong — usually stuck in the **past**
+— so otherwise-valid TLS certificates read as not-yet-valid.
+
+**Why**: boards without a charged RTC (e.g. Jetson) reset their clock on
+boot until NTP syncs. SSH doesn't check certificate dates, so `git@`
+(SSH) clones keep working while **HTTPS** fails — which hides the real
+cause and sends you chasing a network problem that isn't there.
+
+**Fix**:
+
+```bash
+timedatectl                          # check "System clock synchronized"
+sudo timedatectl set-ntp true        # enable NTP
+sudo date -s '2026-06-27 15:00:00'   # or set by hand if the board is offline
+```
+
+## Edited a `humanoid_bringup_lite` script but the change has no effect
+
+**Diagnosis**: the running copy under `install/` is stale — these
+scripts are **installed as copies, not symlinked**.
+
+**Why**: even with `colcon build --symlink-install`, plain scripts
+installed via CMake `install(PROGRAMS ...)` (rather than ament_python
+entry points) are **copied** into `install/.../share/`. Editing the
+source under `src/` doesn't touch the installed copy that actually runs.
+
+**Fix**: rebuild the owning package after editing such a script:
+
+```bash
+colcon build --symlink-install --packages-select humanoid_bringup_lite
+```
+
+## `pip install` "succeeds" but the package won't import inside `pixi run`
+
+**Diagnosis**: `pip` installed into the user site (`~/.local/...`),
+which the conda / RoboStack environment ignores.
+
+**Why**: the RoboStack env often ships no `pip` module of its own, so a
+bare `pip` falls back to a system/user `pip` that targets `~/.local`.
+Conda-style environments don't put the user-site directory on
+`sys.path`, so the import fails inside the env even though `pip` reported
+success.
+
+**Fix**: install Python deps *through pixi* so they land in the env:
+
+```bash
+pixi add --pypi viser     # PyPI-only packages (viser, yourdfpy, ...)
+pixi add some-conda-pkg   # if it's available on conda-forge / robostack
+```
 
 ## Prime eRob bringup takes ~70 s with repeated `0xA000` faults
 
