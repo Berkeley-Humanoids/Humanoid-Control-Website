@@ -98,7 +98,7 @@ uint8 FAULT    = 2   # commands no longer guaranteed; transition recommended
 uint8 CRITICAL = 3   # immediate fault fallback required
 
 uint8 level
-string source       # e.g. "humanoid_control_robstride/can0", "rl_policy_controller"
+string source       # e.g. "humanoid_devices_robstride/can0", "rl_policy_controller"
 uint32 flags        # plugin-specific bitmask
 string message
 ```

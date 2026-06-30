@@ -35,7 +35,7 @@ The simplest possible launch: `robot_state_publisher` + a
 the kinematic chain.
 
 ```sh
-ros2 launch humanoid_control_bringup_lite view_lite.launch.py
+ros2 launch humanoid_bringup_lite view_lite.launch.py
 ```
 
 What you'll see:
@@ -66,7 +66,7 @@ hosted inside `mujoco_sim`, all five mode-FSM controllers loaded, the
 the Robstride firmware computes on silicon.
 
 ```sh
-ros2 launch humanoid_control_bringup_lite mujoco.launch.py
+ros2 launch humanoid_bringup_lite mujoco.launch.py
 ```
 
 A **MuJoCo viewer window** opens with the Lite humanoid at zero pose.
@@ -142,13 +142,13 @@ ros2 topic echo --once /control_mode
 
 :::tip["See it move"]
 Two interchangeable live visualizers ride on `/lite/joint_states` +
-`/robot_description`, both shipped by `humanoid_control_bringup_lite`. On the
+`/robot_description`, both shipped by `humanoid_bringup_lite`. On the
 tethered deployment they live on the **operator workstation** (host
 side of the tether), spawned by `viz.launch.py`:
 
 ```sh
-ros2 launch humanoid_control_bringup_lite viz.launch.py                  # viser, http://localhost:8080
-ros2 launch humanoid_control_bringup_lite viz.launch.py viewer:=rerun    # native rerun window
+ros2 launch humanoid_bringup_lite viz.launch.py                  # viser, http://localhost:8080
+ros2 launch humanoid_bringup_lite viz.launch.py viewer:=rerun    # native rerun window
 ```
 
 For a single-machine MuJoCo run, the standalone shortcuts work too —
@@ -156,8 +156,8 @@ they auto-discover `/robot_description` and the joint-state topic on
 the local domain:
 
 ```sh
-ros2 run humanoid_control_bringup_lite viser_viz
-ros2 run humanoid_control_bringup_lite rerun_viz
+ros2 run humanoid_bringup_lite viser_viz
+ros2 run humanoid_bringup_lite rerun_viz
 ```
 
 Visualiser dependencies (`rerun-sdk`, `viser`, `yourdfpy`, `scipy`)

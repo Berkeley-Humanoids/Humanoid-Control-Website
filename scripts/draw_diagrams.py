@@ -252,13 +252,13 @@ def d_intro_01_system() -> None:
     s.append(Box(50, 100, 210, 50, "IDE / editor",
                  fill=GOLD_FILL, stroke=GOLD).render())
     s.append(Box(50, 170, 210, 70,
-                 ["MuJoCo viewer", "(humanoid_control_bringup_lite/mujoco)"],
+                 ["MuJoCo viewer", "(humanoid_bringup_lite/mujoco)"],
                  fill=GOLD_FILL, stroke=GOLD).render())
     s.append(text(155, 300, "Edits, sim runs, debug",
                   size=11, fill=GREY, anchor="middle"))
 
     # Onboard
-    s.append(Box(340, 100, 220, 50, "humanoid_control_bringup_lite / launch",
+    s.append(Box(340, 100, 220, 50, "humanoid_bringup_lite / launch",
                  fill=BLUE_FILL, stroke=BLUE).render())
     s.append(Box(340, 170, 220, 60, "controller_manager (50 Hz)",
                  fill=BLUE_FILL, stroke=BLUE).render())
@@ -267,7 +267,7 @@ def d_intro_01_system() -> None:
     s.append(Box(460, 250, 100, 50, "humanoid_control_policy",
                  fill=GOLD_FILL, stroke=GOLD).render())
     s.append(Box(340, 320, 220, 60,
-                 ["humanoid_control_robstride", "(SocketCAN)"],
+                 ["humanoid_devices_robstride", "(SocketCAN)"],
                  fill=GREEN_FILL, stroke=GREEN).render())
 
     # Robot
@@ -331,25 +331,25 @@ def d_intro_02_packages() -> None:
     pkg(40, 144, "humanoid_control_msgs", "MITCommand, ControlMode, ...")
     pkg(40, 198, "humanoid_controllers", "5 mode-FSM + mode_manager")
     pkg(40, 252, "humanoid_control_policy", "ONNX runner + LeRobot ref")
-    pkg(40, 306, "humanoid_control_socketcan", "SocketCAN bus library")
+    pkg(40, 306, "humanoid_drivers_socketcan", "SocketCAN bus library")
 
     # Lite column
     pkg(345, 110, "lite_description", "URDF + xacro + meshes",
         fill=GREEN_FILL, stroke=GREEN)
-    pkg(345, 180, "humanoid_control_robstride", "Robstride SystemInterface",
+    pkg(345, 180, "humanoid_devices_robstride", "Robstride SystemInterface",
         fill=GREEN_FILL, stroke=GREEN)
-    pkg(345, 250, "humanoid_control_bringup_lite", "launch + controllers YAML",
+    pkg(345, 250, "humanoid_bringup_lite", "launch + controllers YAML",
         fill=GREEN_FILL, stroke=GREEN)
 
     # Prime column
     pkg(645, 110, "humanoid_control_description_prime", "URDF + EtherCAT PDO",
         fill=RED_FILL, stroke=RED)
-    pkg(645, 180, "humanoid_control_sito", "Sito SystemInterface",
+    pkg(645, 180, "humanoid_devices_sito", "Sito SystemInterface",
         fill=RED_FILL, stroke=RED)
-    pkg(645, 250, "humanoid_control_bringup_prime", "+ ethercat.yaml",
+    pkg(645, 250, "humanoid_bringup_prime", "+ ethercat.yaml",
         fill=RED_FILL, stroke=RED)
 
-    # Arrows: humanoid_control_robstride -> humanoid_control_socketcan
+    # Arrows: humanoid_devices_robstride -> humanoid_drivers_socketcan
     s.append(arrow(345, 202, 290, 320, color=GREY))
     s.append(arrow(645, 202, 290, 320, color=GREY))
     # bringup_lite -> description_lite + hw_robstride + controllers + policy
@@ -478,7 +478,7 @@ def d_hw_can_layout() -> None:
     s.append(arrow(590, 155, 640, 155, label="CAN @ 1 Mbit"))
 
     s.append(text(450, 310,
-                  "On real hardware the humanoid_control_robstride plugin owns both buses; "
+                  "On real hardware the humanoid_devices_robstride plugin owns both buses; "
                   "from the controller's perspective the 17 joints are one flat list.",
                   size=11, anchor="middle", fill=GREY))
 
@@ -749,7 +749,7 @@ def d_lite_mock_launch() -> None:
     W, H = 920, 540
     s = [header(W, H)]
     s.append(title(20, 30, "MuJoCo bringup spawn sequence",
-                   sub="What happens when you run `ros2 launch humanoid_control_bringup_lite mujoco.launch.py`"))
+                   sub="What happens when you run `ros2 launch humanoid_bringup_lite mujoco.launch.py`"))
 
     lanes = [
         ("launch", 100, GREY),
@@ -877,7 +877,7 @@ def d_xacro_3way() -> None:
     s.append(arrow(460, 215, 490, 200, label="true"))
 
     # No -> real
-    s.append(Box(490, 280, 230, 60, "humanoid_control_robstride/", sub="RobstrideSystem",
+    s.append(Box(490, 280, 230, 60, "humanoid_devices_robstride/", sub="RobstrideSystem",
                  fill=RED_FILL, stroke=RED).render())
     s.append(arrow(370, 240, 490, 305, label="false"))
 
@@ -974,9 +974,9 @@ def d_arch_module_deps() -> None:
     s.append(group_box(790, 70, 170, 420, "External", fill="#FAFAFA"))
 
     # Application / bringup
-    s.append(Box(70, 95, 200, 40, "humanoid_control_bringup_lite", sub="launch + YAML",
+    s.append(Box(70, 95, 200, 40, "humanoid_bringup_lite", sub="launch + YAML",
                  fill=BLUE_FILL, stroke=BLUE).render())
-    s.append(Box(310, 95, 200, 40, "humanoid_control_bringup_prime", sub="(scaffold)",
+    s.append(Box(310, 95, 200, 40, "humanoid_bringup_prime", sub="(scaffold)",
                  fill=BLUE_FILL, stroke=BLUE).render())
     s.append(Box(550, 95, 190, 40, "pianist_policy", sub="piano key-state",
                  fill=GOLD_FILL, stroke=GOLD).render())
@@ -990,10 +990,10 @@ def d_arch_module_deps() -> None:
                  fill=GOLD_FILL, stroke=GOLD).render())
 
     # Hardware plugins + description
-    s.append(Box(70, 305, 200, 50, "humanoid_control_robstride",
+    s.append(Box(70, 305, 200, 50, "humanoid_devices_robstride",
                  sub="RobstrideSystem",
                  fill=GREEN_FILL, stroke=GREEN).render())
-    s.append(Box(310, 305, 200, 50, "humanoid_control_sito",
+    s.append(Box(310, 305, 200, 50, "humanoid_devices_sito",
                  sub="(stub)",
                  fill=GREEN_FILL, stroke=GREEN).render())
     s.append(Box(550, 305, 190, 50, "lite_description",
@@ -1001,7 +1001,7 @@ def d_arch_module_deps() -> None:
                  fill=GREY_FILL, stroke=GREY).render())
 
     # Foundations
-    s.append(Box(70, 425, 200, 50, "humanoid_control_socketcan",
+    s.append(Box(70, 425, 200, 50, "humanoid_drivers_socketcan",
                  sub="bus library + I/O thread",
                  fill=GREEN_FILL, stroke=GREEN).render())
     s.append(Box(310, 425, 200, 50, "humanoid_control_msgs",
@@ -1061,7 +1061,7 @@ def d_arch_module_deps() -> None:
     s.append(text(60, 545, "Dashed arrow = runtime dep only (pluginlib)",
                   size=11, anchor="start", fill=GREY))
     s.append(text(60, 570,
-                  "Note: humanoid_controllers does NOT find_package(humanoid_control_robstride) — "
+                  "Note: humanoid_controllers does NOT find_package(humanoid_devices_robstride) — "
                   "the plugin is loaded by controller_manager at launch.",
                   size=11, anchor="start", fill=GREY))
 
@@ -1273,7 +1273,7 @@ def d_safety_pipeline() -> None:
                  fill=GREY_FILL, stroke=GREY).render())
     s.append(Box(380, 230, 200, 40, "flags: uint32 bit mask",
                  fill=GREY_FILL, stroke=GREY).render())
-    s.append(Box(380, 290, 200, 40, "source: 'humanoid_control_robstride/can0'",
+    s.append(Box(380, 290, 200, 40, "source: 'humanoid_devices_robstride/can0'",
                  fill=GREY_FILL, stroke=GREY).render())
     s.append(Box(380, 360, 200, 50,
                  ["/safety_status", "(TRANSIENT_LOCAL)"],

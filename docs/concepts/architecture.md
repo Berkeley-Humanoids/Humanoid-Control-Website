@@ -15,7 +15,7 @@ build against which:
 
 ![Module dependency graph](/img/diagrams/concepts__architecture__03_module_deps.svg)
 
-Notice that `humanoid_controllers` does **not** `find_package(humanoid_control_robstride)`.
+Notice that `humanoid_controllers` does **not** `find_package(humanoid_devices_robstride)`.
 The plugin is loaded by `controller_manager` at launch via `pluginlib` — a
 runtime dep that doesn't appear in the static graph but is just as binding.
 The same applies to every `<plugin>` entry in a controller-manager YAML.
@@ -36,7 +36,7 @@ MuJoCo — it performs three steps:
 | `update()` | read state_interfaces_, write command_interfaces_, lock-free trylock for diag publishers | allocations, blocking, exceptions across the RT boundary |
 | `write()` | stage frames into the bus library's outgoing queue | the actual CAN/EtherCAT syscall (that's the I/O thread's job) |
 
-The I/O thread in each hardware plugin (`humanoid_control_socketcan::SocketCanBus`,
+The I/O thread in each hardware plugin (`humanoid_drivers_socketcan::SocketCanBus`,
 `ethercat_driver_ros2`'s EtherLAB master thread) is **separate** from the
 controller-manager thread. RT-safety is preserved by making `read()` /
 `write()` allocation-free buffer swaps.
@@ -229,8 +229,8 @@ system:
 
 Concrete examples:
 
-- A Robstride bus-off → `humanoid_control_robstride` publishes `SafetyStatus{level=FAULT,
-  source="humanoid_control_robstride/can0", flags=BUS_OFF}` → `mode_manager` requests a
+- A Robstride bus-off → `humanoid_devices_robstride` publishes `SafetyStatus{level=FAULT,
+  source="humanoid_devices_robstride/can0", flags=BUS_OFF}` → `mode_manager` requests a
   STRICT switch to DAMPING. If DAMPING fails (e.g. command interfaces
   unavailable), `mode_manager` falls back to ZERO_TORQUE.
 - A `RemotePolicyController` whose Python publisher stalls for >100 ms
@@ -249,8 +249,8 @@ The shipping configuration is a **two-machine tethered split**. The
 same colcon workspace is installed (and built from the same pixi lock
 file) on both machines; each launch boots only the subset of nodes
 that belongs on its side. Single-machine sim/dev paths
-(`humanoid_control_bringup_lite/mujoco.launch.py`, `humanoid_control_bringup_lite/view_lite.launch.py`,
-`humanoid_control_bringup_lite/calibrate.launch.py`) are unaffected — they
+(`humanoid_bringup_lite/mujoco.launch.py`, `humanoid_bringup_lite/view_lite.launch.py`,
+`humanoid_bringup_lite/calibrate.launch.py`) are unaffected — they
 collapse both sides into one process tree.
 
 Launches come from two sibling repos: `humanoid_control` ships every
@@ -259,8 +259,8 @@ ships the piano-task-specific launches.
 
 | Side | Machine | Launch | What lives here |
 |---|---|---|---|
-| **Robot** | Onboard computer (RT kernel, wired tether) | `humanoid_control_bringup_lite/launch/real.launch.py` (humanoid_control) | `ros2_control_node`, `humanoid_control_robstride` / `humanoid_control_sito` hardware plugins, `joint_state_broadcaster`, the five FSM controllers (`zero_torque` / `damping` / `standby` / `rl_policy` / `remote_policy`), `mode_manager`, `joy_node`, `robot_state_publisher`, IMU driver |
-| **Host** | Operator workstation | `humanoid_control_bringup_lite/launch/viz.launch.py` (humanoid_control) | `viser_viz` *or* `rerun_viz` (selected by `viewer:=`) |
+| **Robot** | Onboard computer (RT kernel, wired tether) | `humanoid_bringup_lite/launch/real.launch.py` (humanoid_control) | `ros2_control_node`, `humanoid_devices_robstride` / `humanoid_devices_sito` hardware plugins, `joint_state_broadcaster`, the five FSM controllers (`zero_torque` / `damping` / `standby` / `rl_policy` / `remote_policy`), `mode_manager`, `joy_node`, `robot_state_publisher`, IMU driver |
+| **Host** | Operator workstation | `humanoid_bringup_lite/launch/viz.launch.py` (humanoid_control) | `viser_viz` *or* `rerun_viz` (selected by `viewer:=`) |
 | **Robot** | Onboard computer | `humanoid_control_policy/launch/lite_policy.launch.py` (humanoid_control) / `pianist_policy/launch/piano_policy.launch.py` (pianist_ros2) | Runs `prepare` (resolve ONNX, convert motion → `.mcap` + overlay) then loads `rl_policy_controller` into the local CM. Inference is in-process, so the `.onnx` / `.mcap` artifacts **and** the W&B / HF Hub / `onnxruntime` *prepare-time* deps live here. The RT path itself pulls none of them. |
 | **Robot** | Onboard computer | `pianist_policy/launch/midi_keyboard_driver.launch.py` (pianist_ros2) | USB-MIDI keyboard driver → `/piano/key_state` (`std_msgs/Float32MultiArray`); feeds the on-robot controller's `key_pressed` extern term locally (loopback, does **not** cross the tether). |
 

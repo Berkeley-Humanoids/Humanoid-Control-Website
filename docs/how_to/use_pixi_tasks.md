@@ -23,7 +23,7 @@ are workspace concerns; both `humanoid_control` and `pianist_ros2` consume them.
 
 :::tip[Why have aliases at all]
 A single `pixi run launch-mujoco` is shorter than
-`ros2 launch humanoid_control_bringup_lite mujoco.launch.py`, but the bigger win
+`ros2 launch humanoid_bringup_lite mujoco.launch.py`, but the bigger win
 is that **every alias runs inside the pixi-managed environment** —
 ROS 2 Jazzy, the colcon overlay, the visualiser PyPI deps, and the
 right `RCUTILS_CONSOLE_OUTPUT_FORMAT` are all sourced automatically.
@@ -38,10 +38,10 @@ explicit `pixi shell` first.
 | `pixi install` | (the pixi install itself) | Solve and materialise the conda + PyPI env into `humanoid_control_ws/.pixi/`. Run once per clone and after every `pixi.toml` change. |
 | `pixi shell` | (the pixi shell itself) | Drop into an interactive shell with the env active. Equivalent to `source install/setup.bash` over a sourced ROS 2 Jazzy install. |
 | `pixi run setup` | `vcs import --input src/humanoid_control/bar.repos src` | Clone the third-party `mujoco_*` + `ethercat_driver_ros2` sources listed in `bar.repos` into `src/`. |
-| `pixi run build` | `colcon build --symlink-install --packages-skip-regex 'ethercat.*\|humanoid_control_bringup_prime'` | Build the Lite path (skips the EtherCAT-linked Prime lane that has no conda recipe). |
-| `pixi run build-all` | `colcon build --symlink-install` | Same, but includes `humanoid_control_bringup_prime` and `ethercat_driver_ros2`. Requires `libethercat` installed on the host. |
+| `pixi run build` | `colcon build --symlink-install --packages-skip-regex 'ethercat.*\|humanoid_bringup_prime'` | Build the Lite path (skips the EtherCAT-linked Prime lane that has no conda recipe). |
+| `pixi run build-all` | `colcon build --symlink-install` | Same, but includes `humanoid_bringup_prime` and `ethercat_driver_ros2`. Requires `libethercat` installed on the host. |
 | `pixi run build-pkg <name>` | `colcon build --symlink-install --packages-select <name>` | Targeted rebuild of one package — fastest edit-loop while iterating. |
-| `pixi run test` | `colcon test --packages-skip-regex 'ethercat.*\|humanoid_control_bringup_prime\|mujoco_.*' --ctest-args -LE linter --event-handlers console_cohesion-` | Run humanoid_control-owned tests; skips the vendored `mujoco_*` packages and the CMake-registered linters (which RoboStack ships at newer versions than apt-jazzy, so they'd diverge from the industrial_ci-on-humanoid_control source of truth). |
+| `pixi run test` | `colcon test --packages-skip-regex 'ethercat.*\|humanoid_bringup_prime\|mujoco_.*' --ctest-args -LE linter --event-handlers console_cohesion-` | Run humanoid_control-owned tests; skips the vendored `mujoco_*` packages and the CMake-registered linters (which RoboStack ships at newer versions than apt-jazzy, so they'd diverge from the industrial_ci-on-humanoid_control source of truth). |
 | `pixi run test-lint` | Same as `test`, but keeps the linters. | Use when you specifically want to see uncrustify / cpplint output locally. |
 | `pixi run test-results` | `colcon test-result --verbose` | Print the per-package test summary after `pixi run test`. |
 | `pixi run clean` | `rm -rf build install log` | Wipe the colcon overlay (leaves the source tree and `.pixi/` env alone). Handy after a package rename. |
@@ -53,11 +53,11 @@ extra arguments after the alias are forwarded unchanged.
 
 | Alias | Equivalent | Side |
 |---|---|---|
-| `pixi run view` | `ros2 launch humanoid_control_bringup_lite view_lite.launch.py` | dev — URDF inspector |
-| `pixi run launch-mujoco` | `ros2 launch humanoid_control_bringup_lite mujoco.launch.py` | dev — full Lite controller stack in MuJoCo |
-| `pixi run launch-real` | `ros2 launch humanoid_control_bringup_lite real.launch.py` | robot — real-hardware Lite bringup |
-| `pixi run launch-viz` | `ros2 launch humanoid_control_bringup_lite viz.launch.py` | host — live URDF + joint-state viewer (`viewer:=viser\|rerun`) |
-| `pixi run calibrate` | `ros2 launch humanoid_control_bringup_lite calibrate.launch.py` | dev — calibration bringup; writes `calibration.yaml` on Ctrl+C |
+| `pixi run view` | `ros2 launch humanoid_bringup_lite view_lite.launch.py` | dev — URDF inspector |
+| `pixi run launch-mujoco` | `ros2 launch humanoid_bringup_lite mujoco.launch.py` | dev — full Lite controller stack in MuJoCo |
+| `pixi run launch-real` | `ros2 launch humanoid_bringup_lite real.launch.py` | robot — real-hardware Lite bringup |
+| `pixi run launch-viz` | `ros2 launch humanoid_bringup_lite viz.launch.py` | host — live URDF + joint-state viewer (`viewer:=viser\|rerun`) |
+| `pixi run calibrate` | `ros2 launch humanoid_bringup_lite calibrate.launch.py` | dev — calibration bringup; writes `calibration.yaml` on Ctrl+C |
 | `pixi run launch-policy` | `ros2 launch humanoid_control_policy lite_policy.launch.py` | robot — runs `prepare` (resolve ONNX, motion → `.mcap`) then loads the in-process `rl_policy_controller`. Pass `checkpoint_file:=` or `wandb_run_path:=`. |
 | `pixi run launch-policy-tracking` | `… lite_policy.launch.py` | robot — pass-through alias (back-compat shortcut) |
 
@@ -66,11 +66,11 @@ extra arguments after the alias are forwarded unchanged.
 | Alias | Equivalent |
 |---|---|
 | `pixi run hc …` | `bar …` (the `humanoid_control_cli` console script) |
-| `pixi run robstride-ping` | `ros2 run humanoid_control_robstride robstride_ping` |
-| `pixi run robstride-discover` | `ros2 run humanoid_control_robstride robstride_discover` |
-| `pixi run mit-slider-gui` | `ros2 run humanoid_control_robstride mit_slider_gui` |
-| `pixi run rerun-viz` | `ros2 run humanoid_control_bringup_lite rerun_viz` |
-| `pixi run viser-viz` | `ros2 run humanoid_control_bringup_lite viser_viz` |
+| `pixi run robstride-ping` | `ros2 run humanoid_devices_robstride robstride_ping` |
+| `pixi run robstride-discover` | `ros2 run humanoid_devices_robstride robstride_discover` |
+| `pixi run mit-slider-gui` | `ros2 run humanoid_devices_robstride mit_slider_gui` |
+| `pixi run rerun-viz` | `ros2 run humanoid_bringup_lite rerun_viz` |
+| `pixi run viser-viz` | `ros2 run humanoid_bringup_lite viser_viz` |
 
 ## Launch aliases — pianist_ros2
 

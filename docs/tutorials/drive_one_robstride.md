@@ -11,7 +11,7 @@ You'll wire one actuator to one CAN bus, bring up a minimal
 
 By the end you'll have hands-on familiarity with:
 - The Robstride wire protocol (via `robstride_ping`).
-- The `humanoid_control_robstride/RobstrideSystem` lifecycle.
+- The `humanoid_devices_robstride/RobstrideSystem` lifecycle.
 - The 5-interface MIT command surface.
 - How calibration plays into the command-to-encoder transform.
 
@@ -90,16 +90,16 @@ re-ping, `pos` should change correspondingly.
 
 ## Step 5 — Launch the single-motor test stack
 
-`humanoid_control_robstride` ships a self-contained launch for this:
+`humanoid_devices_robstride` ships a self-contained launch for this:
 
 ```bash
-ros2 launch humanoid_control_robstride single_robstride_gui.launch.py \
+ros2 launch humanoid_devices_robstride single_robstride_gui.launch.py \
     can_id:=<X>
 ```
 
 This brings up:
 - A 1-joint URDF describing your motor (`single_robstride_test`).
-- `ros2_control_node` loading `humanoid_control_robstride/RobstrideSystem`.
+- `ros2_control_node` loading `humanoid_devices_robstride/RobstrideSystem`.
 - `joint_state_broadcaster` (active).
 - `zero_torque_controller` (active — safe).
 - `forward_mit_controller` (loaded **inactive**).

@@ -79,7 +79,7 @@ side** runs it in-process in `RLPolicyController` (see
   lossy-network behaviour. This is the wire `humanoid_control_msgs_dds` targets.
 - **CAN / SocketCAN** — OpenArm and the RobStride bridge:
   `can0`/`slcan` → CAN frames → motor protocol → actuator. The basis for
-  `humanoid_control_socketcan` + `humanoid_control_robstride` / `humanoid_control_sito`.
+  `humanoid_drivers_socketcan` + `humanoid_devices_robstride` / `humanoid_devices_sito`.
 - **EtherCAT** — eRob SOEM/IGH and `legged_control2`'s SOEM interfaces:
   SOEM or IgH master, Distributed Clock, object-dictionary mapping,
   OP-state transitions, real-time kernel + CPU isolation. The basis for

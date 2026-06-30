@@ -141,8 +141,8 @@ xacro).
 entirely, the hardware plugin probably threw during `on_init` /
 `on_configure` and took the process down. Common causes:
 - URDF expansion failed (run `xacro <file>` directly to see the error).
-- `humanoid_control_robstride` was rebuilt with an ABI-incompatible bump but
-  the .so wasn't reinstalled. `colcon build --symlink-install --packages-select humanoid_control_robstride`.
+- `humanoid_devices_robstride` was rebuilt with an ABI-incompatible bump but
+  the .so wasn't reinstalled. `colcon build --symlink-install --packages-select humanoid_devices_robstride`.
 
 ## DDS discovery fails between launches and `ros2 topic ...`
 

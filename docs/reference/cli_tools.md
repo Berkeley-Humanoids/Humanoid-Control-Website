@@ -23,13 +23,13 @@ These are normally driven by their launch files, but are reachable via
 | Executable | Package | Repo | What it does |
 |---|---|---|---|
 | `hc` (unified CLI) | `humanoid_control_cli` | humanoid_control | Verb/noun entry point (`hc bus ping`, `hc bus discover`, `hc motor slider`, `hc viz rerun`, …). |
-| `robstride_ping` | `humanoid_control_robstride` | humanoid_control | Single-actuator probe (GetDeviceId / OperationStatus). Read-only. |
-| `robstride_discover` | `humanoid_control_robstride` | humanoid_control | Scan a CAN ID range, print every device that replies. Read-only. |
-| `mit_slider_gui` | `humanoid_control_robstride` | humanoid_control | Qt slider window publishing Float64MultiArray to a forward_command_controller. |
+| `robstride_ping` | `humanoid_devices_robstride` | humanoid_control | Single-actuator probe (GetDeviceId / OperationStatus). Read-only. |
+| `robstride_discover` | `humanoid_devices_robstride` | humanoid_control | Scan a CAN ID range, print every device that replies. Read-only. |
+| `mit_slider_gui` | `humanoid_devices_robstride` | humanoid_control | Qt slider window publishing Float64MultiArray to a forward_command_controller. |
 | `mode_manager` | `humanoid_controllers` | humanoid_control | The FSM orchestrator. Normally launched by bringup; sometimes useful to start manually. |
-| `calibrate_robot` | `humanoid_control_bringup_lite` | humanoid_control | Sample (min, max) per joint; write `calibration.yaml` on Ctrl+C. |
-| `rerun_viz` | `humanoid_control_bringup_lite` | humanoid_control | Native rerun viewer subscribed to `/robot_description` + `/lite/joint_states`. |
-| `viser_viz` | `humanoid_control_bringup_lite` | humanoid_control | Browser viewer (default port 8080). Same subscriptions. |
+| `calibrate_robot` | `humanoid_bringup_lite` | humanoid_control | Sample (min, max) per joint; write `calibration.yaml` on Ctrl+C. |
+| `rerun_viz` | `humanoid_bringup_lite` | humanoid_control | Native rerun viewer subscribed to `/robot_description` + `/lite/joint_states`. |
+| `viser_viz` | `humanoid_bringup_lite` | humanoid_control | Browser viewer (default port 8080). Same subscriptions. |
 | `prepare` | `humanoid_control_policy` | humanoid_control | Launch-time prep: resolve the ONNX (local / W&B), convert the LeRobot motion → `.mcap` bag, emit the `rl_policy_controller` overlay (used by `lite_policy.launch.py`). |
 | `prepare` | `pianist_policy` | pianist_ros2 | Piano counterpart of `humanoid_control_policy prepare` (song → key-state `.mcap`; used by `piano_policy.launch.py`). |
 | `piano_state_bridge` | `pianist_policy` | pianist_ros2 | Sim-side bridge — JointState piano keys → `std_msgs/Float32MultiArray` on `/piano/key_state`. |
@@ -40,8 +40,8 @@ These are normally driven by their launch files, but are reachable via
 ### `robstride_ping`
 
 ```bash
-ros2 run humanoid_control_robstride robstride_ping --iface can0 --id 11
-ros2 run humanoid_control_robstride robstride_ping --iface can0 --id 11 --read-status
+ros2 run humanoid_devices_robstride robstride_ping --iface can0 --id 11
+ros2 run humanoid_devices_robstride robstride_ping --iface can0 --id 11 --read-status
 
 # Equivalent via the unified CLI:
 hc bus ping --iface can0 --id 11
@@ -65,8 +65,8 @@ Used in: [Tutorials → Drive one Robstride](../tutorials/drive_one_robstride.md
 ### `robstride_discover`
 
 ```bash
-ros2 run humanoid_control_robstride robstride_discover --iface can0
-ros2 run humanoid_control_robstride robstride_discover --iface can0 \
+ros2 run humanoid_devices_robstride robstride_discover --iface can0
+ros2 run humanoid_devices_robstride robstride_discover --iface can0 \
     --scan-from 1 --scan-to 127 --per-id-wait-ms 8
 
 # Equivalent via the unified CLI:
@@ -94,8 +94,8 @@ Used in: [How-to → Probe CAN bus](../how_to/probe_can_bus.md),
 ### `mit_slider_gui`
 
 ```bash
-ros2 run humanoid_control_robstride mit_slider_gui
-ros2 run humanoid_control_robstride mit_slider_gui \
+ros2 run humanoid_devices_robstride mit_slider_gui
+ros2 run humanoid_devices_robstride mit_slider_gui \
     --joint actuator_1 \
     --command-topic /forward_mit_controller/commands \
     --position-range -3.14 3.14 \
@@ -150,8 +150,8 @@ Used in: [Concepts → Five-mode FSM](../concepts/five_mode_fsm.md),
 ### `calibrate_robot`
 
 ```bash
-ros2 run humanoid_control_bringup_lite calibrate_robot --output ./calibration.yaml
-ros2 run humanoid_control_bringup_lite calibrate_robot \
+ros2 run humanoid_bringup_lite calibrate_robot --output ./calibration.yaml
+ros2 run humanoid_bringup_lite calibrate_robot \
     --output ./calibration.yaml --sweep-threshold 0.3
 ```
 
@@ -170,14 +170,14 @@ Used in: [How-to → Calibrate the zero pose](../how_to/calibrate_zero_pose.md).
 ### `rerun_viz` / `viser_viz`
 
 The two live-viewer executables. **On the tethered deployment they
-are spawned via `ros2 launch humanoid_control_bringup_lite viz.launch.py` on the
+are spawned via `ros2 launch humanoid_bringup_lite viz.launch.py` on the
 operator workstation** (`viewer:=viser` by default; `viewer:=rerun`
 for the native window). Direct invocation is the single-machine
 sim/dev shortcut:
 
 ```bash
-ros2 run humanoid_control_bringup_lite rerun_viz       # native rerun window
-ros2 run humanoid_control_bringup_lite viser_viz       # browser viewer at http://0.0.0.0:8080
+ros2 run humanoid_bringup_lite rerun_viz       # native rerun window
+ros2 run humanoid_bringup_lite viser_viz       # browser viewer at http://0.0.0.0:8080
 ```
 
 Both read `/robot_description` (latched) once, subscribe to a

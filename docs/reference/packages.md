@@ -82,7 +82,7 @@ in `humanoid_control`** — it lives in the external, CAD-generated
 [`lite_description`](https://github.com/Berkeley-Humanoids/Lite-Description) repo
 (bar deploys the `lite_dummy` variant), pulled in via `bar.repos`. It is
 **asset-only**: the RViz inspector (`view_lite.launch.py` + `view_lite.rviz`) now
-lives in `humanoid_control_bringup_lite`. Prime's description likewise lives in the external [`prime_description`](https://github.com/T-K-233/Prime-Description) repo (bar deploys the `prime_dummy` variant, which also carries the hybrid eRob+Sito `<ros2_control>`).
+lives in `humanoid_bringup_lite`. Prime's description likewise lives in the external [`prime_description`](https://github.com/T-K-233/Prime-Description) repo (bar deploys the `prime_dummy` variant, which also carries the hybrid eRob+Sito `<ros2_control>`).
 
 Layout (Lite shown, inside the `lite_description` repo):
 
@@ -113,21 +113,21 @@ real-hardware path. Values mirror
 [Hardware specifications → Joint table](./hardware_specs.md#joint-table)
 for the canonical values.
 
-### `humanoid_control_drivers/humanoid_control_socketcan`
+### `humanoid_drivers/humanoid_drivers_socketcan`
 
 Reusable SocketCAN bus library. Owns the kernel-facing CAN socket lifecycle, a
 dedicated I/O thread, and lock-free buffers. Per-actuator-family plugins
-(`humanoid_control_robstride`, `humanoid_control_sito`) consume its synchronous `read_state()` /
+(`humanoid_devices_robstride`, `humanoid_devices_sito`) consume its synchronous `read_state()` /
 `write_command()` API.
 
 **Pattern reference**: mirrors the `soem_ros2` / `cleardrive_ros2` split from
 `legged_control2`.
 
-### `humanoid_control_devices/humanoid_control_robstride` and `humanoid_control_devices/humanoid_control_sito`
+### `humanoid_devices/humanoid_devices_robstride` and `humanoid_devices/humanoid_devices_sito`
 
 Per-actuator-family `hardware_interface::SystemInterface` plugins.
-`humanoid_control_robstride` for Lite (and Prime's auxiliary joints if added later);
-`humanoid_control_sito` for Prime's Sito side.
+`humanoid_devices_robstride` for Lite (and Prime's auxiliary joints if added later);
+`humanoid_devices_sito` for Prime's Sito side.
 
 Both:
 - Export the standard **3 state interfaces** (`<joint>/position`, `<joint>/velocity`, `<joint>/effort`).
@@ -135,7 +135,7 @@ Both:
 - Read `can_interface` (system-level) and per-joint `can_id` from URDF params.
 - Register via `pluginlib` against `hardware_interface::SystemInterface`.
 
-`humanoid_control_robstride` additionally:
+`humanoid_devices_robstride` additionally:
 
 - Reads per-joint **`model`** (one of `rs-00`..`rs-06` — drives the MIT-mode
   scaling limits), **`direction`** (±1), **`lower_limit`** / **`upper_limit`**
@@ -201,7 +201,7 @@ See [Controllers reference](controllers.md).
 The unified verb/noun CLI surface (`hc bus ping`, `hc bus discover`,
 `hc motor slider`, `hc viz rerun`, `hc viz viser`). An ament_python
 package that thin-wraps the underlying executables shipped by
-`humanoid_control_robstride` and `humanoid_control_bringup_lite`. Invoke as `bar <verb> <noun> …`
+`humanoid_devices_robstride` and `humanoid_bringup_lite`. Invoke as `bar <verb> <noun> …`
 once `install/setup.bash` is sourced. (`pixi run hc …` is the
 workspace-level shortcut — see
 [Workspace shortcuts with pixi](../how_to/use_pixi_tasks.md).)
@@ -240,7 +240,7 @@ cloned side-by-side under `humanoid_control_ws/src/`:
 | Package | Build type | What it ships |
 |---|---|---|
 | `pianist_assets` | ament_cmake | Piano MJCF (`piano.xml`) installed under `<share>/pianist_assets/mjcf/`. |
-| `pianist_bringup` | ament_cmake | `mujoco.launch.py` — composes a `_runtime_lite_piano.xml` scene next to `lite.xml` (so MuJoCo's `meshdir="../meshes/"` resolves), then delegates to `humanoid_control_bringup_lite/mujoco.launch.py` with `scene:=_runtime_lite_piano`. Also spawns `piano_state_bridge` so `/piano/key_state` exists on the sim path. |
+| `pianist_bringup` | ament_cmake | `mujoco.launch.py` — composes a `_runtime_lite_piano.xml` scene next to `lite.xml` (so MuJoCo's `meshdir="../meshes/"` resolves), then delegates to `humanoid_bringup_lite/mujoco.launch.py` with `scene:=_runtime_lite_piano`. Also spawns `piano_state_bridge` so `/piano/key_state` exists on the sim path. |
 | `pianist_msgs` | ament_cmake | Piano-task messages. No longer carries the key-state stream (that moved to a generic `std_msgs/Float32MultiArray` on `/piano/key_state`). |
 | `pianist_policy` | ament_python | `prepare` console script + `piano_policy.launch.py` (runs the piano `prepare`, then loads the in-process `rl_policy_controller` inactive — the piano task is selected by the ONNX `task_type='piano'`). Also ships the live key-state nodes `piano_state_bridge` (sim) and `midi_keyboard_driver` (real USB-MIDI), both publishing `std_msgs/Float32MultiArray` on `/piano/key_state`, with a matching `midi_keyboard_driver.launch.py`. |
 
@@ -252,9 +252,9 @@ and the song reference is baked into the `.mcap` the controller loads.
 New task families follow the same pattern: depend on `humanoid_control_msgs` +
 `humanoid_control_policy`, ship a `<task>_policy prepare` tool that emits the overlay
 + `.mcap`, and a bringup launch composing onto
-`humanoid_control_bringup_lite/mujoco.launch.py` or `…/real.launch.py`.
+`humanoid_bringup_lite/mujoco.launch.py` or `…/real.launch.py`.
 
-### `humanoid_control_bringup_lite` / `humanoid_control_bringup_prime`
+### `humanoid_bringup_lite` / `humanoid_bringup_prime`
 
 The "main()" of the project. Each robot ships **parallel launches**
 (franka_ros2-style per-robot bringup — there is no top-level
@@ -265,9 +265,9 @@ for which side runs which):
 
 | Launch | Deployment side | Hardware path | Selected xacro args |
 |---|---|---|---|
-| `real.launch.py` | Robot onboard computer | `humanoid_control_robstride` / `humanoid_control_sito` over SocketCAN (+ EtherCAT for Prime) | `use_fake_hardware:=false use_sim:=false` |
+| `real.launch.py` | Robot onboard computer | `humanoid_devices_robstride` / `humanoid_devices_sito` over SocketCAN (+ EtherCAT for Prime) | `use_fake_hardware:=false use_sim:=false` |
 | `mujoco.launch.py` | Single-machine sim/dev | `mujoco_ros2_control/MujocoSystem` inside `mujoco_sim` | `use_sim:=true` |
-| `calibrate.launch.py` | Single-machine (robot benchtop) | `humanoid_control_robstride` with identity calibration + `calibrate_robot` observer | `use_fake_hardware:=false use_sim:=false` |
+| `calibrate.launch.py` | Single-machine (robot benchtop) | `humanoid_devices_robstride` with identity calibration + `calibrate_robot` observer | `use_fake_hardware:=false use_sim:=false` |
 | `viz.launch.py` | Operator workstation (host) | DDS-consumer only; no controller_manager, no hardware | n/a — only subscribes |
 
 The first two launches:
@@ -281,26 +281,26 @@ The first two launches:
 5. Start `mode_manager` (when `enable_mode_manager:=true`).
 6. Start `joy_node` (when `enable_gamepad:=true`, which is the default).
 
-`humanoid_control_bringup_lite/config/sim_overrides.yaml` adds `use_sim_time:=true`
+`humanoid_bringup_lite/config/sim_overrides.yaml` adds `use_sim_time:=true`
 on top of `humanoid_control_lite_controllers.yaml` for the MuJoCo path.
-`humanoid_control_bringup_lite/config/calibration.yaml` is the per-physical-robot
-zero offset that `humanoid_control_robstride` applies at the bus boundary on the
-real path (regenerate via `ros2 launch humanoid_control_bringup_lite calibrate.launch.py` — see the
-[Launch args](launch_args.md#humanoid_control_bringup_litelaunchcalibratelaunchpy)
-page). `humanoid_control_bringup_lite/config/lite_hardware.yaml` is the per-machine
-bus + joint mapping consumed by xacro. `humanoid_control_bringup_prime/config/ethercat.yaml`
+`humanoid_bringup_lite/config/calibration.yaml` is the per-physical-robot
+zero offset that `humanoid_devices_robstride` applies at the bus boundary on the
+real path (regenerate via `ros2 launch humanoid_bringup_lite calibrate.launch.py` — see the
+[Launch args](launch_args.md#humanoid_bringup_litelaunchcalibratelaunchpy)
+page). `humanoid_bringup_lite/config/lite_hardware.yaml` is the per-machine
+bus + joint mapping consumed by xacro. `humanoid_bringup_prime/config/ethercat.yaml`
 configures the IgH master for Prime real-hardware bringup.
 
-`humanoid_control_bringup_lite` also ships three operator-facing Python nodes.
+`humanoid_bringup_lite` also ships three operator-facing Python nodes.
 The viewers are normally launched on the host side via
-`ros2 launch humanoid_control_bringup_lite viz.launch.py` (which wraps them and
+`ros2 launch humanoid_bringup_lite viz.launch.py` (which wraps them and
 selects between them via `viewer:=viser|rerun`); direct
-`ros2 run humanoid_control_bringup_lite rerun_viz` / `viser_viz` is the
+`ros2 run humanoid_bringup_lite rerun_viz` / `viser_viz` is the
 single-machine sim/dev shortcut:
 
 | Executable | Purpose |
 |---|---|
-| `calibrate_robot` | Calibration observer — subscribes `/robot_description` + `/lite/joint_states`, tracks per-joint (min, max), writes the homing-offset YAML on Ctrl+C. Driven by `calibrate.launch.py` (`ros2 launch humanoid_control_bringup_lite calibrate.launch.py`). |
+| `calibrate_robot` | Calibration observer — subscribes `/robot_description` + `/lite/joint_states`, tracks per-joint (min, max), writes the homing-offset YAML on Ctrl+C. Driven by `calibrate.launch.py` (`ros2 launch humanoid_bringup_lite calibrate.launch.py`). |
 | `rerun_viz` | Live URDF visualization in the **native** [rerun](https://rerun.io) viewer — auto-spawned subprocess by default, or `--connect host:port` to feed a remote one. Subscribes `/robot_description` (latched) and a `--joint-state-topic` (default `/lite/joint_states`); logs per-joint `Transform3D` to `/tf` at the tick rate. `rerun-sdk` ships in the workspace env. |
 | `viser_viz` | Same subscriptions and resolution pattern, rendering into a **browser** at `http://<host>:<port>` (default `0.0.0.0:8080`) via [viser](https://github.com/nerfstudio-project/viser). Friendlier for headless robot machines and SSH workflows. `viser`, `yourdfpy`, and `scipy` ship in the workspace env. |
 

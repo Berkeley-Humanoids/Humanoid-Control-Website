@@ -37,7 +37,7 @@ The xacro selects between three plugin paths based on these:
 ```
 use_sim:=true                        -> mujoco_ros2_control/MujocoSystem
 use_fake_hardware:=true (use_sim:=false) -> mock_components/GenericSystem
-(both false)                         -> humanoid_control_robstride/RobstrideSystem
+(both false)                         -> humanoid_devices_robstride/RobstrideSystem
 ```
 
 `use_sim` wins over `use_fake_hardware` — same precedence as the
@@ -51,7 +51,7 @@ blocks:
 ```xml
 <ros2_control name="LiteLeftArm" type="system">
   <hardware>
-    <plugin>humanoid_control_robstride/RobstrideSystem</plugin>
+    <plugin>humanoid_devices_robstride/RobstrideSystem</plugin>
     <param name="can_interface">${can_interface_left}</param>   <!-- can_interface_left arg -->
     <param name="calibration_file">${calibration_file}</param>
   </hardware>
@@ -60,7 +60,7 @@ blocks:
 
 <ros2_control name="LiteRightArm" type="system">
   <hardware>
-    <plugin>humanoid_control_robstride/RobstrideSystem</plugin>
+    <plugin>humanoid_devices_robstride/RobstrideSystem</plugin>
     <param name="can_interface">${can_interface_right}</param>  <!-- can_interface_right arg -->
     <param name="calibration_file">${calibration_file}</param>
   </hardware>

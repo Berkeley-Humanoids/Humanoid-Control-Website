@@ -66,7 +66,7 @@ projects. Three properties make it the right primitive:
 1. **One formula across silicon and sim.** Robstride firmware computes
    it on the motor MCU; `mujoco_ros2_control::MujocoSystem` computes
    the same expression and applies it via `qfrc_applied`; our
-   `humanoid_control_robstride/RobstrideSystem` encodes the five fields straight
+   `humanoid_devices_robstride/RobstrideSystem` encodes the five fields straight
    into a wire frame. A controller written against this surface runs
    unchanged on silicon, MuJoCo, and `mock_components`.
 2. **No mode-switching at the actuator.** "Switch from position control
@@ -120,8 +120,8 @@ kd        : 16 bits, unsigned, scaled to [0, kd_max]
 ```
 
 Limits are model-specific (rs-00..rs-06); see
-`humanoid_control_devices/humanoid_control_robstride/include/humanoid_control_robstride/robstride_protocol.hpp`.
-`humanoid_control_robstride/RobstrideSystem::write` does the scale-and-pack;
+`humanoid_devices/humanoid_devices_robstride/include/humanoid_devices_robstride/robstride_protocol.hpp`.
+`humanoid_devices_robstride/RobstrideSystem::write` does the scale-and-pack;
 `read` reverses it.
 
 ## See also
@@ -131,5 +131,5 @@ Limits are model-specific (rs-00..rs-06); see
 - [Reference → Hardware specs → MIT-mode command convention](../reference/hardware_specs.md#mit-mode-command-convention)
   — short-form repeat of the formula.
 - The protocol header in
-  [`humanoid_control_robstride/robstride_protocol.hpp`](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_control_devices/humanoid_control_robstride/include/humanoid_control_robstride/robstride_protocol.hpp)
+  [`humanoid_devices_robstride/robstride_protocol.hpp`](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_devices/humanoid_devices_robstride/include/humanoid_devices_robstride/robstride_protocol.hpp)
   is the source-of-truth for the wire encoding.

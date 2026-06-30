@@ -36,7 +36,7 @@ Easiest: pass `enable_mode_manager:=false` so `mode_manager` isn't
 spawned at all:
 
 ```bash
-ros2 launch humanoid_control_bringup_lite real.launch.py enable_mode_manager:=false
+ros2 launch humanoid_bringup_lite real.launch.py enable_mode_manager:=false
 ```
 
 Now `zero_torque_controller` is active (the spawner set it active),

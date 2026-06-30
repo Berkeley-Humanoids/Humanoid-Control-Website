@@ -95,7 +95,7 @@ In the **bringup** terminal (inside `pixi shell`), start MuJoCo:
 
 ```bash
 cd humanoid_control_ws && pixi shell
-ros2 launch humanoid_control_bringup_lite mujoco.launch.py
+ros2 launch humanoid_bringup_lite mujoco.launch.py
 ```
 
 Wait for `zero_torque_controller` to come active. (For real hardware,
@@ -173,7 +173,7 @@ PD mode encodes the same gravity term as a **position offset**
 (`K=PD_POSITION_KP`, `D=PD_VELOCITY_KD`). The arm feels stiffer and
 self-centering rather than free-floating. Both publish in
 `LITE_ARM_JOINTS` order (the `arm_joints` list in
-`humanoid_control_bringup_lite/config/lite_hardware.yaml`); `RemotePolicyController`
+`humanoid_bringup_lite/config/lite_hardware.yaml`); `RemotePolicyController`
 rejects a joint-order mismatch.
 
 :::tip[No bringup, no robot]

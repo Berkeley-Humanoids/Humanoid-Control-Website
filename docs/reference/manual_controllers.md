@@ -49,7 +49,7 @@ length must match `interface_names`'s length; each element goes
 straight to the matching command interface in order.
 
 The single-actuator bringup
-(`humanoid_control_robstride/single_robstride_gui.launch.py`) is the canonical
+(`humanoid_devices_robstride/single_robstride_gui.launch.py`) is the canonical
 example.
 
 ## `joint_trajectory_controller` (stock ros2_controllers)

@@ -20,7 +20,7 @@ any pose.
 - USB-to-CAN adapters plugged into the workstation. Both arms' buses
   are visible at `can0` and `can1` (typical) or whatever the host
   assigned — `ip -br link show type can` to confirm.
-- A pre-existing `humanoid_control_bringup_lite/config/calibration.yaml` for this
+- A pre-existing `humanoid_bringup_lite/config/calibration.yaml` for this
   physical robot. The bundled file works for the development robot;
   if you're on a different unit, [calibrate first](./calibrate_zero_pose.md).
 - Robot **power is on** at the wall, but motors can be in any pose.
@@ -66,7 +66,7 @@ warnings**, the actuators aren't powered — see
 ## Step 3 — Launch the bringup
 
 ```bash
-ros2 launch humanoid_control_bringup_lite real.launch.py
+ros2 launch humanoid_bringup_lite real.launch.py
 ```
 
 Default args: `mode:=arms hardware_config:=<bundled lite_hardware.yaml>
@@ -82,7 +82,7 @@ keyboardless lab box to use the `/humanoid_control/mode/*` services instead.
 
 `real.launch.py` boots the **onboard-computer side** of the tethered
 deployment split: hardware plugins, FSM controllers, `mode_manager`,
-gamepad. Visualisers (`ros2 launch humanoid_control_bringup_lite viz.launch.py`)
+gamepad. Visualisers (`ros2 launch humanoid_bringup_lite viz.launch.py`)
 and policy runners (`ros2 launch humanoid_control_policy lite_policy.launch.py …`)
 live on the operator workstation — matching `ROS_DOMAIN_ID` is enough
 for them to see each other. See
@@ -91,8 +91,8 @@ for them to see each other. See
 Watch the launch logs for:
 
 ```
-[ros2_control_node-1] Loaded hardware 'LiteLeftArm'  from plugin 'humanoid_control_robstride/RobstrideSystem'
-[ros2_control_node-1] Loaded hardware 'LiteRightArm' from plugin 'humanoid_control_robstride/RobstrideSystem'
+[ros2_control_node-1] Loaded hardware 'LiteLeftArm'  from plugin 'humanoid_devices_robstride/RobstrideSystem'
+[ros2_control_node-1] Loaded hardware 'LiteRightArm' from plugin 'humanoid_devices_robstride/RobstrideSystem'
 
 [ros2_control_node-1] SocketCanBus opened on 'can0'
 [ros2_control_node-1] SocketCanBus opened on 'can1'
@@ -125,7 +125,7 @@ ros2 topic echo --once /lite/joint_states | head -5
 # header / 14 names / real-looking positions (NOT all 0.0 — that'd mean motors un-Enabled)
 
 ros2 topic echo --once /safety_status
-# level: 0    flags: 0    source: humanoid_control_robstride/can0  (then a second one for can1)
+# level: 0    flags: 0    source: humanoid_devices_robstride/can0  (then a second one for can1)
 ```
 
 The "all 0.0 positions" signal is the most useful early-warning: it
