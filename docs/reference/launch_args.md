@@ -1,6 +1,6 @@
 # Launch args
 
-Every humanoid_control bringup follows the same vocabulary. Each robot ships **two
+Every Humanoid Control bringup follows the same vocabulary. Each robot ships **two
 parallel launches** — `real.launch.py` for silicon, `mujoco.launch.py` for
 MuJoCo physics. Operators pick the *launch file* rather than flipping a
 `use_fake_hardware` flag on a single one. The xacro still accepts
@@ -9,7 +9,7 @@ bundled launch enables that path.
 
 Launches live in two repos:
 
-- `humanoid_control` ships the Lite + Prime control-plane bringups (`humanoid_bringup_lite`,
+- `Humanoid Control` ships the Lite + Prime control-plane bringups (`humanoid_bringup_lite`,
   `humanoid_bringup_prime`), the URDF inspector (`humanoid_bringup_lite`),
   and the policy prepare-and-load launches (`humanoid_control_policy`).
 - `pianist_ros2` ships piano-task-specific launches: scene composition

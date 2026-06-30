@@ -1,11 +1,11 @@
 ---
-title: Talk to humanoid_control from Python
+title: Talk to Humanoid Control from Python
 ---
 
-# Talk to humanoid_control from Python
+# Talk to Humanoid Control from Python
 
 You have a host-side Python process — a gravity-comp runner, a VLA / manipulation
-policy, a data tool — that needs to exchange messages with a running `humanoid_control`
+policy, a data tool — that needs to exchange messages with a running `Humanoid Control`
 bringup, but you **don't** want `rclpy`, a colcon overlay, or
 `--system-site-packages` in that environment. This is the **Tier-3** path: a
 pure-pip process that joins the same DDS network the ROS nodes use.
@@ -101,7 +101,7 @@ lite-sdk2-control enp2s0 disable          # zero-torque burst, then exit
 
 ## Changing a message
 
-Messages live in `humanoid_control`, not in the SDK. Edit `humanoid_control_msgs/msg/*.msg`, run
+Messages live in `Humanoid Control`, not in the SDK. Edit `humanoid_control_msgs/msg/*.msg`, run
 `pixi run gen-dds` to regenerate `humanoid_control_msgs_dds`, and the new/changed type flows
 through `lite_sdk2` automatically — there is no schema to mirror by hand. This is
 a [frozen-schema change](../concepts/frozen_schemas.md#how-to-change-a-frozen-schema);

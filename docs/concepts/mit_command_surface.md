@@ -4,7 +4,7 @@ title: MIT command surface
 
 # MIT command surface
 
-Every joint in humanoid_control — Robstride, Sito, MujocoSystem, mock — exposes the
+Every joint in Humanoid Control — Robstride, Sito, MujocoSystem, mock — exposes the
 same **5 command interfaces** and **3 state interfaces**. This page
 explains what those interfaces mean, how they combine into a single
 torque, and why the same convention is used across silicon and

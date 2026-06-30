@@ -17,7 +17,7 @@ it into one environment and one repository creates dependency conflicts
 (CUDA versions, PyTorch wheels vs. the ROS conda packages), build-system
 mismatches (colcon vs. uv), and release-cadence mismatches.
 
-`humanoid_control` separates code by **what it needs to talk to**, not by language
+`Humanoid Control` separates code by **what it needs to talk to**, not by language
 or topic:
 
 | | **Tier 1 — ROS native** | **Tier 2 — workspace tooling** | **Tier 3 — separate project** |
@@ -39,7 +39,7 @@ follows: a process with no ROS deps participating in the robot's DDS
 network.
 
 The catch with "just speak DDS directly" is usually that you have to
-hand-mirror the message types, and they drift. `humanoid_control` avoids that by
+hand-mirror the message types, and they drift. `Humanoid Control` avoids that by
 **generating** them:
 
 - [`humanoid_control_msgs_dds`](../reference/packages.md) generates wire-compatible
@@ -121,7 +121,7 @@ The repository layout is a deliberate split:
   environment and tooling — `pixi.toml`, `pixi.lock`, `.gitattributes`
   (which marks `pixi.lock` as generated), `canup.sh`, and the task
   definitions — and **gitignores all of `src/`** (keeping a `.gitkeep`).
-- **First-party code lives in the `humanoid_control` monorepo.** All the `humanoid_control_*`
+- **First-party code lives in the `Humanoid Control` monorepo.** All the `humanoid_control_*`
   packages are co-developed and released together, so they share one repo
   (its own git history) checked out under `src/humanoid_control/`, rather than the
   strict `ros2/ros2` one-repo-per-package convention. The piano task is
@@ -132,7 +132,7 @@ The repository layout is a deliberate split:
   `src/`. Pin to commit SHAs for releases.
 
 This keeps the *environment* history (`humanoid_control_ws` / `pixi.lock`) on a separate
-track from the *code* history (`humanoid_control`), while still letting `humanoid_control`
+track from the *code* history (`Humanoid Control`), while still letting `Humanoid Control`
 be tagged and reused on its own.
 
 ### The reproducibility chain
@@ -147,7 +147,7 @@ pixi run setup      # vcs import third-party deps into src/
 pixi run build      # colcon build
 ```
 
-`pixi.lock` pins the environment; the `humanoid_control` / `pianist_ros2`
+`pixi.lock` pins the environment; the `Humanoid Control` / `pianist_ros2`
 checkouts pin the first-party tree; `bar.repos` pins the third-party tree.
 Together they reproduce the workspace bit-for-bit.
 
@@ -157,6 +157,6 @@ Together they reproduce the workspace bit-for-bit.
   setup.
 - [Workspace shortcuts with pixi](../how_to/use_pixi_tasks.md) — what each
   `pixi run …` alias does.
-- [Talk to humanoid_control from Python](../how_to/talk_to_humanoid_control_from_python.md)
+- [Talk to Humanoid Control from Python](../how_to/talk_to_humanoid_control_from_python.md)
   — building a Tier-3 client over DDS.
 - [Packages reference](../reference/packages.md) — what each package ships.

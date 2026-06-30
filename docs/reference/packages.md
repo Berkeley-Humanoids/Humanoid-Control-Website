@@ -11,11 +11,11 @@ cloned side-by-side under `humanoid_control_ws/src/`:
   task-specific code.
 - **[`T-K-233/pianist_ros2`](https://github.com/T-K-233/pianist_ros2)** —
   4 packages implementing the **piano playing** task on top of
-  `humanoid_control`: piano MJCF assets, a scene-composition launch, the
+  `Humanoid Control`: piano MJCF assets, a scene-composition launch, the
   piano-specific messages, and a `pianist_policy` package shipping the
   piano `prepare` tool + live key-state nodes.
 
-The split is deliberate. `humanoid_control` is robot/control infrastructure
+The split is deliberate. `Humanoid Control` is robot/control infrastructure
 that every task reuses; `pianist_ros2` is the first concrete task
 following the pattern. New task families (locomotion-task, dexterous
 grasping, etc.) follow the same shape — a sibling repo depending on
@@ -28,7 +28,7 @@ The rest of this page walks each package in turn. The
 [`pianist_ros2` packages](#task-specific-packages-live-in-sibling-repos)
 get their own section near the bottom.
 
-## Per-package details (humanoid_control)
+## Per-package details (Humanoid Control)
 
 ### `humanoid_control_common`
 
@@ -73,12 +73,12 @@ wire conventions only** — no participant/transport.
 | Generated types | `MITCommand`, `ControlMode`, `SafetyStatus`, `StandbyState` + borrowed `std_msgs/Header`, `builtin_interfaces/Time`, `sensor_msgs/JointState` |
 
 The `lite_sdk2` SDK builds its publisher/subscriber layer on top. See
-[Talk to humanoid_control from Python](../how_to/talk_to_humanoid_control_from_python.md).
+[Talk to Humanoid Control from Python](../how_to/talk_to_humanoid_control_from_python.md).
 
 ### `lite_description` / `prime_description` (external)
 
 URDF / xacro / meshes / `<ros2_control>` blocks. **Lite's description is no longer
-in `humanoid_control`** — it lives in the external, CAD-generated
+in `Humanoid Control`** — it lives in the external, CAD-generated
 [`lite_description`](https://github.com/Berkeley-Humanoids/Lite-Description) repo
 (bar deploys the `lite_dummy` variant), pulled in via `bar.repos`. It is
 **asset-only**: the RViz inspector (`view_lite.launch.py` + `view_lite.rviz`) now
@@ -232,7 +232,7 @@ the `prepare` CLI args, and the dataset-resolution order.
 
 ### Task-specific packages live in sibling repos
 
-`humanoid_control` deliberately does not carry task-specific code. The piano
+`Humanoid Control` deliberately does not carry task-specific code. The piano
 playing task lives in
 [**`T-K-233/pianist_ros2`**](https://github.com/T-K-233/pianist_ros2),
 cloned side-by-side under `humanoid_control_ws/src/`:

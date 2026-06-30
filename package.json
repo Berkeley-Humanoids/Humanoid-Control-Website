@@ -2,7 +2,7 @@
   "name": "humanoid-control-website",
   "version": "0.0.1",
   "private": true,
-  "description": "Documentation site for humanoid_control — the humanoid_control humanoid low-level control stack.",
+  "description": "Documentation site for Humanoid Control — the Humanoid Control humanoid low-level control stack.",
   "license": "BSD-3-Clause",
   "scripts": {
     "docusaurus": "docusaurus",

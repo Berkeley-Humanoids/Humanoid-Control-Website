@@ -199,7 +199,7 @@ raw CycloneDDS, no `rclpy`); next it is VLA / manipulation. Such a client
 does not hand-write the message types: [`humanoid_control_msgs_dds`](../reference/packages.md#humanoid_control_msgs_dds)
 generates wire-compatible `cyclonedds` types from `humanoid_control_msgs/msg/*.msg`, and
 the `lite_sdk2` SDK wraps them in a publisher/subscriber layer — see
-[Talk to humanoid_control from Python](../how_to/talk_to_humanoid_control_from_python.md).
+[Talk to Humanoid Control from Python](../how_to/talk_to_humanoid_control_from_python.md).
 These are System 1/2: slower, deliberative, and tolerant of the latency the
 DDS hop adds.
 
@@ -253,15 +253,15 @@ that belongs on its side. Single-machine sim/dev paths
 `humanoid_bringup_lite/calibrate.launch.py`) are unaffected — they
 collapse both sides into one process tree.
 
-Launches come from two sibling repos: `humanoid_control` ships every
+Launches come from two sibling repos: `Humanoid Control` ships every
 Lite/Prime control-plane and tracking-policy launch; `pianist_ros2`
 ships the piano-task-specific launches.
 
 | Side | Machine | Launch | What lives here |
 |---|---|---|---|
-| **Robot** | Onboard computer (RT kernel, wired tether) | `humanoid_bringup_lite/launch/real.launch.py` (humanoid_control) | `ros2_control_node`, `humanoid_devices_robstride` / `humanoid_devices_sito` hardware plugins, `joint_state_broadcaster`, the five FSM controllers (`zero_torque` / `damping` / `standby` / `rl_policy` / `remote_policy`), `mode_manager`, `joy_node`, `robot_state_publisher`, IMU driver |
-| **Host** | Operator workstation | `humanoid_bringup_lite/launch/viz.launch.py` (humanoid_control) | `viser_viz` *or* `rerun_viz` (selected by `viewer:=`) |
-| **Robot** | Onboard computer | `humanoid_control_policy/launch/lite_policy.launch.py` (humanoid_control) / `pianist_policy/launch/piano_policy.launch.py` (pianist_ros2) | Runs `prepare` (resolve ONNX, convert motion → `.mcap` + overlay) then loads `rl_policy_controller` into the local CM. Inference is in-process, so the `.onnx` / `.mcap` artifacts **and** the W&B / HF Hub / `onnxruntime` *prepare-time* deps live here. The RT path itself pulls none of them. |
+| **Robot** | Onboard computer (RT kernel, wired tether) | `humanoid_bringup_lite/launch/real.launch.py` (Humanoid Control) | `ros2_control_node`, `humanoid_devices_robstride` / `humanoid_devices_sito` hardware plugins, `joint_state_broadcaster`, the five FSM controllers (`zero_torque` / `damping` / `standby` / `rl_policy` / `remote_policy`), `mode_manager`, `joy_node`, `robot_state_publisher`, IMU driver |
+| **Host** | Operator workstation | `humanoid_bringup_lite/launch/viz.launch.py` (Humanoid Control) | `viser_viz` *or* `rerun_viz` (selected by `viewer:=`) |
+| **Robot** | Onboard computer | `humanoid_control_policy/launch/lite_policy.launch.py` (Humanoid Control) / `pianist_policy/launch/piano_policy.launch.py` (pianist_ros2) | Runs `prepare` (resolve ONNX, convert motion → `.mcap` + overlay) then loads `rl_policy_controller` into the local CM. Inference is in-process, so the `.onnx` / `.mcap` artifacts **and** the W&B / HF Hub / `onnxruntime` *prepare-time* deps live here. The RT path itself pulls none of them. |
 | **Robot** | Onboard computer | `pianist_policy/launch/midi_keyboard_driver.launch.py` (pianist_ros2) | USB-MIDI keyboard driver → `/piano/key_state` (`std_msgs/Float32MultiArray`); feeds the on-robot controller's `key_pressed` extern term locally (loopback, does **not** cross the tether). |
 
 :::tip[The deployment trade the in-process move makes]

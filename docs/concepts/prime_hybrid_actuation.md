@@ -4,7 +4,7 @@ title: Prime hybrid actuation
 
 # Prime hybrid actuation
 
-humanoid_control Prime is the bimanual humanoid. The **waist is dropped** this version
+Humanoid Control Prime is the bimanual humanoid. The **waist is dropped** this version
 (rigid torso, no waist drives), leaving **14 actuated DoF** — 7 per arm.
 What makes Prime different from Lite is that those 14 joints live on **two
 different buses, driven by two different actuator families**, yet present a

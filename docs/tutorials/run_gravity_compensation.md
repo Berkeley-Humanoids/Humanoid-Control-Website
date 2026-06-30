@@ -14,7 +14,7 @@ gravity-compensation loop that reads joint states and publishes
 and the difference between the torque-mode and PD-mode gravity loops.
 
 This is the worked, end-to-end companion to
-[How-to → Talk to humanoid_control from Python](../how_to/talk_to_humanoid_control_from_python.md):
+[How-to → Talk to Humanoid Control from Python](../how_to/talk_to_humanoid_control_from_python.md):
 that page is the recipe, this is the lesson.
 
 ## Time + materials
@@ -37,7 +37,7 @@ thing that touches the command interfaces; the external loop just feeds
 it `MITCommand`s:
 
 ```
-   host-side process (pure pip, no rclpy)        humanoid_control bringup (System 0, RT)
+   host-side process (pure pip, no rclpy)        Humanoid Control bringup (System 0, RT)
    ┌───────────────────────────────┐            ┌──────────────────────────────┐
    │ run_ros2_torque.py            │            │ joint_state_broadcaster       │
    │   each tick @ COMMAND_HZ:     │  rt/lite/  │   publishes /lite/joint_states│
@@ -86,7 +86,7 @@ the three rmw conventions — the `rt/` topic prefix, the
 `pkg::msg::dds_::Name_` type-name mangling, and RELIABLE/KEEP_LAST QoS —
 so `cyclonedds-python` pairs directly with `rmw_cyclonedds_cpp` *or*
 `rmw_fastrtps_cpp` on the bringup. See
-[How-to → Talk to humanoid_control from Python](../how_to/talk_to_humanoid_control_from_python.md).
+[How-to → Talk to Humanoid Control from Python](../how_to/talk_to_humanoid_control_from_python.md).
 :::
 
 ## Step 2 — Bring up the stack
@@ -203,7 +203,7 @@ Then Ctrl-C the runner, then the bringup launch.
 
 | Skill | Page where it's documented in detail |
 |---|---|
-| The Tier-3 external-client (no-`rclpy`) DDS path | [How-to → Talk to humanoid_control from Python](../how_to/talk_to_humanoid_control_from_python.md) |
+| The Tier-3 external-client (no-`rclpy`) DDS path | [How-to → Talk to Humanoid Control from Python](../how_to/talk_to_humanoid_control_from_python.md) |
 | `lite_sdk2` / `humanoid_control_msgs_dds` topic + QoS registry | [Reference → Packages](../reference/packages.md#humanoid_control_msgs_dds) |
 | The REMOTE mode + `start_remote` transition | [Concepts → Five-mode FSM](../concepts/five_mode_fsm.md) |
 | `RemotePolicyController` and the MIT command write | [Reference → Controllers](../reference/controllers.md) |

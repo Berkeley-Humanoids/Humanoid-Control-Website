@@ -4,8 +4,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 // https://docusaurus.io/docs/api/docusaurus-config
 const config: Config = {
-  title: 'humanoid_control',
-  tagline: 'humanoid_control low-level control stack',
+  title: 'Humanoid Control',
+  tagline: 'Humanoid Control low-level control stack',
   favicon: 'img/logo.svg',
 
   // Production URL for GitHub Pages project site.
@@ -50,9 +50,9 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'humanoid_control',
+      title: 'Humanoid Control',
       logo: {
-        alt: 'humanoid_control logo',
+        alt: 'Humanoid Control logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -100,7 +100,7 @@ const config: Config = {
           title: 'Project',
           items: [
             {
-              label: 'humanoid_control on GitHub',
+              label: 'Humanoid Control on GitHub',
               href: 'https://github.com/Berkeley-Humanoids/humanoid_control',
             },
             {

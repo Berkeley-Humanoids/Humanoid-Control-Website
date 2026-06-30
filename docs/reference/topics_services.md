@@ -4,7 +4,7 @@ title: Topics & services
 
 # Topics & services
 
-Index of the ROS topics and services that `humanoid_control` publishes,
+Index of the ROS topics and services that `Humanoid Control` publishes,
 subscribes, or serves. Use this page to find "who publishes X" or
 "what topic carries Y".
 
@@ -44,7 +44,7 @@ standard ROS infrastructure topics:
 - `/parameter_events`, `/rosout`
 - `~/get_parameters`, `~/set_parameters`, etc. (per node)
 
-These are conventional ROS — not specific to `humanoid_control`. Mentioned
+These are conventional ROS — not specific to `Humanoid Control`. Mentioned
 here so `ros2 topic list` output isn't confusing.
 
 ## Services

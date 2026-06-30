@@ -1,13 +1,13 @@
 # Introduction
 
-`humanoid_control` is the unified low-level control stack for the **Berkeley Architecture
-Research (humanoid_control)** humanoid robots. It runs on **ROS 2 Jazzy under PREEMPT_RT**
+`Humanoid Control` is the unified low-level control stack for the **Berkeley Architecture
+Research (Humanoid Control)** humanoid robots. It runs on **ROS 2 Jazzy under PREEMPT_RT**
 (shipped via the [RoboStack](https://robostack.github.io) conda channel and
 pixi, no system-wide ROS install required) and targets two robots with **as
 much shared code as possible**.
 
 Task-specific packages (piano playing, etc.) ship from sibling repos
-that depend on `humanoid_control` — see [Packages reference](../reference/packages.md)
+that depend on `Humanoid Control` — see [Packages reference](../reference/packages.md)
 for the split. Throughout the rest of the docs, runtime commands are
 shown in canonical `ros2 launch …` / `ros2 run …` form; if you prefer
 shorter aliases, the workspace also ships a `pixi run …` shortcut
@@ -35,7 +35,7 @@ hardware-by-hardware axis: separate plugins for each actuator family, separate
 launch files per task, separate observation pipelines for sim vs. silicon. The
 result is N × M code paths, where N is robots and M is tasks.
 
-`humanoid_control` factors the axes orthogonally:
+`Humanoid Control` factors the axes orthogonally:
 
 | Axis | Where the variation lives |
 |---|---|

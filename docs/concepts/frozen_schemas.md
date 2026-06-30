@@ -4,7 +4,7 @@ title: Frozen schemas
 
 # Frozen schemas
 
-A few things in `humanoid_control` are described as **frozen**. This page
+A few things in `Humanoid Control` are described as **frozen**. This page
 explains which ones, why, and what to do when you want to change them.
 
 ![Frozen schemas and their consumers](/img/diagrams/concepts__frozen_schemas__01.svg)
