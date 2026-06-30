@@ -19,7 +19,7 @@ Every command on this page runs inside `pixi shell` (one-time per
 terminal, sources ROS 2 Jazzy + the workspace overlay):
 
 ```sh
-cd bar_ws && pixi shell
+cd humanoid_control_ws && pixi shell
 ```
 
 Stay in that shell for the rest of the lesson. If you ever want
@@ -35,7 +35,7 @@ The simplest possible launch: `robot_state_publisher` + a
 the kinematic chain.
 
 ```sh
-ros2 launch bar_bringup_lite view_lite.launch.py
+ros2 launch humanoid_control_bringup_lite view_lite.launch.py
 ```
 
 What you'll see:
@@ -66,7 +66,7 @@ hosted inside `mujoco_sim`, all five mode-FSM controllers loaded, the
 the Robstride firmware computes on silicon.
 
 ```sh
-ros2 launch bar_bringup_lite mujoco.launch.py
+ros2 launch humanoid_control_bringup_lite mujoco.launch.py
 ```
 
 A **MuJoCo viewer window** opens with the Lite humanoid at zero pose.
@@ -89,11 +89,11 @@ Expected output (give or take):
 
 ```
 joint_state_broadcaster   joint_state_broadcaster/JointStateBroadcaster   active
-zero_torque_controller    bar/ZeroTorqueController                        active
-damping_controller        bar/DampingController                           inactive
-standby_controller        bar/StandbyController                           inactive
-rl_policy_controller      bar/RLPolicyController                          inactive
-remote_policy_controller  bar/RemotePolicyController                      inactive
+zero_torque_controller    humanoid_control/ZeroTorqueController                        active
+damping_controller        humanoid_control/DampingController                           inactive
+standby_controller        humanoid_control/StandbyController                           inactive
+rl_policy_controller      humanoid_control/RLPolicyController                          inactive
+remote_policy_controller  humanoid_control/RemotePolicyController                      inactive
 ```
 
 ### What just happened
@@ -142,13 +142,13 @@ ros2 topic echo --once /control_mode
 
 :::tip["See it move"]
 Two interchangeable live visualizers ride on `/lite/joint_states` +
-`/robot_description`, both shipped by `bar_bringup_lite`. On the
+`/robot_description`, both shipped by `humanoid_control_bringup_lite`. On the
 tethered deployment they live on the **operator workstation** (host
 side of the tether), spawned by `viz.launch.py`:
 
 ```sh
-ros2 launch bar_bringup_lite viz.launch.py                  # viser, http://localhost:8080
-ros2 launch bar_bringup_lite viz.launch.py viewer:=rerun    # native rerun window
+ros2 launch humanoid_control_bringup_lite viz.launch.py                  # viser, http://localhost:8080
+ros2 launch humanoid_control_bringup_lite viz.launch.py viewer:=rerun    # native rerun window
 ```
 
 For a single-machine MuJoCo run, the standalone shortcuts work too —
@@ -156,8 +156,8 @@ they auto-discover `/robot_description` and the joint-state topic on
 the local domain:
 
 ```sh
-ros2 run bar_bringup_lite viser_viz
-ros2 run bar_bringup_lite rerun_viz
+ros2 run humanoid_control_bringup_lite viser_viz
+ros2 run humanoid_control_bringup_lite rerun_viz
 ```
 
 Visualiser dependencies (`rerun-sdk`, `viser`, `yourdfpy`, `scipy`)
@@ -185,8 +185,8 @@ Verify:
 
 ```sh
 ros2 control list_controllers
-# damping_controller        bar/DampingController                           active
-# zero_torque_controller    bar/ZeroTorqueController                        inactive
+# damping_controller        humanoid_control/DampingController                           active
+# zero_torque_controller    humanoid_control/ZeroTorqueController                        inactive
 ```
 
 :::tip[Why DAMPING is the "compliant fail-safe"]
@@ -227,7 +227,7 @@ Four moving pieces, all worth recognising for the rest of the docs:
 |---|---|
 | **URDF** (`lite_description`) | Kinematic + dynamic description. Same file across mock / sim / real — the `<ros2_control>` `<plugin>` is the only difference. |
 | **`controller_manager`** | Hosts the hardware plugin + every controller. The "tick loop" of the system. Update rate 50 Hz here. |
-| **Mode-FSM controllers** (`bar_controllers`) | Five plugins, one active at a time. `zero_torque` (safe default), `damping` (compliant fail-safe), `standby` (interpolate to a pose), `rl_policy` (in-process ONNX — the System 0 learned-policy tier), `remote_policy` (System 1/2 external-command ingress for non-real-time `MITCommand` sources). |
+| **Mode-FSM controllers** (`humanoid_controllers`) | Five plugins, one active at a time. `zero_torque` (safe default), `damping` (compliant fail-safe), `standby` (interpolate to a pose), `rl_policy` (in-process ONNX — the System 0 learned-policy tier), `remote_policy` (System 1/2 external-command ingress for non-real-time `MITCommand` sources). |
 | **MuJoCo / Robstride** (the simulation / real backend) | Where the MIT torque actually gets applied. Same five command interfaces in both. |
 
 ## Next

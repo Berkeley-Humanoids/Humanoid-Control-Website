@@ -31,21 +31,21 @@ keep the workspace clear.
 - A `forward_command_controller/MultiInterfaceForwardCommandController`
   loaded in the controllers YAML, claiming all 5 MIT interfaces on
   the target joint. The single-actuator test config in
-  `bar_devices/bar_robstride/test/single_robstride_gui_controllers.yaml`
+  `humanoid_control_devices/humanoid_control_robstride/test/single_robstride_gui_controllers.yaml`
   is the canonical example.
 
 ## Step 1 — Launch the test stack
 
 For a single-motor sanity check there's a dedicated launch (inside
-the workspace env — `cd bar_ws && pixi shell`):
+the workspace env — `cd humanoid_control_ws && pixi shell`):
 
 ```bash
-ros2 launch bar_robstride single_robstride_gui.launch.py
+ros2 launch humanoid_control_robstride single_robstride_gui.launch.py
 ```
 
 The launch composes a `controller_manager` and starts the
 `mit_slider_gui` executable; if you want the slider GUI alone against
-an already-running controller manager, run `ros2 run bar_robstride
+an already-running controller manager, run `ros2 run humanoid_control_robstride
 mit_slider_gui` directly.
 
 This brings up:
@@ -57,7 +57,7 @@ This brings up:
 In a second terminal, open the slider GUI:
 
 ```bash
-bar motor slider
+hc motor slider
 ```
 
 A Qt window appears with five sliders (position, velocity, effort,
@@ -148,6 +148,6 @@ interactions.
 
 ## See also
 
-- The GUI source: [`bar_robstride/scripts/mit_slider_gui.py`](https://github.com/T-K-233/bar_ros2/blob/main/bar_devices/bar_robstride/scripts/mit_slider_gui.py).
+- The GUI source: [`humanoid_control_robstride/scripts/mit_slider_gui.py`](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_control_devices/humanoid_control_robstride/scripts/mit_slider_gui.py).
 - [Concepts → MIT command surface](../concepts/mit_command_surface.md) — what each slider does.
 - [Switch controllers without the FSM](./switch_controllers_manually.md).

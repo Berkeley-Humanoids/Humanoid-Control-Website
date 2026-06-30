@@ -1,9 +1,9 @@
 # Reference map
 
 A survey of the open robot low-level control ecosystem we studied while
-designing `bar_ros2`. It is **descriptive**, not prescriptive: each entry
+designing `humanoid_control`. It is **descriptive**, not prescriptive: each entry
 records *what the reference is* and *the role it played in our study*, so a
-contributor can go read the primary source. Where `bar_ros2` made a
+contributor can go read the primary source. Where `humanoid_control` made a
 specific design choice, the rationale lives in the
 [Concepts](../concepts/index.md) pages — this page is the map, not the
 decision log.
@@ -22,7 +22,7 @@ layering is remarkably consistent (see [Common layering](#common-layering-patter
 | ROS 2 — Quality of Service | [https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Quality-of-Service-Settings.html](https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Quality-of-Service-Settings.html) | History/depth/reliability/durability/deadline/liveliness — why control vs. logging traffic want different profiles. |
 | ROS 2 — Executors | [https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Executors.html](https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Executors.html) | Callback scheduling and its interaction with control-loop timing and data freshness. |
 | ROS 2 — Real-time programming demo | [https://docs.ros.org/en/jazzy/Tutorials/Demos/Real-Time-Programming.html](https://docs.ros.org/en/jazzy/Tutorials/Demos/Real-Time-Programming.html) | The "what not to do in the RT path" list: page faults, dynamic allocation, blocking sync; `mlockall`, latency measurement. |
-| ros2_control — Getting started | [https://control.ros.org/jazzy/doc/getting_started/getting_started.html](https://control.ros.org/jazzy/doc/getting_started/getting_started.html) | The core architecture `bar_ros2` is built on: controller manager, resource manager, controllers, hardware components. |
+| ros2_control — Getting started | [https://control.ros.org/jazzy/doc/getting_started/getting_started.html](https://control.ros.org/jazzy/doc/getting_started/getting_started.html) | The core architecture `humanoid_control` is built on: controller manager, resource manager, controllers, hardware components. |
 | ROS 2 code style | [https://docs.ros.org/en/rolling/The-ROS2-Project/Contributing/Code-Style-Language-Versions.html](https://docs.ros.org/en/rolling/The-ROS2-Project/Contributing/Code-Style-Language-Versions.html) · [REP-8](https://ros.org/reps/rep-0008.html) | The style floor for our C++ / Python packages. |
 
 ### ros2_control in one paragraph
@@ -66,7 +66,7 @@ This is exactly the spine described in
 | instinct_onboard | [https://github.com/project-instinct/instinct_onboard](https://github.com/project-instinct/instinct_onboard) | Onboard inference (Unitree G1, Jetson Orin NX) with **ONNX Runtime CPU/GPU auto-dispatch** and MCAP logging — reference for our in-process ONNX path. |
 | legged_control template controller | [https://github.com/qiayuanl/legged_template_controller](https://github.com/qiayuanl/legged_template_controller) | Minimal legged-RL controller skeleton. |
 
-These map onto `bar_ros2` as: the **training side** (BeyondMimic,
+These map onto `humanoid_control` as: the **training side** (BeyondMimic,
 `pianist-tracking-mj`) produces a self-describing ONNX; the **deployment
 side** runs it in-process in `RLPolicyController` (see
 [Tracking policy](../tutorials/tracking_policy.md) and
@@ -76,10 +76,10 @@ side** runs it in-process in `RLPolicyController` (see
 
 - **DDS** — ROS 2 core comms and Unitree SDK2 both ride CycloneDDS.
   Concerns: QoS selection, message compatibility, NIC binding, discovery,
-  lossy-network behaviour. This is the wire `bar_msgs_dds` targets.
+  lossy-network behaviour. This is the wire `humanoid_control_msgs_dds` targets.
 - **CAN / SocketCAN** — OpenArm and the RobStride bridge:
   `can0`/`slcan` → CAN frames → motor protocol → actuator. The basis for
-  `bar_socketcan` + `bar_robstride` / `bar_sito`.
+  `humanoid_control_socketcan` + `humanoid_control_robstride` / `humanoid_control_sito`.
 - **EtherCAT** — eRob SOEM/IGH and `legged_control2`'s SOEM interfaces:
   SOEM or IgH master, Distributed Clock, object-dictionary mapping,
   OP-state transitions, real-time kernel + CPU isolation. The basis for
@@ -99,7 +99,7 @@ Transport / bus        DDS · SocketCAN · CANopen-like protocol · EtherCAT (SO
 Actuator / embedded    motor firmware · drive state machine · encoder/current loop · safety · calibration
 ```
 
-`bar_ros2` lands its own packages on this stack as described in
+`humanoid_control` lands its own packages on this stack as described in
 [Architecture](../concepts/architecture.md) and the
 [Packages reference](./packages.md).
 

@@ -13,12 +13,12 @@ runbook.
 Open a shell into the workspace so `ros2` is on PATH:
 
 ```bash
-cd bar_ws
+cd humanoid_control_ws
 pixi shell
 ros2 topic echo /safety_status
 # level: 2     # 0=OK, 1=WARNING, 2=FAULT, 3=CRITICAL
 # flags: 8     # bitmask
-# source: bar_robstride/can0
+# source: humanoid_control_robstride/can0
 # message: ""
 ```
 
@@ -60,7 +60,7 @@ from.
 
 **Recovery**:
 1. Confirm motors are powered:
-   `bar bus discover --iface canN`
+   `hc bus discover --iface canN`
 2. Confirm wiring — wiggle the daisy chain connector at each motor.
 3. Restart the launch. `RX_TIMEOUT` clears on `on_activate` so a
    relaunch is sufficient; no power-cycle needed.
@@ -90,7 +90,7 @@ generic flag.
    every joint.
 2. If the fault persists, single-step diagnosis:
    ```bash
-   bar bus ping --iface canN --id <X> --read-status
+   hc bus ping --iface canN --id <X> --read-status
    ```
    The reply's `fault_bits` byte tells you which specific sub-cause:
    - `bit 0` = overtemperature (also raised as `FLAG_TEMPERATURE_LIMIT`)
@@ -145,8 +145,8 @@ walks back up:
 #  R1+A           →   LOCOMOTION
 #  R1+B           →   REMOTE
 # Or via the std_srvs/Trigger services:
-ros2 service call /bar/mode/load          std_srvs/srv/Trigger
-ros2 service call /bar/mode/start_remote  std_srvs/srv/Trigger
+ros2 service call /humanoid_control/mode/load          std_srvs/srv/Trigger
+ros2 service call /humanoid_control/mode/start_remote  std_srvs/srv/Trigger
 ```
 
 Or via `ros2 control switch_controllers` directly.

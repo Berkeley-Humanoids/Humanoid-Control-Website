@@ -11,7 +11,7 @@ You'll wire one actuator to one CAN bus, bring up a minimal
 
 By the end you'll have hands-on familiarity with:
 - The Robstride wire protocol (via `robstride_ping`).
-- The `bar_robstride/RobstrideSystem` lifecycle.
+- The `humanoid_control_robstride/RobstrideSystem` lifecycle.
 - The 5-interface MIT command surface.
 - How calibration plays into the command-to-encoder transform.
 
@@ -55,9 +55,9 @@ ip -d link show can0
 ## Step 3 — Ping the motor
 
 ```bash
-cd bar_ws
+cd humanoid_control_ws
 pixi shell
-bar bus ping --iface can0 --id <X>
+hc bus ping --iface can0 --id <X>
 # TX  GetDeviceId  id=...
 # RX  GetDeviceId reply  device=<X>  uid=...
 # stats: rx=1 tx=1 rx_dropped=0 tx_failed=0
@@ -68,7 +68,7 @@ on new Robstride; vendor tool to reassign). If you don't know the
 ID, scan:
 
 ```bash
-bar bus discover --iface can0 --scan-to 127
+hc bus discover --iface can0 --scan-to 127
 ```
 
 A clean reply confirms three things: the bus is up, the motor is
@@ -78,7 +78,7 @@ Enabled the motor yet — `GetDeviceId` is read-only.
 ## Step 4 — Read live status (still read-only)
 
 ```bash
-bar bus ping --iface can0 --id <X> --read-status
+hc bus ping --iface can0 --id <X> --read-status
 # RX  OperationStatus  device=<X>  pos= ... rad  vel= 0.0  torque= 0.0  temp= ... C  fault_bits=0x00
 ```
 
@@ -90,16 +90,16 @@ re-ping, `pos` should change correspondingly.
 
 ## Step 5 — Launch the single-motor test stack
 
-`bar_robstride` ships a self-contained launch for this:
+`humanoid_control_robstride` ships a self-contained launch for this:
 
 ```bash
-ros2 launch bar_robstride single_robstride_gui.launch.py \
+ros2 launch humanoid_control_robstride single_robstride_gui.launch.py \
     can_id:=<X>
 ```
 
 This brings up:
 - A 1-joint URDF describing your motor (`single_robstride_test`).
-- `ros2_control_node` loading `bar_robstride/RobstrideSystem`.
+- `ros2_control_node` loading `humanoid_control_robstride/RobstrideSystem`.
 - `joint_state_broadcaster` (active).
 - `zero_torque_controller` (active — safe).
 - `forward_mit_controller` (loaded **inactive**).
@@ -107,7 +107,7 @@ This brings up:
 Verify in a second terminal:
 
 ```bash
-cd bar_ws
+cd humanoid_control_ws
 pixi shell
 ros2 topic echo --once /joint_states
 # name: ['actuator_1']
@@ -121,7 +121,7 @@ ros2 control list_controllers
 ## Step 6 — Slider GUI
 
 ```bash
-bar motor slider
+hc motor slider
 ```
 
 A Qt window with five sliders (position, velocity, effort, kp, kd)
@@ -184,8 +184,8 @@ sudo ip link add dev vcan0 type vcan
 sudo ip link set up vcan0
 ```
 
-Then run the same `bar bus ping --iface vcan0` and
-`bar bus discover --iface vcan0`. You won't get replies
+Then run the same `hc bus ping --iface vcan0` and
+`hc bus discover --iface vcan0`. You won't get replies
 (nothing's listening), but the TX path lights up and you can see
 your own frames with `candump vcan0`. The single-motor launch will
 boot but report `RX_TIMEOUT` in `/safety_status`.

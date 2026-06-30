@@ -11,7 +11,7 @@ parameters. The cheat sheet you print or pin to a second monitor.
 Every link points at the page with the full details.
 
 All commands below assume you've entered the workspace env (e.g.
-`cd bar_ws && pixi shell`) so `ros2`, `colcon`, and the BAR console
+`cd humanoid_control_ws && pixi shell`) so `ros2`, `colcon`, and the BAR console
 scripts are on `PATH`. Looking for one-line aliases (`pixi run
 launch-mujoco`, `pixi run build`, …)?  See
 [How-to → Workspace shortcuts with pixi](../how_to/use_pixi_tasks.md).
@@ -22,9 +22,9 @@ Grouped by which machine they run on. See
 [Concepts → Architecture → Deployment topology](../concepts/architecture.md#deployment-topology)
 for the split rationale. Launches come from two repos:
 
-- `bar_ros2` ships the Lite + Prime bringups (`bar_bringup_lite`,
-  `bar_bringup_prime`), the description viewer (`bar_bringup_lite`),
-  and the policy prepare-and-load launch (`bar_policy`).
+- `humanoid_control` ships the Lite + Prime bringups (`humanoid_control_bringup_lite`,
+  `humanoid_control_bringup_prime`), the description viewer (`humanoid_control_bringup_lite`),
+  and the policy prepare-and-load launch (`humanoid_control_policy`).
 - `pianist_ros2` ships the piano-task launches (`pianist_bringup`
   composes a Lite + piano MuJoCo scene; `pianist_policy` prepares the
   piano policy and runs the USB-MIDI driver).
@@ -33,32 +33,32 @@ for the split rationale. Launches come from two repos:
 
 ```bash
 # Drag joints in RViz — no controllers, no physics
-ros2 launch bar_bringup_lite view_lite.launch.py
+ros2 launch humanoid_control_bringup_lite view_lite.launch.py
 
 # MuJoCo sim — full controller stack, /clock from sim time
-ros2 launch bar_bringup_lite mujoco.launch.py
+ros2 launch humanoid_control_bringup_lite mujoco.launch.py
 
 # Lite + piano in MuJoCo (pianist_bringup composes the scene, spawns piano_state_bridge)
 ros2 launch pianist_bringup mujoco.launch.py
 
 # Calibrate the zero pose (writes ./calibration.yaml on Ctrl+C)
-ros2 launch bar_bringup_lite calibrate.launch.py
+ros2 launch humanoid_control_bringup_lite calibrate.launch.py
 ```
 
 ### Robot onboard computer (real bringup)
 
 ```bash
 # Real Lite — both buses, two ros2_control blocks, gamepad + mode_manager
-ros2 launch bar_bringup_lite real.launch.py
+ros2 launch humanoid_control_bringup_lite real.launch.py
 
-# Real Lite, no gamepad attached (drive the FSM via /bar/mode/* services)
-ros2 launch bar_bringup_lite real.launch.py enable_gamepad:=false
+# Real Lite, no gamepad attached (drive the FSM via /humanoid_control/mode/* services)
+ros2 launch humanoid_control_bringup_lite real.launch.py enable_gamepad:=false
 
 # Gamepad enumerated as js1 (multiple controllers plugged into the Jetson)
-ros2 launch bar_bringup_lite real.launch.py joy_dev:=/dev/input/js1
+ros2 launch humanoid_control_bringup_lite real.launch.py joy_dev:=/dev/input/js1
 
 # Real Lite, no FSM (raw debug / calibration)
-ros2 launch bar_bringup_lite real.launch.py enable_mode_manager:=false
+ros2 launch humanoid_control_bringup_lite real.launch.py enable_mode_manager:=false
 ```
 
 `real.launch.py` boots the real-time control plane only — visualisers
@@ -68,10 +68,10 @@ loaded on the robot below.
 ### Robot onboard computer (prepare + load a policy)
 
 ```bash
-# Prepare + load the in-process tracking policy (bar_ros2 → bar_policy):
+# Prepare + load the in-process tracking policy (humanoid_control → humanoid_control_policy):
 # runs `prepare` (ONNX → .mcap + overlay), then loads rl_policy_controller
 # inactive. START_LOCOMOTION (R1+A) activates it.
-ros2 launch bar_policy lite_policy.launch.py \
+ros2 launch humanoid_control_policy lite_policy.launch.py \
     wandb_run_path:=… wandb_checkpoint_name:=model.onnx
 
 # Piano policy (pianist_ros2 → pianist_policy); task picked by ONNX task_type
@@ -85,9 +85,9 @@ ros2 launch pianist_policy midi_keyboard_driver.launch.py
 ### Operator workstation (host side of the tether)
 
 ```bash
-# Live URDF + /lite/joint_states viewer (bar_bringup_lite)
-ros2 launch bar_bringup_lite viz.launch.py                  # viser, http://0.0.0.0:8080
-ros2 launch bar_bringup_lite viz.launch.py viewer:=rerun    # native rerun window
+# Live URDF + /lite/joint_states viewer (humanoid_control_bringup_lite)
+ros2 launch humanoid_control_bringup_lite viz.launch.py                  # viser, http://0.0.0.0:8080
+ros2 launch humanoid_control_bringup_lite viz.launch.py viewer:=rerun    # native rerun window
 ```
 
 Both machines must share `ROS_DOMAIN_ID`. Full surface:
@@ -109,24 +109,24 @@ ip -d link show can1
 
 ## Diagnostic CLIs
 
-These are the `bar` (bar_cli) verbs — equivalent `ros2 run bar_robstride …`
+These are the `hc` (humanoid_control_cli) verbs — equivalent `ros2 run humanoid_control_robstride …`
 invocations are listed in [CLI tools](./cli_tools.md).
 
 ```bash
 # Scan an ID range; read-only, no Enable
-bar bus discover --iface can0 --scan-to 32
-bar bus discover --iface can1 --scan-to 32
+hc bus discover --iface can0 --scan-to 32
+hc bus discover --iface can1 --scan-to 32
 
 # One-shot GetDeviceId / OperationStatus probe
-bar bus ping --iface can0 --id 11
+hc bus ping --iface can0 --id 11
 
 # Per-joint slider window (forward_command_controller frontend)
-bar motor slider
+hc motor slider
 
 # Live URDF + /lite/joint_states viewers (single-machine sim/dev shortcuts;
-# on the tethered host, prefer `ros2 launch bar_bringup_lite viz.launch.py`)
-bar viz viser                            # browser at :8080
-bar viz rerun                            # native rerun window
+# on the tethered host, prefer `ros2 launch humanoid_control_bringup_lite viz.launch.py`)
+hc viz viser                            # browser at :8080
+hc viz rerun                            # native rerun window
 ```
 
 ## Mode-FSM gamepad bindings (Xbox layout)
@@ -173,10 +173,10 @@ Always end a session with `zero_torque_controller` active before
 |---|---|---|---|
 | `/lite/joint_states` | `sensor_msgs/JointState` | 50 Hz real / 200 Hz sim | always (`joint_state_broadcaster`, remapped at bringup) |
 | `/imu/data` | `sensor_msgs/Imu` | sensor-rate | always; RELIABLE |
-| `/control_mode` | `bar_msgs/ControlMode` | 50 Hz | always (`mode_manager`) |
-| `/safety_status` | `bar_msgs/SafetyStatus` | on-change, latched | TRANSIENT_LOCAL; `source` field per bus |
-| `/standby_controller/state` | `bar_msgs/StandbyState` | active-only | TRANSIENT_LOCAL; watch for `is_finished:true` before R1+A |
-| `/remote_policy_controller/command` | `bar_msgs/MITCommand` | source rate | when a System 1/2 source (gravity-comp, VLA) feeds `remote_policy_controller` |
+| `/control_mode` | `humanoid_control_msgs/ControlMode` | 50 Hz | always (`mode_manager`) |
+| `/safety_status` | `humanoid_control_msgs/SafetyStatus` | on-change, latched | TRANSIENT_LOCAL; `source` field per bus |
+| `/standby_controller/state` | `humanoid_control_msgs/StandbyState` | active-only | TRANSIENT_LOCAL; watch for `is_finished:true` before R1+A |
+| `/remote_policy_controller/command` | `humanoid_control_msgs/MITCommand` | source rate | when a System 1/2 source (gravity-comp, VLA) feeds `remote_policy_controller` |
 | `/piano/key_state` | `std_msgs/Float32MultiArray` | sensor / sim rate | piano runs only (RELIABLE + KEEP_LAST(1)); live key state, in-process `key_pressed` term |
 | `/joy` | `sensor_msgs/Joy` | sensor-rate | when `enable_gamepad:=true` (default) |
 
@@ -196,26 +196,26 @@ ros2 topic echo --once /lite/joint_states
 ros2 topic echo --once /safety_status
 
 # Drive an FSM transition without a gamepad
-ros2 service call /bar/mode/damp std_srvs/srv/Trigger
-ros2 service call /bar/mode/load std_srvs/srv/Trigger
+ros2 service call /humanoid_control/mode/damp std_srvs/srv/Trigger
+ros2 service call /humanoid_control/mode/load std_srvs/srv/Trigger
 
 # Fake a System 1/2 MITCommand publish (when remote_policy_controller is active in MuJoCo)
 ros2 topic pub --once /remote_policy_controller/command \
-    bar_msgs/msg/MITCommand "{header: {stamp: now}, joint_names: [...], ...}"
+    humanoid_control_msgs/msg/MITCommand "{header: {stamp: now}, joint_names: [...], ...}"
 ```
 
 ## Services for FSM transitions
 
-`std_srvs/Trigger` services on `/bar/mode/*` mirror the gamepad
+`std_srvs/Trigger` services on `/humanoid_control/mode/*` mirror the gamepad
 intents — useful when there's no joystick attached.
 
 | Service | Effect |
 |---|---|
-| `/bar/mode/damp` | → DAMPING from any state |
-| `/bar/mode/load` | DAMPING → STANDBY |
-| `/bar/mode/start_remote` | STANDBY → REMOTE (gated on `is_finished`) |
-| `/bar/mode/start_locomotion` | STANDBY → LOCOMOTION (gated on `is_finished`) |
-| `/bar/mode/quit` | exit (only from ZERO_TORQUE or DAMPING) |
+| `/humanoid_control/mode/damp` | → DAMPING from any state |
+| `/humanoid_control/mode/load` | DAMPING → STANDBY |
+| `/humanoid_control/mode/start_remote` | STANDBY → REMOTE (gated on `is_finished`) |
+| `/humanoid_control/mode/start_locomotion` | STANDBY → LOCOMOTION (gated on `is_finished`) |
+| `/humanoid_control/mode/quit` | exit (only from ZERO_TORQUE or DAMPING) |
 
 ## The Lite joint table
 

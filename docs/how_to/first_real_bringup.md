@@ -15,12 +15,12 @@ any pose.
 
 ## Prerequisites
 
-- Workspace built (`colcon build --symlink-install` from `bar_ws/`,
+- Workspace built (`colcon build --symlink-install` from `humanoid_control_ws/`,
   inside `pixi shell`).
 - USB-to-CAN adapters plugged into the workstation. Both arms' buses
   are visible at `can0` and `can1` (typical) or whatever the host
   assigned — `ip -br link show type can` to confirm.
-- A pre-existing `bar_bringup_lite/config/calibration.yaml` for this
+- A pre-existing `humanoid_control_bringup_lite/config/calibration.yaml` for this
   physical robot. The bundled file works for the development robot;
   if you're on a different unit, [calibrate first](./calibrate_zero_pose.md).
 - Robot **power is on** at the wall, but motors can be in any pose.
@@ -49,12 +49,12 @@ acceptable; `BUS-OFF` means power-cycle the adapter.)
 A read-only scan before anything claims the bus:
 
 ```bash
-cd bar_ws
+cd humanoid_control_ws
 pixi shell
-bar bus discover --iface can0 --scan-to 32
+hc bus discover --iface can0 --scan-to 32
 # Expect 7 actuators at ids 11..17
 
-bar bus discover --iface can1 --scan-to 32
+hc bus discover --iface can1 --scan-to 32
 # Expect 7 actuators at ids 21..27
 ```
 
@@ -66,7 +66,7 @@ warnings**, the actuators aren't powered — see
 ## Step 3 — Launch the bringup
 
 ```bash
-ros2 launch bar_bringup_lite real.launch.py
+ros2 launch humanoid_control_bringup_lite real.launch.py
 ```
 
 Default args: `mode:=arms hardware_config:=<bundled lite_hardware.yaml>
@@ -78,12 +78,12 @@ development robot). The default `enable_gamepad:=true` hard-fails if
 the resolved `joy_dev` path is missing; the error message lists any
 other `/dev/input/js*` devices it can see so you can override with
 `joy_dev:=/dev/input/jsN`. Pass `enable_gamepad:=false` on a
-keyboardless lab box to use the `/bar/mode/*` services instead.
+keyboardless lab box to use the `/humanoid_control/mode/*` services instead.
 
 `real.launch.py` boots the **onboard-computer side** of the tethered
 deployment split: hardware plugins, FSM controllers, `mode_manager`,
-gamepad. Visualisers (`ros2 launch bar_bringup_lite viz.launch.py`)
-and policy runners (`ros2 launch bar_policy lite_policy.launch.py …`)
+gamepad. Visualisers (`ros2 launch humanoid_control_bringup_lite viz.launch.py`)
+and policy runners (`ros2 launch humanoid_control_policy lite_policy.launch.py …`)
 live on the operator workstation — matching `ROS_DOMAIN_ID` is enough
 for them to see each other. See
 [Concepts → Architecture → Deployment topology](../concepts/architecture.md#deployment-topology).
@@ -91,8 +91,8 @@ for them to see each other. See
 Watch the launch logs for:
 
 ```
-[ros2_control_node-1] Loaded hardware 'LiteLeftArm'  from plugin 'bar_robstride/RobstrideSystem'
-[ros2_control_node-1] Loaded hardware 'LiteRightArm' from plugin 'bar_robstride/RobstrideSystem'
+[ros2_control_node-1] Loaded hardware 'LiteLeftArm'  from plugin 'humanoid_control_robstride/RobstrideSystem'
+[ros2_control_node-1] Loaded hardware 'LiteRightArm' from plugin 'humanoid_control_robstride/RobstrideSystem'
 
 [ros2_control_node-1] SocketCanBus opened on 'can0'
 [ros2_control_node-1] SocketCanBus opened on 'can1'
@@ -110,7 +110,7 @@ holding zero torque — fully back-drivable by hand.
 ## Step 4 — Verify in a second terminal
 
 ```bash
-cd bar_ws
+cd humanoid_control_ws
 pixi shell
 
 # 14 joints reporting at the configured update rate
@@ -125,7 +125,7 @@ ros2 topic echo --once /lite/joint_states | head -5
 # header / 14 names / real-looking positions (NOT all 0.0 — that'd mean motors un-Enabled)
 
 ros2 topic echo --once /safety_status
-# level: 0    flags: 0    source: bar_robstride/can0  (then a second one for can1)
+# level: 0    flags: 0    source: humanoid_control_robstride/can0  (then a second one for can1)
 ```
 
 The "all 0.0 positions" signal is the most useful early-warning: it

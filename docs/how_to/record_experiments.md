@@ -45,7 +45,7 @@ ros2 bag record -s mcap -o tuning_$(date +%Y%m%d_%H%M%S) \
 ```
 
 For a System 1/2 ingress session (gravity-comp, VLA), also add the
-command topic `/remote_policy_controller/command` (`bar_msgs/MITCommand`).
+command topic `/remote_policy_controller/command` (`humanoid_control_msgs/MITCommand`).
 For piano runs, capture the live key state `/piano/key_state`
 (`std_msgs/Float32MultiArray`, 0/1 per key) — the source for offline
 F1 / precision / recall computed via `pianist_metrics` against the

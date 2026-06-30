@@ -34,7 +34,7 @@ ls /dev/input/js0
 Quick test that `joy_node` will be happy (inside `pixi shell`):
 
 ```bash
-cd bar_ws && pixi shell
+cd humanoid_control_ws && pixi shell
 ros2 run joy joy_node &
 ros2 topic echo --once /joy
 # Should print a Joy message with buttons[] and axes[] arrays.
@@ -47,7 +47,7 @@ If `joy_node` errors with permissions, your user isn't in the
 ## Step 1 — Launch with the gamepad
 
 ```bash
-ros2 launch bar_bringup_lite mujoco.launch.py
+ros2 launch humanoid_control_bringup_lite mujoco.launch.py
 # `enable_gamepad:=true` is already the default; the launch hard-fails
 # if no joystick is detected. Pass enable_gamepad:=false to bypass.
 ```
@@ -57,13 +57,13 @@ Two windows / processes come up:
 - `joy_node` reading `/dev/input/js0`.
 
 For an extra live URDF view, open a second terminal and run
-`ros2 run bar_bringup_lite rerun_viz` or
-`ros2 run bar_bringup_lite viser_viz`.
+`ros2 run humanoid_control_bringup_lite rerun_viz` or
+`ros2 run humanoid_control_bringup_lite viser_viz`.
 
 In a second terminal:
 
 ```bash
-cd bar_ws
+cd humanoid_control_ws
 pixi shell
 ros2 control list_controllers
 # zero_torque_controller       active
@@ -164,7 +164,7 @@ listening:
 
 ```bash
 ros2 topic pub --once /remote_policy_controller/command \
-    bar_msgs/msg/MITCommand \
+    humanoid_control_msgs/msg/MITCommand \
     "{header: {stamp: now},
       joint_names: ['left_shoulder_pitch', 'left_shoulder_roll', 'left_shoulder_yaw',
                     'left_elbow_pitch', 'left_wrist_yaw', 'left_wrist_roll', 'left_wrist_pitch',

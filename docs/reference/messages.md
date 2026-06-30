@@ -1,23 +1,23 @@
 # Messages
 
 Custom ROS 2 interfaces. **Frozen** once a trained policy depends on the
-schema (changing the layout forces retraining). `bar_msgs` ships four
+schema (changing the layout forces retraining). `humanoid_control_msgs` ships four
 messages. The live piano key state is **not** a custom message — it
 travels as a stock `std_msgs/Float32MultiArray` on `/piano/key_state`,
-which keeps `bar_controllers` free of any `pianist_msgs` dependency.
+which keeps `humanoid_controllers` free of any `pianist_msgs` dependency.
 
 :::note[Off-ROS consumers]
 Tier-3 (non-`rclpy`) clients get these types from
-[`bar_msgs_dds`](packages.md#bar_msgs_dds) — generated from the same `.msg`
+[`humanoid_control_msgs_dds`](packages.md#humanoid_control_msgs_dds) — generated from the same `.msg`
 and wire-compatible — usually via the `lite_sdk2` SDK. See
-[Talk to bar_ros2 from Python](../how_to/talk_to_bar_ros2_from_python.md).
+[Talk to humanoid_control from Python](../how_to/talk_to_humanoid_control_from_python.md).
 :::
 
 ## Topology
 
-![bar_msgs pub/sub topology](/img/diagrams/reference__messages__01.svg)
+![humanoid_control_msgs pub/sub topology](/img/diagrams/reference__messages__01.svg)
 
-## `bar_msgs/MITCommand`
+## `humanoid_control_msgs/MITCommand`
 
 The five-MIT-mode-interface command record. It is written **internally**
 by `RLPolicyController` each tick (in-process, never published), and it is
@@ -46,7 +46,7 @@ explicit**: a "position-only" command would still send `velocity=0`,
 re-creation fully reproducible.
 :::
 
-## `bar_msgs/ControlMode`
+## `humanoid_control_msgs/ControlMode`
 
 Mode-FSM telemetry, published by `mode_manager` at tick rate (50 Hz).
 
@@ -67,7 +67,7 @@ string status_message       # human-readable, may carry rejection reason
 The numeric `mode` field uses the explicit constants above. Consumers should
 match against the `uint8 <name> = <value>` defines, not hard-code integers.
 
-## `bar_msgs/StandbyState`
+## `humanoid_control_msgs/StandbyState`
 
 Published by `StandbyController` on `~/state` (which resolves to
 `/standby_controller/state`) with `TRANSIENT_LOCAL` (latched) QoS so a
@@ -84,7 +84,7 @@ bool is_finished          # true once final pose + final gains reached
 `mode_manager` gates the `START` intent (STANDBY → LOCOMOTION/REMOTE) on
 `is_finished == true`.
 
-## `bar_msgs/SafetyStatus`
+## `humanoid_control_msgs/SafetyStatus`
 
 Layered safety telemetry. Any hardware plugin or controller may publish; the
 `flags` bitmask is **plugin-specific**.
@@ -98,7 +98,7 @@ uint8 FAULT    = 2   # commands no longer guaranteed; transition recommended
 uint8 CRITICAL = 3   # immediate fault fallback required
 
 uint8 level
-string source       # e.g. "bar_robstride/can0", "rl_policy_controller"
+string source       # e.g. "humanoid_control_robstride/can0", "rl_policy_controller"
 uint32 flags        # plugin-specific bitmask
 string message
 ```

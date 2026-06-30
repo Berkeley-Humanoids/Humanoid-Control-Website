@@ -1,6 +1,6 @@
 # Calibrate the Prime arms (eRob + Sito)
 
-Per-physical-robot recipe: regenerate `bar_bringup_prime/config/prime_calibration.yaml`
+Per-physical-robot recipe: regenerate `humanoid_control_bringup_prime/config/prime_calibration.yaml`
 so each joint's encoder zero maps to the URDF's joint zero. One file holds all 14
 joints — the 10 eRob (ZeroErr, EtherCAT) arm joints and the 4 Sito (CAN) wrists — and
 the **same** `calibrate_erob` sweep tool calibrates both. Same idea as
@@ -71,9 +71,9 @@ The launch also spawns the `joint_state_broadcaster` (so `/prime/joint_states` f
 and the `calibrate_erob` tracker:
 
 ```bash
-ros2 launch bar_bringup_prime calibrate.launch.py backends:=ec \
+ros2 launch humanoid_control_bringup_prime calibrate.launch.py backends:=ec \
   output:=~/prime_calibration.yaml \
-  prior:=$(ros2 pkg prefix bar_bringup_prime)/share/bar_bringup_prime/config/prime_calibration.yaml
+  prior:=$(ros2 pkg prefix humanoid_control_bringup_prime)/share/humanoid_control_bringup_prime/config/prime_calibration.yaml
 ```
 
 `prior:=...` carries already-calibrated joints (the Sito wrists, or the other arm)
@@ -87,7 +87,7 @@ with a live readout.
 For each ring position, support the joint, then:
 
 ```bash
-ros2 run bar_bringup_prime erob_limp_joint <ring_pos>      # e.g. 4
+ros2 run humanoid_control_bringup_prime erob_limp_joint <ring_pos>      # e.g. 4
 ```
 
 The joint goes damped-limp (the read-back prints `Kp=0`, confirming the `0x2383` gate
@@ -102,7 +102,7 @@ joint with too small a sweep (skipped, prior kept) or `abs(homing_offset) > pi` 
 
 ## Step 3 — Apply and verify
 
-Copy the reviewed file over `bar_bringup_prime/config/prime_calibration.yaml`.
+Copy the reviewed file over `humanoid_control_bringup_prime/config/prime_calibration.yaml`.
 `real.launch.py` folds it into per-joint configs automatically at launch. To verify the
 sign end-to-end, fold it, re-launch, and move one joint to a known stop — at the stop,
 `/joint_states` should read that joint's URDF limit.
@@ -114,7 +114,7 @@ A good cross-check on a symmetric robot: the two arms' offsets should mirror eac
 
 The 4 Sito wrists (`left`/`right` `wrist_roll` + `wrist_pitch`) use the **same**
 `calibrate_erob` tool and the **same** `prime_calibration.yaml` — it discovers them from
-the `bar_sito/SitoSystem` block (by `can_id`) alongside the eRob. Two differences:
+the `humanoid_control_sito/SitoSystem` block (by `can_id`) alongside the eRob. Two differences:
 
 - **Limp is free.** A Sito is an MIT motor; with no command controller active its gains
   default to zero, so it is backdrivable out of the box — no gain-gate dance.
@@ -124,13 +124,13 @@ the `bar_sito/SitoSystem` block (by `can_id`) alongside the eRob. Two difference
   single-bus run still writes a complete 14-joint file.
 
 ```bash
-ros2 launch bar_bringup_prime calibrate.launch.py backends:=can \
+ros2 launch humanoid_control_bringup_prime calibrate.launch.py backends:=can \
   output:=~/prime_calibration.yaml \
-  prior:=$(ros2 pkg prefix bar_bringup_prime)/share/bar_bringup_prime/config/prime_calibration.yaml
+  prior:=$(ros2 pkg prefix humanoid_control_bringup_prime)/share/humanoid_control_bringup_prime/config/prime_calibration.yaml
 ```
 
 Hand-sweep each wrist to both stops (the live readout tracks them), Ctrl-C, review, copy
-over `prime_calibration.yaml`, and `colcon build --packages-select bar_bringup_prime`.
+over `prime_calibration.yaml`, and `colcon build --packages-select humanoid_control_bringup_prime`.
 Unlike the eRob, the Sito read `direction` **and** `homing_offset` straight from this
 file (`SitoSystem::load_calibration`) — so a flipped wrist is a one-line edit.
 
@@ -145,7 +145,7 @@ offset_new = offset + (lower + upper)
 
 For a symmetric joint (`lower = -upper`, e.g. the wrists) the offset is unchanged; for an
 asymmetric one (e.g. `shoulder_roll`, `elbow_pitch`) it shifts. Then
-`colcon build --packages-select bar_bringup_prime` — no source rebuild; the eRob fold and
+`colcon build --packages-select humanoid_control_bringup_prime` — no source rebuild; the eRob fold and
 `SitoSystem` both re-read the file at launch. This works for any joint, eRob or Sito.
 
 ## eRob bus-split (hardware-confirmed)

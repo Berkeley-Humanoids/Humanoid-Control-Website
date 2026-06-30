@@ -4,7 +4,7 @@ title: Frozen schemas
 
 # Frozen schemas
 
-A few things in `bar_ros2` are described as **frozen**. This page
+A few things in `humanoid_control` are described as **frozen**. This page
 explains which ones, why, and what to do when you want to change them.
 
 ![Frozen schemas and their consumers](/img/diagrams/concepts__frozen_schemas__01.svg)
@@ -27,7 +27,7 @@ specific surfaces are not.
 
 ### 1. Canonical joint order
 
-The order of joints in `bar_lite_controllers.yaml`'s `joints:` list
+The order of joints in `humanoid_control_lite_controllers.yaml`'s `joints:` list
 is canonical:
 
 ```yaml
@@ -57,7 +57,7 @@ work. Inserting or reordering is not safe. The Lite URDF supports
 this directly via `mode:=arms` (14 joints, default) and
 `mode:=arms_neck` (17 joints, requires neck silicon).
 
-### 2. `bar_msgs/MITCommand` fields
+### 2. `humanoid_control_msgs/MITCommand` fields
 
 The command schema the controllers write/consume — used internally by
 the in-process `RLPolicyController` and on the wire by any System 1/2
@@ -77,10 +77,10 @@ Five parallel arrays + names. The arrays are indexed in the same
 canonical joint order above. Adding a field breaks parsers; renaming
 a field breaks everything.
 
-Off-ROS (Tier-3) clients don't hand-mirror this struct: `bar_msgs_dds`
+Off-ROS (Tier-3) clients don't hand-mirror this struct: `humanoid_control_msgs_dds`
 **generates** the wire-compatible `cyclonedds` type from this `.msg` via
 `pixi run gen-dds`, so the wire form follows the schema automatically. That
-makes `bar_msgs_dds` one more frozen-schema consumer to regenerate on any
+makes `humanoid_control_msgs_dds` one more frozen-schema consumer to regenerate on any
 change (see [the change drill](#how-to-change-a-frozen-schema)).
 
 ### 3. The 5 MIT command interface names
@@ -95,9 +95,9 @@ These names are not arbitrary — they match
 `stiffness` to e.g. `kp` would break the binding against the sim
 plugin while leaving the silicon plugin happy — silent skew.
 
-### 4. The ONNX `custom_metadata_map` schema (`bar_policy`)
+### 4. The ONNX `custom_metadata_map` schema (`humanoid_control_policy`)
 
-`bar_policy/policy_metadata.py` parses 13 fields baked into every
+`humanoid_control_policy/policy_metadata.py` parses 13 fields baked into every
 trained `.onnx`:
 
 ```
@@ -131,7 +131,7 @@ position); removing them is not.
 To draw the contrast: most of the rest of the project is free to
 refactor.
 
-- **Per-joint default `K_p` / `K_d`** in `bar_lite_controllers.yaml`
+- **Per-joint default `K_p` / `K_d`** in `humanoid_control_lite_controllers.yaml`
   are tuning numbers, not schema. Change at will.
 - **CAN ids in the URDF** are wiring facts; if the physical robot
   changes, the URDF changes.
@@ -149,16 +149,16 @@ refactor.
 The drill, in order:
 
 1. **Write down what depends on it.** Every trained policy, every
-   subscriber, every rosbag from the past — and, for `bar_msgs`, the
-   generated `bar_msgs_dds` mirror that every Tier-3 (non-`rclpy`) client
+   subscriber, every rosbag from the past — and, for `humanoid_control_msgs`, the
+   generated `humanoid_control_msgs_dds` mirror that every Tier-3 (non-`rclpy`) client
    consumes via `lite_sdk2`.
 2. **Stage the change** — branch + commit + describe in the PR
    exactly which schemas move and why.
-3. **Bump a version**. For `bar_msgs`, that's the message's
+3. **Bump a version**. For `humanoid_control_msgs`, that's the message's
    `package.xml` version + a deprecation period (parallel old +
    new field, or a v2 message type, for at least one release).
 4. **Regenerate the Tier-3 mirror.** Run `pixi run gen-dds` to re-emit
-   `bar_msgs_dds/_generated.py` from the new `.msg`, and commit it. CI
+   `humanoid_control_msgs_dds/_generated.py` from the new `.msg`, and commit it. CI
    re-runs the emitter (`pixi run test-dds`) plus a CDR wire round-trip
    test, failing on an uncommitted diff or a changed field layout.
 5. **Retrain every trained policy** against the new schema.

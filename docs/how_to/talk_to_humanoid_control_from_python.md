@@ -1,19 +1,19 @@
 ---
-title: Talk to bar_ros2 from Python
+title: Talk to humanoid_control from Python
 ---
 
-# Talk to bar_ros2 from Python
+# Talk to humanoid_control from Python
 
 You have a host-side Python process — a gravity-comp runner, a VLA / manipulation
-policy, a data tool — that needs to exchange messages with a running `bar_ros2`
+policy, a data tool — that needs to exchange messages with a running `humanoid_control`
 bringup, but you **don't** want `rclpy`, a colcon overlay, or
 `--system-site-packages` in that environment. This is the **Tier-3** path: a
 pure-pip process that joins the same DDS network the ROS nodes use.
 
 You do not hand-write the message types. Two packages handle it:
 
-- **`bar_msgs_dds`** — `cyclonedds` `IdlStruct` types **generated** from
-  `bar_msgs/msg/*.msg` (see [Packages → `bar_msgs_dds`](../reference/packages.md#bar_msgs_dds)).
+- **`humanoid_control_msgs_dds`** — `cyclonedds` `IdlStruct` types **generated** from
+  `humanoid_control_msgs/msg/*.msg` (see [Packages → `humanoid_control_msgs_dds`](../reference/packages.md#humanoid_control_msgs_dds)).
   Wire-compatible with ROS 2: it bakes in the rmw type-name mangling
   (`pkg::msg::dds_::Name_`) and the `rt/` topic prefix.
 - **`lite_sdk2`** — a message-agnostic publisher/subscriber layer on top, with a
@@ -21,7 +21,7 @@ You do not hand-write the message types. Two packages handle it:
 
 ## 1. Add the dependency
 
-`lite_sdk2` pulls in `bar_msgs_dds` and `cyclonedds`:
+`lite_sdk2` pulls in `humanoid_control_msgs_dds` and `cyclonedds`:
 
 ```toml
 # pyproject.toml
@@ -101,8 +101,8 @@ lite-sdk2-control enp2s0 disable          # zero-torque burst, then exit
 
 ## Changing a message
 
-Messages live in `bar_ros2`, not in the SDK. Edit `bar_msgs/msg/*.msg`, run
-`pixi run gen-dds` to regenerate `bar_msgs_dds`, and the new/changed type flows
+Messages live in `humanoid_control`, not in the SDK. Edit `humanoid_control_msgs/msg/*.msg`, run
+`pixi run gen-dds` to regenerate `humanoid_control_msgs_dds`, and the new/changed type flows
 through `lite_sdk2` automatically — there is no schema to mirror by hand. This is
 a [frozen-schema change](../concepts/frozen_schemas.md#how-to-change-a-frozen-schema);
 follow the full drill if a trained policy depends on it.

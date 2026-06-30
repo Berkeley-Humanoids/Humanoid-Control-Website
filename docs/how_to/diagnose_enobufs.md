@@ -12,8 +12,8 @@ for finding and fixing the root cause.
 ## The symptom
 
 ```
-[bar_socketcan]: CAN write() returned -1 (errno=No buffer space available) for id=0x017FFF0B
-[bar_socketcan]: CAN write() returned -1 (errno=No buffer space available) for id=0x017FFF15
+[humanoid_control_socketcan]: CAN write() returned -1 (errno=No buffer space available) for id=0x017FFF0B
+[humanoid_control_socketcan]: CAN write() returned -1 (errno=No buffer space available) for id=0x017FFF15
 ...
 ```
 
@@ -21,11 +21,11 @@ Plus a `/safety_status` message with `FLAG_TX_QUEUE_OVERRUN` set
 (open a `pixi shell` first so `ros2` is on PATH):
 
 ```bash
-cd bar_ws && pixi shell
+cd humanoid_control_ws && pixi shell
 ros2 topic echo /safety_status
 # level: 2     # FAULT
 # flags: 4     # FLAG_TX_QUEUE_OVERRUN = 1 << 2
-# source: bar_robstride/can0
+# source: humanoid_control_robstride/can0
 ```
 
 ## Why it happens
@@ -52,12 +52,12 @@ each motor.
 
 ```bash
 # Quick read-only probe to confirm motors are responding
-bar bus discover --iface can0
-bar bus discover --iface can1
+hc bus discover --iface can0
+hc bus discover --iface can1
 # Should report 7 motors on each bus, no ENOBUFS warnings in the output.
 ```
 
-If `bar bus discover` itself reports `tx_dropped > 0`, motors are
+If `hc bus discover` itself reports `tx_dropped > 0`, motors are
 still off the bus. Don't proceed until that scan is clean.
 
 ## Step 2 — Check the kernel CAN state
@@ -126,7 +126,7 @@ and quiet afterwards, the Enable burst was the issue.
 
 If you've raised qdisc to 1000 and still hit ENOBUFS, the
 controller_manager might be writing too fast for the wire. Lower
-the update rate in `bar_lite_controllers.yaml`:
+the update rate in `humanoid_control_lite_controllers.yaml`:
 
 ```yaml
 controller_manager:
@@ -157,8 +157,8 @@ bottleneck. Either drop the rate or upgrade the adapter.
 
 ```
 ENOBUFS warnings observed
-├── bar bus discover reports 0 motors → motor power off → fix power, relaunch
-├── bar bus discover reports motors but ENOBUFS persists at activation only
+├── hc bus discover reports 0 motors → motor power off → fix power, relaunch
+├── hc bus discover reports motors but ENOBUFS persists at activation only
 │   └── Burst-on-Enable. Drop activate-time WriteParameter calls (already done
 │       in our plugin via write_firmware_limits=false default). If recurring,
 │       raise txqueuelen or stagger Enables.

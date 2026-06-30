@@ -4,7 +4,7 @@ title: Topics & services
 
 # Topics & services
 
-Index of the ROS topics and services that `bar_ros2` publishes,
+Index of the ROS topics and services that `humanoid_control` publishes,
 subscribes, or serves. Use this page to find "who publishes X" or
 "what topic carries Y".
 
@@ -24,16 +24,16 @@ subscribes, or serves. Use this page to find "who publishes X" or
 
 | Topic | Type | QoS | Publisher | When present |
 |---|---|---|---|---|
-| `/control_mode` | `bar_msgs/ControlMode` | RELIABLE depth 10 | `mode_manager` | When `enable_mode_manager:=true` (default for `real.launch.py` / `mujoco.launch.py`). 50 Hz. |
-| `/safety_status` | `bar_msgs/SafetyStatus` | RELIABLE TRANSIENT_LOCAL depth 1 | every hardware plugin | Per-bus (`bar_robstride/can0`, `bar_robstride/can1` for Lite). Published only on change. |
-| `/standby_controller/state` | `bar_msgs/StandbyState` | RELIABLE TRANSIENT_LOCAL depth 1 | `bar/StandbyController` (when active) | Carries `is_finished` — the gate for `START_*` intents. |
+| `/control_mode` | `humanoid_control_msgs/ControlMode` | RELIABLE depth 10 | `mode_manager` | When `enable_mode_manager:=true` (default for `real.launch.py` / `mujoco.launch.py`). 50 Hz. |
+| `/safety_status` | `humanoid_control_msgs/SafetyStatus` | RELIABLE TRANSIENT_LOCAL depth 1 | every hardware plugin | Per-bus (`humanoid_control_robstride/can0`, `humanoid_control_robstride/can1` for Lite). Published only on change. |
+| `/standby_controller/state` | `humanoid_control_msgs/StandbyState` | RELIABLE TRANSIENT_LOCAL depth 1 | `humanoid_control/StandbyController` (when active) | Carries `is_finished` — the gate for `START_*` intents. |
 | `/joy` | `sensor_msgs/Joy` | SENSOR_DATA | `joy_node` | When `enable_gamepad:=true` (default). The launch hard-fails on missing `/dev/input/js*`. |
 
 ### Active-controller-dependent
 
 | Topic | Type | QoS | Direction | When |
 |---|---|---|---|---|
-| `/remote_policy_controller/command` | `bar_msgs/MITCommand` | RELIABLE depth 4 | subscribed by `RemotePolicyController` | When `RemotePolicyController` is active. Published by a System 1/2 external-command source (gravity-comp runner today, VLA / manipulation later). Not used by the learned policies — those run in-process. |
+| `/remote_policy_controller/command` | `humanoid_control_msgs/MITCommand` | RELIABLE depth 4 | subscribed by `RemotePolicyController` | When `RemotePolicyController` is active. Published by a System 1/2 external-command source (gravity-comp runner today, VLA / manipulation later). Not used by the learned policies — those run in-process. |
 | `/piano/key_state` | `std_msgs/Float32MultiArray` | RELIABLE KEEP_LAST(1) | sim: `pianist_policy/piano_state_bridge`; real: `pianist_policy/midi_keyboard_driver` | Piano runs. Live key state (0.0/1.0 per key). Consumed by the in-process `RLPolicyController` as the `key_pressed` extern observation term. |
 | `/forward_mit_controller/commands` | `std_msgs/Float64MultiArray` | RELIABLE depth 10 | subscribed by upstream `forward_command_controller/MultiInterfaceForwardCommandController` | Used by `mit_slider_gui`. |
 
@@ -44,7 +44,7 @@ standard ROS infrastructure topics:
 - `/parameter_events`, `/rosout`
 - `~/get_parameters`, `~/set_parameters`, etc. (per node)
 
-These are conventional ROS — not specific to `bar_ros2`. Mentioned
+These are conventional ROS — not specific to `humanoid_control`. Mentioned
 here so `ros2 topic list` output isn't confusing.
 
 ## Services
@@ -56,11 +56,11 @@ keyboardless lab boxes or scripted tests.
 
 | Service | Effect |
 |---|---|
-| `/bar/mode/damp` | → DAMPING from any state |
-| `/bar/mode/load` | DAMPING → STANDBY |
-| `/bar/mode/start_remote` | STANDBY → REMOTE (gated on `is_finished`) |
-| `/bar/mode/start_locomotion` | STANDBY → LOCOMOTION (gated on `is_finished`) |
-| `/bar/mode/quit` | exit (only from ZERO_TORQUE or DAMPING) |
+| `/humanoid_control/mode/damp` | → DAMPING from any state |
+| `/humanoid_control/mode/load` | DAMPING → STANDBY |
+| `/humanoid_control/mode/start_remote` | STANDBY → REMOTE (gated on `is_finished`) |
+| `/humanoid_control/mode/start_locomotion` | STANDBY → LOCOMOTION (gated on `is_finished`) |
+| `/humanoid_control/mode/quit` | exit (only from ZERO_TORQUE or DAMPING) |
 
 ### controller_manager-side (under `/controller_manager`)
 
@@ -103,7 +103,7 @@ durability to receive the latched value.
 
 ## Inspecting at runtime
 
-From a sourced workspace env (`cd bar_ws && pixi shell`):
+From a sourced workspace env (`cd humanoid_control_ws && pixi shell`):
 
 ```bash
 # What's published right now?
@@ -126,7 +126,7 @@ ros2 service info /controller_manager/switch_controller
 ## See also
 
 - [Reference → Messages](./messages.md) — full field schemas for the
-  custom `bar_msgs` types.
+  custom `humanoid_control_msgs` types.
 - [Reference → Quick reference](./quick_reference.md) — common
   `ros2 topic echo` / `ros2 topic hz` invocations.
 - [Concepts → Safety pipeline](../concepts/safety_pipeline.md) — what

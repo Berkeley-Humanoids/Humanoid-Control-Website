@@ -5,7 +5,7 @@ title: Run and extend an in-process policy
 # Run and extend an in-process policy
 
 Every learned policy on this stack — tracking, piano, locomotion —
-runs **in-process** in the C++ `bar::RLPolicyController` (FSM
+runs **in-process** in the C++ `humanoid_control::RLPolicyController` (FSM
 `LOCOMOTION` mode). This is the **System 0** real-time layer: inference
 happens inside the `ros2_control` RT `update()`, with no allocation, no
 blocking, and no separate process that could stall. Policies differ only
@@ -18,7 +18,7 @@ observation term or task**.
 
 :::note[The old Python-tier promotion workflow was removed]
 There used to be an out-of-process Python *inference* tier
-(`bar_policy.remote_policy_runner` / `pianist_policy.PianoPolicyRunner`)
+(`humanoid_control_policy.remote_policy_runner` / `pianist_policy.PianoPolicyRunner`)
 that published `MITCommand` over DDS, plus a "prototype in Python, then
 promote to C++" workflow. **That tier is gone.** There is no Python→C++
 promotion step anymore — all inference is C++ in-process from the start.
@@ -33,8 +33,8 @@ for the full rationale.
 The non-real-time work happens **once at launch** in a `prepare` step;
 the RT loop only ever integer-indexes preloaded data.
 
-1. **Launch-time `prepare`.** `ros2 launch bar_policy lite_policy.launch.py`
-   runs `bar_policy prepare` synchronously. It resolves the ONNX
+1. **Launch-time `prepare`.** `ros2 launch humanoid_control_policy lite_policy.launch.py`
+   runs `humanoid_control_policy prepare` synchronously. It resolves the ONNX
    checkpoint (a local file or a W&B run), converts the policy's LeRobot
    motion dataset into a single-episode rosbag2 **`.mcap`** motion bag,
    and emits an `rl_policy_controller` parameter overlay
@@ -44,7 +44,7 @@ the RT loop only ever integer-indexes preloaded data.
 2. **Inactive spawn.** The launch then spawns `rl_policy_controller`
    *inactive* into the running controller_manager with that overlay.
 3. **FSM activation.** The operator's `START_LOCOMOTION` intent
-   (`/bar/mode/start_locomotion`, R1+A on the gamepad) activates it.
+   (`/humanoid_control/mode/start_locomotion`, R1+A on the gamepad) activates it.
 4. **Per-tick, in-process.** Once active, each RT tick the controller
    packs the observation (`ObservationManager`), runs ONNX inference
    (`OnnxPolicy`), reads the motion reference from the preloaded `.mcap`
@@ -72,14 +72,14 @@ Then, in a second terminal (inside `pixi shell`), prepare + load the
 policy. From a local ONNX file:
 
 ```bash
-ros2 launch bar_policy lite_policy.launch.py \
+ros2 launch humanoid_control_policy lite_policy.launch.py \
     checkpoint_file:=/path/to/policy.onnx
 ```
 
 …or pull it straight from a W&B run:
 
 ```bash
-ros2 launch bar_policy lite_policy.launch.py \
+ros2 launch humanoid_control_policy lite_policy.launch.py \
     wandb_run_path:=entity/project/run_id
 ```
 
@@ -91,7 +91,7 @@ Useful extra arguments (all optional):
 | `motion_file:=` | Local LeRobot dataset dir override. |
 | `registry_name:=` | HuggingFace LeRobot repo id override (the ONNX `dataset_repo_id` wins otherwise). |
 | `episode_index:=` | Dataset episode to replay (default `0`). |
-| `out_dir:=` | Artifact output dir (default `~/.cache/bar_policy/launch`). |
+| `out_dir:=` | Artifact output dir (default `~/.cache/humanoid_control_policy/launch`). |
 
 For the piano task, use the equivalent
 `pianist_policy/launch/piano_policy.launch.py` from `pianist_ros2`; it
@@ -100,10 +100,10 @@ runs the same prepare→inactive-spawn flow with the piano metadata.
 Finally, drive the FSM to activate (third terminal, inside `pixi shell`):
 
 ```bash
-ros2 service call /bar/mode/damp std_srvs/srv/Trigger
-ros2 service call /bar/mode/load std_srvs/srv/Trigger
+ros2 service call /humanoid_control/mode/damp std_srvs/srv/Trigger
+ros2 service call /humanoid_control/mode/load std_srvs/srv/Trigger
 # wait for /standby_controller/state.is_finished == true
-ros2 service call /bar/mode/start_locomotion std_srvs/srv/Trigger
+ros2 service call /humanoid_control/mode/start_locomotion std_srvs/srv/Trigger
 ```
 
 :::tip[onnxruntime is opt-in]
@@ -116,8 +116,8 @@ nothing. The startup log line tells you which backend is active.
 
 ## Add a new observation term or task
 
-All term resolution lives in C++ now, in `bar::ObservationManager`
-(`bar_controllers/include/bar_controllers/observation_manager.hpp`). At
+All term resolution lives in C++ now, in `humanoid_control::ObservationManager`
+(`humanoid_controllers/include/humanoid_controllers/observation_manager.hpp`). At
 `on_configure` it resolves the metadata-declared `observation_names`
 **in order** into a fixed list of term descriptors, then packs them into
 a preallocated buffer each tick — no allocation, no string work in the
@@ -152,12 +152,12 @@ So the decision tree for a new term is:
 | A precomputed time-series from the motion dataset | the relevant `ReferenceProvider` | have `prepare` emit it into the `.mcap` bag |
 | A live sensor reading at runtime | a controller `register_extern` + subscription | publish it on a **generic** `Float32MultiArray` topic |
 
-:::tip[Keep `bar_controllers` task-agnostic]
+:::tip[Keep `humanoid_controllers` task-agnostic]
 Live sensor terms route through a plain `std_msgs/Float32MultiArray`
 rather than a task-specific message (no `pianist_msgs` dependency). The
 core controller package never learns a specific task exists — it just
 packs a named extern vector. A new task adds its own publisher on its
-own topic without touching `bar_controllers`.
+own topic without touching `humanoid_controllers`.
 :::
 
 Make sure the new term name appears in the ONNX metadata's
@@ -174,7 +174,7 @@ If you have a slow, deliberative, non-real-time source — gravity
 compensation today (`Lite-Gravity-Compensation`), VLA / manipulation
 later — that belongs in the **System 1/2 external-command ingress**, not
 here. Such a source runs out-of-process and publishes `MITCommand` over
-DDS to `bar::RemotePolicyController` (FSM `REMOTE` mode), which validates
+DDS to `humanoid_control::RemotePolicyController` (FSM `REMOTE` mode), which validates
 joint order, gates on arrival-time staleness, and falls back to damping.
 That controller is *not* used by learned policies. See
 [Switch controllers without the FSM](./switch_controllers_manually.md)
@@ -188,8 +188,8 @@ and the architecture page below.
   metadata contract (`observation_names`, joint order, scales) the
   checkpoint freezes.
 - The C++ controller and modules:
-  [`bar_controllers/src/rl_policy_controller.cpp`](https://github.com/T-K-233/bar_ros2/blob/main/bar_controllers/src/rl_policy_controller.cpp),
+  [`humanoid_controllers/src/rl_policy_controller.cpp`](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_controllers/src/rl_policy_controller.cpp),
   `observation_manager.hpp`, `reference_provider.hpp`, `action_mapper.hpp`,
   `onnx_policy.hpp`.
 - The launch:
-  [`bar_policy/launch/lite_policy.launch.py`](https://github.com/T-K-233/bar_ros2/blob/main/bar_policy/launch/lite_policy.launch.py).
+  [`humanoid_control_policy/launch/lite_policy.launch.py`](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_control_policy/launch/lite_policy.launch.py).
