@@ -36,7 +36,7 @@ Easiest: pass `enable_mode_manager:=false` so `mode_manager` isn't
 spawned at all:
 
 ```bash
-ros2 launch bar_bringup_lite real.launch.py enable_mode_manager:=false
+ros2 launch humanoid_control_bringup_lite real.launch.py enable_mode_manager:=false
 ```
 
 Now `zero_torque_controller` is active (the spawner set it active),
@@ -51,7 +51,7 @@ calls — open a second terminal and `pixi shell` into the workspace so
 `ros2` is on PATH:
 
 ```bash
-cd bar_ws
+cd humanoid_control_ws
 pixi shell
 ```
 
@@ -94,7 +94,7 @@ ros2 control switch_controllers \
     --activate   remote_policy_controller
 ```
 
-`remote_policy_controller` (`bar/RemotePolicyController`) is the
+`remote_policy_controller` (`humanoid_control/RemotePolicyController`) is the
 **System 1/2 external-command ingress**: it immediately starts looking
 for `MITCommand` on `/remote_policy_controller/command`. Without a
 publisher it'll trip its stale-command policy (`passive` by default
@@ -104,10 +104,10 @@ non-real-time `MITCommand` source first — gravity compensation
 controller is **not** fed by any learned policy; learned policies run
 in-process in `rl_policy_controller`.
 
-`rl_policy_controller` (`bar/RLPolicyController`) is **not** spawned by
+`rl_policy_controller` (`humanoid_control/RLPolicyController`) is **not** spawned by
 `real.launch.py` — it is loaded *inactive* by the prepare→spawn
 [policy launch](./promote_python_to_cpp.md)
-(`ros2 launch bar_policy lite_policy.launch.py checkpoint_file:=<path>`),
+(`ros2 launch humanoid_control_policy lite_policy.launch.py checkpoint_file:=<path>`),
 which runs `prepare` to resolve the ONNX + `.mcap` motion bag and emit
 the parameter overlay. Once that launch has spawned it, you can activate
 it by hand the same way as below.
@@ -132,11 +132,11 @@ shutdown.
 # Which controllers are loaded, and which are active?
 ros2 control list_controllers
 # Expected after first transition:
-#   damping_controller        bar/DampingController        active
-#   zero_torque_controller    bar/ZeroTorqueController     inactive
+#   damping_controller        humanoid_control/DampingController        active
+#   zero_torque_controller    humanoid_control/ZeroTorqueController     inactive
 #   joint_state_broadcaster   joint_state_broadcaster/...  active
-#   standby_controller        bar/StandbyController        inactive
-#   remote_policy_controller  bar/RemotePolicyController   inactive
+#   standby_controller        humanoid_control/StandbyController        inactive
+#   remote_policy_controller  humanoid_control/RemotePolicyController   inactive
 
 # What hardware components are up?
 ros2 control list_hardware_components

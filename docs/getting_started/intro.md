@@ -1,13 +1,13 @@
 # Introduction
 
-`bar_ros2` is the unified low-level control stack for the **Berkeley Architecture
+`humanoid_control` is the unified low-level control stack for the **Berkeley Architecture
 Research (BAR)** humanoid robots. It runs on **ROS 2 Jazzy under PREEMPT_RT**
 (shipped via the [RoboStack](https://robostack.github.io) conda channel and
 pixi, no system-wide ROS install required) and targets two robots with **as
 much shared code as possible**.
 
 Task-specific packages (piano playing, etc.) ship from sibling repos
-that depend on `bar_ros2` — see [Packages reference](../reference/packages.md)
+that depend on `humanoid_control` — see [Packages reference](../reference/packages.md)
 for the split. Throughout the rest of the docs, runtime commands are
 shown in canonical `ros2 launch …` / `ros2 run …` form; if you prefer
 shorter aliases, the workspace also ships a `pixi run …` shortcut
@@ -35,7 +35,7 @@ hardware-by-hardware axis: separate plugins for each actuator family, separate
 launch files per task, separate observation pipelines for sim vs. silicon. The
 result is N × M code paths, where N is robots and M is tasks.
 
-`bar_ros2` factors the axes orthogonally:
+`humanoid_control` factors the axes orthogonally:
 
 | Axis | Where the variation lives |
 |---|---|
@@ -61,14 +61,14 @@ controllers — they don't see the split. Prime adds a third path through
 
 ## How the project is organized
 
-A single git repo at `T-K-233/bar_ros2`, a flat collection of ROS 2 packages
+A single git repo at `Berkeley-Humanoids/humanoid_control`, a flat collection of ROS 2 packages
 (franka_ros2 / Universal_Robots_ROS2_Driver pattern):
 
 ![Package organization](/img/diagrams/getting_started__intro__02.svg)
 
-Notice that **`bar_controllers`, `bar_msgs`, and `bar_policy` have no
-robot-specific code** — everything robot-specific lives in `bar_description_*`
-or `bar_bringup_*`.
+Notice that **`humanoid_controllers`, `humanoid_control_msgs`, and `humanoid_control_policy` have no
+robot-specific code** — everything robot-specific lives in `humanoid_control_description_*`
+or `humanoid_control_bringup_*`.
 
 ## Design rationale (one-paragraph version)
 
@@ -97,7 +97,7 @@ list; the most influential are:
   decomposition pattern and `industrial_ci` workflow.
 - **[legged_control2](https://qiayuanl.github.io/legged_control2_doc/overview.html)**
   — two-tier hardware factoring (bus library / per-actuator-family plugin)
-  that we mirror for `bar_socketcan` / `bar_robstride` / `bar_sito`.
+  that we mirror for `humanoid_control_socketcan` / `humanoid_control_robstride` / `humanoid_control_sito`.
 - **[mujoco_ros2_control](https://github.com/qiayuanl/mujoco_ros2_control)** —
   the MuJoCo ↔ ros2_control bridge whose `MujocoSystem` plugin we consume.
 - **[franka_ros2](https://github.com/frankarobotics/franka_ros2)** — the flat
@@ -105,7 +105,7 @@ list; the most influential are:
 - **[Universal_Robots_ROS2_Driver](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver)**
   — gold-standard `ros2_control` hardware integration. The
   `Universal_Robots_Client_Library` / `ur_robot_driver` split mirrors our
-  `bar_socketcan` / `bar_robstride` split.
+  `humanoid_control_socketcan` / `humanoid_control_robstride` split.
 
 ## Next
 
@@ -114,4 +114,4 @@ list; the most influential are:
 - [Architecture](../concepts/architecture.md) — ros2_control flow, the 5-mode
   FSM, and the in-process System 0 policy tier.
 - [Installation](./installation.md) — install the prebuilt packages from the
-  `bar-robotics` channel in ~2 minutes, or build from source.
+  `berkeley-humanoids` channel in ~2 minutes, or build from source.

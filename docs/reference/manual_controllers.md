@@ -49,7 +49,7 @@ length must match `interface_names`'s length; each element goes
 straight to the matching command interface in order.
 
 The single-actuator bringup
-(`bar_robstride/single_robstride_gui.launch.py`) is the canonical
+(`humanoid_control_robstride/single_robstride_gui.launch.py`) is the canonical
 example.
 
 ## `joint_trajectory_controller` (stock ros2_controllers)
@@ -74,7 +74,7 @@ We don't bundle a YAML for this in the project — the FSM
 `StandbyController` covers the production trajectory case
 end-to-end. Drop in stock JTC for one-off scripted tests.
 
-## `bar/MITJointTrajectoryController` (project-local)
+## `humanoid_control/MITJointTrajectoryController` (project-local)
 
 Custom controller that **owns the full 5-interface MIT surface**
 and accepts trajectories. Useful when you want the rqt-driven
@@ -118,7 +118,7 @@ a one-shot `ros2 topic pub` to drive it.
 The standard flow (drop into `pixi shell` first so `ros2` is on PATH):
 
 ```bash
-cd bar_ws && pixi shell
+cd humanoid_control_ws && pixi shell
 
 # 1. Make sure the controller TYPE is registered with pluginlib
 ros2 control list_controller_types | grep <ClassName>

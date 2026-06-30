@@ -2,8 +2,8 @@
 
 This page is the source of truth for **joint counts, actuator specs, and bus
 topology** on Lite and Prime. The numbers here drive the joint limits in
-`bar_description_*` and the per-joint stiffness/damping defaults in
-`bar_controllers/config/bar_*_controllers.yaml`.
+`humanoid_control_description_*` and the per-joint stiffness/damping defaults in
+`humanoid_controllers/config/humanoid_control_*_controllers.yaml`.
 
 ## Lite humanoid
 
@@ -18,8 +18,8 @@ either way; the `<ros2_control>` neck block is added only in the
 
 ### Joint table
 
-Order matches the **canonical index** used by `bar_lite_controllers.yaml`, the
-C++ `MITState` struct, and the Python `bar_policy.ObservationManager`. Once a
+Order matches the **canonical index** used by `humanoid_control_lite_controllers.yaml`, the
+C++ `MITState` struct, and the Python `humanoid_control_policy.ObservationManager`. Once a
 policy is trained against this order, it is frozen — see "Frozen schemas" in
 [Architecture](../concepts/architecture.md#frozen-schemas).
 
@@ -60,7 +60,7 @@ the generated file):
 ```
 
 xacro expands those into `<param>` children on the `<joint>` element, which
-`bar_robstride/RobstrideSystem::on_init` reads (and, for `torque_limit` /
+`humanoid_control_robstride/RobstrideSystem::on_init` reads (and, for `torque_limit` /
 `current_limit`, also writes to the actuator firmware at `on_activate` via
 the Robstride parameter IDs `0x700B` and `0x7018` — same writes the upstream
 `T-K-233/Lite-Lowlevel-Python`'s `humanoid_control/control.py` performs).
@@ -85,19 +85,19 @@ the `lite_description` repo and flows back through `bar.repos`:
 1. In the `lite_description` repo, edit the joint's `torque_limit` (N·m, float)
    and / or `current_limit` (A, float) in `robots/lite_dummy/cad/ros2_control.json`.
 2. Regenerate the xacro: `uv run robot-assets-generate lite_dummy --only xacro`.
-3. Commit + push; bump the `lite_description` pin in `bar_ros2`'s `bar.repos`
+3. Commit + push; bump the `lite_description` pin in `humanoid_control`'s `bar.repos`
    (keep the buildfarm's in sync).
 4. Re-import, rebuild, and re-launch:
 
    ```sh
-   cd <workspace>/bar_ws
+   cd <workspace>/humanoid_control_ws
    pixi shell
    pixi run setup        # vcs import — pulls the regenerated lite_description
    colcon build --symlink-install --packages-select lite_description
    # If a bringup is already running, Ctrl+C it first — the firmware-side
    # caps are written on the `on_activate` transition, so an already-
    # activated plugin won't pick up the new value until the next bringup.
-   ros2 launch bar_bringup_lite real.launch.py
+   ros2 launch humanoid_control_bringup_lite real.launch.py
    ```
 
    For a throwaway bench experiment, edit the caps directly in the vcs-imported
@@ -108,16 +108,16 @@ the `lite_description` repo and flows back through `bar.repos`:
 5. Confirm in the bringup log that the new value flowed through:
 
    ```
-   [bar_robstride] Wrote torque_limit=15.0 to can_id=11 (left_shoulder_pitch)
-   [bar_robstride] Wrote current_limit=20.0 to can_id=11 (left_shoulder_pitch)
+   [humanoid_control_robstride] Wrote torque_limit=15.0 to can_id=11 (left_shoulder_pitch)
+   [humanoid_control_robstride] Wrote current_limit=20.0 to can_id=11 (left_shoulder_pitch)
    ```
 
 **No separate calibration step.** Unlike `homing_offset` (per-physical-robot,
-lives in `bar_bringup_lite/config/calibration.yaml`), torque and current
+lives in `humanoid_control_bringup_lite/config/calibration.yaml`), torque and current
 caps are per-robot-tuning — same value on every Lite physical instance,
 versioned alongside the URDF. If you want to A/B-test caps across
 deployments without editing source, set up two checked-out branches of
-`bar_ros2` and switch between them rather than splitting the source of
+`humanoid_control` and switch between them rather than splitting the source of
 truth.
 
 **Setting to 0 disables the firmware write.** The plugin treats
@@ -138,8 +138,8 @@ authoritative for what's *on the bus*, not just what's *in this process*.
 
 Lite uses **two SocketCAN buses** (CAN-to-USB adapters), one per arm. Each
 bus is a separate `<ros2_control>` block in the URDF, each loading its own
-`bar_robstride/RobstrideSystem` instance. The default bus names come from
-`bar_bringup_lite/config/lite_hardware.yaml`, which the launch passes through
+`humanoid_control_robstride/RobstrideSystem` instance. The default bus names come from
+`humanoid_control_bringup_lite/config/lite_hardware.yaml`, which the launch passes through
 to xacro as the `hardware_config:=` arg:
 
 | Block | Default ifname | CAN ids |
@@ -162,20 +162,20 @@ sudo ip link set can1 down 2>/dev/null
 sudo ip link set can1 up type can bitrate 1000000
 
 # 2. Read-only sanity scan — no Enable, no MIT.
-#    (the `bar` and `ros2` CLIs assume you've `cd bar_ws && pixi shell`'d.)
-bar bus discover --iface can0 --scan-to 32
-bar bus discover --iface can1 --scan-to 32
+#    (the `hc` and `ros2` CLIs assume you've `cd humanoid_control_ws && pixi shell`'d.)
+hc bus discover --iface can0 --scan-to 32
+hc bus discover --iface can1 --scan-to 32
 # Expect 7 + 7 = 14 actuators replying at ids 11..17 and 21..27.
 
 # 3. Calibrate the zero pose (once per physical robot).
-ros2 launch bar_bringup_lite calibrate.launch.py
+ros2 launch humanoid_control_bringup_lite calibrate.launch.py
 # Hand-sweep every joint to both extremes. Ctrl+C to write calibration.yaml.
 
 # 4. Real-hardware bringup.
-ros2 launch bar_bringup_lite real.launch.py
+ros2 launch humanoid_control_bringup_lite real.launch.py
 ```
 
-If `bar bus discover` reports `ENOBUFS` / TX-drop warnings, the actuator
+If `hc bus discover` reports `ENOBUFS` / TX-drop warnings, the actuator
 power is off (no ACKs → frames pile up in the kernel qdisc). Power the
 motors first.
 
@@ -184,7 +184,7 @@ motors first.
 A single serial / USB IMU publishes `sensor_msgs/Imu` on `/imu/data`. It is
 **not** routed through `ros2_control` as a `SensorInterface` — a blocking
 serial read inside the controller_manager `read()` cycle would block the RT
-loop. Consumers (RLPolicyController, bar_policy) cache the latest sample via
+loop. Consumers (RLPolicyController, humanoid_control_policy) cache the latest sample via
 `realtime_tools::RealtimeBuffer`.
 
 ## Prime humanoid
@@ -197,7 +197,7 @@ Sito actuators for auxiliary joints, running concurrently in the same
 The Prime description now lives in the external CAD-generated
 [`prime_description`](https://github.com/T-K-233/Prime-Description) repo — bar
 deploys the `prime_dummy` variant via `bar.repos` — with the **waist dropped**
-(rigid torso, **14 actuated DoF**). `bar_prime_controllers.yaml` binds the real
+(rigid torso, **14 actuated DoF**). `humanoid_control_prime_controllers.yaml` binds the real
 14-joint set (no longer a placeholder). The joint specs below were early
 projections; cross-check against `prime_description` + `prime_hardware.yaml`.
 :::
@@ -206,7 +206,7 @@ projections; cross-check against `prime_description` + `prime_hardware.yaml`.
 
 Prime is unique in that **two `<ros2_control>` blocks coexist** in its URDF —
 one binds `ethercat_driver/EthercatDriver`, the other binds
-`bar_sito/SitoSystem`. The controller_manager runs both concurrently;
+`humanoid_control_sito/SitoSystem`. The controller_manager runs both concurrently;
 controllers see a single flat joint list regardless of which bus carries them.
 
 ## MIT-mode command convention
@@ -217,7 +217,7 @@ project:
 
 ![MIT-mode hybrid command](/img/diagrams/reference__hardware_specs__03.svg)
 
-Every controller in `bar_controllers` claims **all five** command interfaces,
+Every controller in `humanoid_controllers` claims **all five** command interfaces,
 even when it only writes some of them (writing zero to the rest is the safe
 default — for example `ZeroTorqueController` writes 0 to everything;
 `DampingController` writes `K=0, D=damping_value, q_cmd=captured_q`).
@@ -238,7 +238,7 @@ silicon and sim with no URDF interface-tag rewrites.
 
 - [Architecture](../concepts/architecture.md) — how this hardware surface is
   consumed by ros2_control and the mode FSM.
-- [bar_lite_controllers.yaml](https://github.com/T-K-233/bar_ros2/blob/main/bar_controllers/config/bar_lite_controllers.yaml)
+- [humanoid_control_lite_controllers.yaml](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_controllers/config/humanoid_control_lite_controllers.yaml)
   — the canonical 17-joint binding for every controller.
-- [`bar_robstride/include/bar_robstride/robstride_system.hpp`](https://github.com/T-K-233/bar_ros2/blob/main/bar_devices/bar_robstride/include/bar_robstride/robstride_system.hpp)
+- [`humanoid_control_robstride/include/humanoid_control_robstride/robstride_system.hpp`](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_control_devices/humanoid_control_robstride/include/humanoid_control_robstride/robstride_system.hpp)
   — the SystemInterface implementation for the Lite hardware path.

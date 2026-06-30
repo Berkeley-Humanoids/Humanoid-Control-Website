@@ -32,18 +32,18 @@ property.
 
 | Mode | Plugin | What it writes per tick | Use it for |
 |---|---|---|---|
-| **ZERO_TORQUE** | `bar::ZeroTorqueController` | `0` to all 5 MIT interfaces on every joint | Startup default. Fault fallback when DAMPING can't be applied (e.g. state not yet valid). Robot is alive but inert. |
-| **DAMPING** | `bar::DampingController` | `stiffness=0`, `damping=damping_value`, `position=captured`, `velocity=0`, `effort=0` | Compliant fail-safe. Robot stays soft under gravity but resists velocity. The state you pass through between operator-driven transitions. |
-| **STANDBY** | `bar::StandbyController` | Interpolated `position` along a YAML pose sequence; `K_p`/`K_d` ramped 0→target during segment 0 | Animate the arms to the piano-ready pose with gain ramp-in. Publishes `~/state.is_finished` so transitions out are gated correctly. |
-| **LOCOMOTION** | `bar::RLPolicyController` | In-process ONNX inference (low-latency, C++): packs obs, replays the `.mcap` motion reference, writes commands | **Every learned policy** — tracking, piano, locomotion. They differ only by the loaded `.onnx` + `.mcap`; the ONNX `task_type` selects the term set. This is the System 0 real-time path. |
-| **REMOTE** | `bar::RemotePolicyController` | `MITCommand` consumed from `~/command` over DDS | System 1/2 external-command ingress: a *non*-real-time source publishes commands (gravity-comp today via `Lite-Gravity-Compensation`; VLA / manipulation later). Not used by the learned policies. |
+| **ZERO_TORQUE** | `humanoid_control::ZeroTorqueController` | `0` to all 5 MIT interfaces on every joint | Startup default. Fault fallback when DAMPING can't be applied (e.g. state not yet valid). Robot is alive but inert. |
+| **DAMPING** | `humanoid_control::DampingController` | `stiffness=0`, `damping=damping_value`, `position=captured`, `velocity=0`, `effort=0` | Compliant fail-safe. Robot stays soft under gravity but resists velocity. The state you pass through between operator-driven transitions. |
+| **STANDBY** | `humanoid_control::StandbyController` | Interpolated `position` along a YAML pose sequence; `K_p`/`K_d` ramped 0→target during segment 0 | Animate the arms to the piano-ready pose with gain ramp-in. Publishes `~/state.is_finished` so transitions out are gated correctly. |
+| **LOCOMOTION** | `humanoid_control::RLPolicyController` | In-process ONNX inference (low-latency, C++): packs obs, replays the `.mcap` motion reference, writes commands | **Every learned policy** — tracking, piano, locomotion. They differ only by the loaded `.onnx` + `.mcap`; the ONNX `task_type` selects the term set. This is the System 0 real-time path. |
+| **REMOTE** | `humanoid_control::RemotePolicyController` | `MITCommand` consumed from `~/command` over DDS | System 1/2 external-command ingress: a *non*-real-time source publishes commands (gravity-comp today via `Lite-Gravity-Compensation`; VLA / manipulation later). Not used by the learned policies. |
 
 Full per-controller parameter tables live in
 [Reference → Controllers](../reference/controllers.md).
 
 ## Transition rules
 
-Encoded in `bar_controllers/src/mode_manager.cpp`. The operator's
+Encoded in `humanoid_controllers/src/mode_manager.cpp`. The operator's
 gamepad intent goes through `dispatch_intent`, which gates based on the
 current mode:
 
@@ -58,10 +58,10 @@ QUIT             (BACK)     : ZERO_TORQUE or DAMPING → rclcpp::shutdown()
 ```
 
 The same transitions are also exposed as `std_srvs/Trigger` services
-under `/bar/mode/{damp,load,start_remote,start_locomotion,quit}`, so a
+under `/humanoid_control/mode/{damp,load,start_remote,start_locomotion,quit}`, so a
 keyboardless lab box can drive the FSM with `ros2 service call …`.
 
-`mode_manager` publishes `/control_mode` (`bar_msgs/ControlMode`) at
+`mode_manager` publishes `/control_mode` (`humanoid_control_msgs/ControlMode`) at
 50 Hz. When an intent is rejected, the rejection reason goes into
 `status_message` so operators see *why* a button didn't take effect.
 
@@ -72,7 +72,7 @@ controllers become visible to `dispatch_intent` immediately.
 
 ## The auto-DAMP path (safety)
 
-Every hardware plugin publishes `/safety_status` (`bar_msgs/SafetyStatus`)
+Every hardware plugin publishes `/safety_status` (`humanoid_control_msgs/SafetyStatus`)
 on a TRANSIENT_LOCAL QoS, with a bitmask of `BUS_OFF`, `RX_TIMEOUT`,
 `TX_QUEUE_OVERRUN`, `MOTOR_FAULT`, `TEMPERATURE_LIMIT`, `INVALID_FRAME`.
 `mode_manager` subscribes. On any non-`OK` level it requests DAMPING
@@ -128,4 +128,4 @@ runtime**, not by a launch arg. There's no `policy_mode` parameter on
 - [Reference → Controllers](../reference/controllers.md) — per-plugin parameter tables.
 - [Concepts → Safety pipeline](./safety_pipeline.md) — what triggers auto-DAMP.
 - [How-to → Switch controllers without the FSM](../how_to/switch_controllers_manually.md).
-- [`mode_manager` source](https://github.com/T-K-233/bar_ros2/blob/main/bar_controllers/src/mode_manager.cpp).
+- [`mode_manager` source](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_controllers/src/mode_manager.cpp).

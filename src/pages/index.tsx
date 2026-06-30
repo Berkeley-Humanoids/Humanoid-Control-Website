@@ -40,7 +40,7 @@ function HomepageHeader() {
           </Link>
           <Link
             className="button button--secondary button--lg"
-            href="https://github.com/T-K-233/bar_ros2">
+            href="https://github.com/Berkeley-Humanoids/humanoid_control">
             GitHub
           </Link>
         </div>
@@ -54,7 +54,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title={`${siteConfig.title} — ${siteConfig.tagline}`}
-      description="Docs for bar_ros2, the BAR humanoid low-level control stack.">
+      description="Docs for humanoid_control, the BAR humanoid low-level control stack.">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

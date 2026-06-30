@@ -4,16 +4,16 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 // https://docusaurus.io/docs/api/docusaurus-config
 const config: Config = {
-  title: 'bar_ros2',
-  tagline: 'BAR humanoid low-level control stack',
+  title: 'humanoid_control',
+  tagline: 'humanoid_control low-level control stack',
   favicon: 'img/logo.svg',
 
   // Production URL for GitHub Pages project site.
-  url: 'https://t-k-233.github.io',
-  baseUrl: '/BAR-ROS2-Docs/',
+  url: 'https://berkeley-humanoids.github.io',
+  baseUrl: '/Humanoid-Control-Website/',
 
-  organizationName: 'T-K-233',
-  projectName: 'BAR-ROS2-Docs',
+  organizationName: 'Berkeley-Humanoids',
+  projectName: 'Humanoid-Control-Website',
   trailingSlash: false,
 
   // Fail the build on broken internal links — same policy as VitePress.
@@ -32,7 +32,7 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
           editUrl:
-            'https://github.com/T-K-233/bar_ros2_docs/tree/main/',
+            'https://github.com/Berkeley-Humanoids/Humanoid-Control-Website/tree/main/',
           routeBasePath: '/',
         },
         blog: false,
@@ -50,7 +50,7 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'bar_ros2',
+      title: 'humanoid_control',
       logo: {
         alt: 'BAR humanoid logo',
         src: 'img/logo.svg',
@@ -62,7 +62,7 @@ const config: Config = {
         {to: '/concepts/',             label: 'Concepts',        position: 'left'},
         {to: '/reference/packages',    label: 'Reference',       position: 'left'},
         {
-          href: 'https://github.com/T-K-233/bar_ros2',
+          href: 'https://github.com/Berkeley-Humanoids/humanoid_control',
           label: 'GitHub',
           position: 'right',
         },
@@ -100,8 +100,8 @@ const config: Config = {
           title: 'Project',
           items: [
             {
-              label: 'bar_ros2 on GitHub',
-              href: 'https://github.com/T-K-233/bar_ros2',
+              label: 'humanoid_control on GitHub',
+              href: 'https://github.com/Berkeley-Humanoids/humanoid_control',
             },
             {
               label: 'Berkeley Architecture Research',
@@ -110,7 +110,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} BAR Dev. Built with Docusaurus. BSD-3-Clause.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Humanoid Control Dev. Built with Docusaurus. BSD-3-Clause.`,
     },
     prism: {
       theme: prismThemes.github,

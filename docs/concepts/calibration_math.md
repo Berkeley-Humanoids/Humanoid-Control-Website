@@ -4,7 +4,7 @@ title: Calibration math
 
 # Calibration math
 
-How `bar_robstride` maps between the raw encoder reading and the
+How `humanoid_control_robstride` maps between the raw encoder reading and the
 URDF joint frame, where the per-joint constants live, and why the
 calibration is split across two files.
 
@@ -37,7 +37,7 @@ is in the joint frame — controllers never see the raw encoder.
 | Parameter | Per | Where it lives | What it captures |
 |---|---|---|---|
 | `direction` | joint | URDF `<param>` inside the `<ros2_control>` block | Wiring sign — does the motor's positive direction match the URDF's positive joint direction? |
-| `homing_offset` | joint | `bar_bringup_lite/config/calibration.yaml` | Per-physical-robot encoder zero offset (motor frame, rad). |
+| `homing_offset` | joint | `humanoid_control_bringup_lite/config/calibration.yaml` | Per-physical-robot encoder zero offset (motor frame, rad). |
 
 The split is deliberate:
 
@@ -53,7 +53,7 @@ The split is deliberate:
 
 ## Deriving the offset
 
-The calibration tool (`bar_bringup_lite/scripts/calibrate_robot.py`)
+The calibration tool (`humanoid_control_bringup_lite/scripts/calibrate_robot.py`)
 runs the plugin with `calibration_file:=''` — identity calibration —
 so `/lite/joint_states` reports `direction · raw_motor_pos` (the
 direction-applied-but-not-offset frame). The operator hand-sweeps each
@@ -141,6 +141,6 @@ URDF. The cost is that hand-edits to `id` / `direction` in
 ## See also
 
 - [How-to → Calibrate the zero pose](../how_to/calibrate_zero_pose.md) — the recipe.
-- [`RobstrideSystem` source](https://github.com/T-K-233/bar_ros2/blob/main/bar_devices/bar_robstride/src/robstride_system.cpp#:~:text=load_calibration)
+- [`RobstrideSystem` source](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_control_devices/humanoid_control_robstride/src/robstride_system.cpp#:~:text=load_calibration)
   — the loader + apply.
-- `bar_bringup_lite/scripts/calibrate_robot.py` — the formula in code.
+- `humanoid_control_bringup_lite/scripts/calibrate_robot.py` — the formula in code.

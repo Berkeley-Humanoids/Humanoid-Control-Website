@@ -4,7 +4,7 @@ title: Safety pipeline
 
 # Safety pipeline
 
-`bar_ros2`'s safety layer is **layered** rather than concentrated.
+`humanoid_control`'s safety layer is **layered** rather than concentrated.
 Three subsystems each enforce one piece of the contract; together
 they make sure that "the robot is in DAMPING within a tick of a
 fault" is the worst case, never "the robot is doing something
@@ -26,11 +26,11 @@ unexpected and we didn't notice".
 | `TEMPERATURE_LIMIT` | A specific overtemperature bit was set in a motor's fault frame. |
 | `INVALID_FRAME` | A frame on the bus had the wrong comm-type code or DLC for the protocol. |
 
-The plugin publishes `bar_msgs/SafetyStatus` on `/safety_status` —
+The plugin publishes `humanoid_control_msgs/SafetyStatus` on `/safety_status` —
 TRANSIENT_LOCAL durability so late-joining subscribers (like rqt or a
 freshly-started `mode_manager`) immediately see the most recent
 value. The `source` field carries the bus interface name
-(`bar_robstride/can0`, etc.), so an operator can tell which bus
+(`humanoid_control_robstride/can0`, etc.), so an operator can tell which bus
 flagged.
 
 Each tick, the plugin rebuilds `flags` from **currently observed**
@@ -84,7 +84,7 @@ against bad *output* instead: a NaN / non-finite action returns
 
 Every active-policy controller is configured with
 `fallback_controllers: [damping_controller]` in
-`bar_lite_controllers.yaml`. The controller_manager interprets this
+`humanoid_control_lite_controllers.yaml`. The controller_manager interprets this
 as "if this controller returns ERROR, automatically deactivate it
 and activate the fallback".
 

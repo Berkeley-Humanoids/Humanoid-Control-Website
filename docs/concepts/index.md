@@ -6,7 +6,7 @@ sidebar_label: Overview
 
 # Concepts
 
-Background reading. These pages discuss the *design* of `bar_ros2` —
+Background reading. These pages discuss the *design* of `humanoid_control` —
 the architecture, the conventions, the trade-offs that decided which
 abstractions live where. Read these when you want to understand the
 project well enough to extend it (or argue with it).

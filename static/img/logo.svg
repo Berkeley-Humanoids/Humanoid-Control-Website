@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <!-- Berkeley blue + gold "bar" mark for bar_ros2. Stylized as a humanoid silhouette. -->
+  <!-- Berkeley blue + gold mark for humanoid_control. Stylized as a humanoid silhouette. -->
   <rect width="64" height="64" rx="10" fill="#003262"/>
   <!-- Head -->
   <circle cx="32" cy="18" r="6" fill="#FDB515"/>

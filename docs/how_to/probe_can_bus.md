@@ -40,10 +40,10 @@ and the bus is acking. `ERROR-WARNING` is transient and self-recovers;
 ## Scan all IDs on a bus
 
 ```bash
-cd bar_ws
+cd humanoid_control_ws
 pixi shell
-bar bus discover --iface can0
-bar bus discover --iface can1
+hc bus discover --iface can0
+hc bus discover --iface can1
 ```
 
 Default scan range: 1..32. Sends one `GetDeviceId` per ID with 8 ms
@@ -68,11 +68,11 @@ on `can1` (right arm).
 
 ```bash
 # Default range is 1..32; widen if you suspect IDs outside that.
-bar bus discover --iface can0 \
+hc bus discover --iface can0 \
     --scan-from 1 --scan-to 127
 
 # Tighter scan (faster) if you only want to check specific IDs:
-bar bus discover --iface can0 \
+hc bus discover --iface can0 \
     --scan-from 11 --scan-to 17
 ```
 
@@ -81,7 +81,7 @@ bar bus discover --iface can0 \
 If the bus is slow / cheap-USB-adapter, raise `--per-id-wait-ms`:
 
 ```bash
-bar bus discover --iface can0 \
+hc bus discover --iface can0 \
     --per-id-wait-ms 20
 ```
 
@@ -90,7 +90,7 @@ bar bus discover --iface can0 \
 When you know the ID and want a deeper status check:
 
 ```bash
-bar bus ping --iface can0 --id 11
+hc bus ping --iface can0 --id 11
 # TX  GetDeviceId  id=...
 # RX  GetDeviceId reply  device=11  uid=...
 # stats: rx=1 tx=1 rx_dropped=0 tx_failed=0
@@ -101,7 +101,7 @@ With `--read-status` the ping briefly Enables, prompts an
 responds with calibrated-looking values:
 
 ```bash
-bar bus ping --iface can0 --id 11 --read-status
+hc bus ping --iface can0 --id 11 --read-status
 # RX  OperationStatus  device=11  pos= 4.9200 rad  vel= 0.0  torque= 0.0  temp=24.0 C  fault_bits=0x00
 ```
 
@@ -129,7 +129,7 @@ how you confirm `on_deactivate`'s Disable made it through.
 
 ## Common findings
 
-| `bar bus discover` reports | Likely cause |
+| `hc bus discover` reports | Likely cause |
 |---|---|
 | `found : 0 actuator(s)` | Bus down, adapter unplugged, or motors not powered. Check `ip -d link` and the bench power. |
 | `found : N < expected` | Some motors are off the bus. Trace the daisy-chain — usually a connector. |

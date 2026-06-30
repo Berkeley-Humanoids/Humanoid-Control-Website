@@ -18,8 +18,8 @@ Five files in three packages:
 | `lite_description/robots/lite_dummy/xacro/lite_dummy.urdf.xacro` | Kinematic chain: link, joint axis, limits, mass, mesh |
 | `lite_description/robots/lite_dummy/xacro/lite_dummy.ros2_control.xacro` | `<ros2_control>` block — which CAN bus, model, direction, command/state interfaces |
 | `lite_description/robots/lite_dummy/mjcf/lite_dummy.xml` | MuJoCo model (if you want sim parity) |
-| `bar_controllers/config/bar_lite_controllers.yaml` | `joints:` list for every controller + per-joint K/D / standby pose entries |
-| `bar_bringup_lite/config/calibration.yaml` | `homing_offset` for the new joint (created via [Calibrate the zero pose](./calibrate_zero_pose.md)) |
+| `humanoid_controllers/config/humanoid_control_lite_controllers.yaml` | `joints:` list for every controller + per-joint K/D / standby pose entries |
+| `humanoid_control_bringup_lite/config/calibration.yaml` | `homing_offset` for the new joint (created via [Calibrate the zero pose](./calibrate_zero_pose.md)) |
 
 > **Heads-up — the Lite description is generated.** The three `lite_description`
 > files above are build artifacts of the external
@@ -93,7 +93,7 @@ xacro $(ros2 pkg prefix lite_description)/share/lite_description/robots/lite_dum
 Open the file, confirm the new joints appear with the right `<param>`
 children.
 
-## Step 3 — Update `bar_lite_controllers.yaml`
+## Step 3 — Update `humanoid_control_lite_controllers.yaml`
 
 For every controller's `joints:` list, append the new joint name(s).
 **Order matters** — this is the canonical joint order
@@ -134,24 +134,24 @@ Once the URDF + YAML are updated and the build is clean, plug in the
 new motor and run:
 
 ```bash
-ros2 launch bar_bringup_lite calibrate.launch.py
+ros2 launch humanoid_control_bringup_lite calibrate.launch.py
 ```
 
 Hand-sweep the new joint(s) through their full range. Old joints
 sit stationary — the tool's `sweep_threshold` will preserve their
 existing `homing_offset` entries. Move the resulting
-`./calibration.yaml` over `bar_bringup_lite/config/calibration.yaml`.
+`./calibration.yaml` over `humanoid_control_bringup_lite/config/calibration.yaml`.
 
 ## Step 5 — Verify
 
 ```bash
-ros2 launch bar_bringup_lite real.launch.py mode:=arms_neck
+ros2 launch humanoid_control_bringup_lite real.launch.py mode:=arms_neck
 ```
 
 In a second terminal:
 
 ```bash
-cd bar_ws && pixi shell
+cd humanoid_control_ws && pixi shell
 # Should now see 14 + new joints in /lite/joint_states
 ros2 topic echo --once /lite/joint_states | grep -c " - " # name count
 ```

@@ -6,7 +6,7 @@ sidebar_position: 5
 # Tutorial: Build your own controller plugin
 
 Walk through the pieces of a `controller_interface::ControllerInterface`
-plugin by building one yourself. We'll create `bar::HelloController`,
+plugin by building one yourself. We'll create `humanoid_control::HelloController`,
 a minimal-but-real plugin that claims one joint's `position` command
 interface and writes a sinusoidal target. By the end you'll know:
 
@@ -16,7 +16,7 @@ interface and writes a sinusoidal target. By the end you'll know:
 - How interface claiming works.
 - How to load and activate your controller from the running stack.
 
-This is **the** lesson for understanding why `bar_controllers` looks
+This is **the** lesson for understanding why `humanoid_controllers` looks
 the way it does.
 
 ## Time + materials
@@ -28,21 +28,21 @@ the way it does.
 
 ## The plan
 
-We'll add a new controller to `bar_controllers` (rather than a new
+We'll add a new controller to `humanoid_controllers` (rather than a new
 package, to skip the boilerplate). Five files change:
 
 | File | What we do |
 |---|---|
-| `bar_controllers/include/bar_controllers/hello_controller.hpp` | New header — class definition |
-| `bar_controllers/src/hello_controller.cpp` | New source — lifecycle bodies |
-| `bar_controllers/bar_controllers_plugins.xml` | Register the new class with pluginlib |
-| `bar_controllers/CMakeLists.txt` | Add the `.cpp` to the library |
-| `bar_controllers/config/hello_controller.yaml` | Parameters at load time |
+| `humanoid_controllers/include/humanoid_controllers/hello_controller.hpp` | New header — class definition |
+| `humanoid_controllers/src/hello_controller.cpp` | New source — lifecycle bodies |
+| `humanoid_controllers/humanoid_control_controllers_plugins.xml` | Register the new class with pluginlib |
+| `humanoid_controllers/CMakeLists.txt` | Add the `.cpp` to the library |
+| `humanoid_controllers/config/hello_controller.yaml` | Parameters at load time |
 
 ## Step 1 — Header
 
 ```cpp
-// bar_controllers/include/bar_controllers/hello_controller.hpp
+// humanoid_controllers/include/humanoid_controllers/hello_controller.hpp
 #pragma once
 
 #include <string>
@@ -51,7 +51,7 @@ package, to skip the boilerplate). Five files change:
 #include <controller_interface/controller_interface.hpp>
 #include <rclcpp/macros.hpp>
 
-namespace bar
+namespace humanoid_control
 {
 
 // Demo controller for the "build your own" tutorial. Claims one joint's
@@ -82,21 +82,21 @@ private:
   rclcpp::Time activate_time_;
 };
 
-}  // namespace bar
+}  // namespace humanoid_control
 ```
 
 ## Step 2 — Source
 
 ```cpp
-// bar_controllers/src/hello_controller.cpp
-#include "bar_controllers/hello_controller.hpp"
+// humanoid_controllers/src/hello_controller.cpp
+#include "humanoid_controllers/hello_controller.hpp"
 
 #include <cmath>
 #include <pluginlib/class_list_macros.hpp>
 
-#include "bar_common/loaned_interface_helpers.hpp"
+#include "humanoid_control_common/loaned_interface_helpers.hpp"
 
-namespace bar
+namespace humanoid_control
 {
 
 using controller_interface::CallbackReturn;
@@ -137,7 +137,7 @@ CallbackReturn HelloController::on_activate(const rclcpp_lifecycle::State &)
 {
   // on_activate: command interfaces are bound now. Capture initial state
   // so we have a baseline.
-  captured_position_ = bar::get_state(state_interfaces_[0]);
+  captured_position_ = humanoid_control::get_state(state_interfaces_[0]);
   activate_time_ = get_node()->now();
   return CallbackReturn::SUCCESS;
 }
@@ -168,23 +168,23 @@ return_type HelloController::update(
   const double t = (time - activate_time_).seconds();
   const double target = captured_position_ +
                         amplitude_ * std::sin(2.0 * M_PI * frequency_ * t);
-  bar::set_cmd(command_interfaces_[0], target);
+  humanoid_control::set_cmd(command_interfaces_[0], target);
   return return_type::OK;
 }
 
-}  // namespace bar
+}  // namespace humanoid_control
 
-PLUGINLIB_EXPORT_CLASS(bar::HelloController, controller_interface::ControllerInterface)
+PLUGINLIB_EXPORT_CLASS(humanoid_control::HelloController, controller_interface::ControllerInterface)
 ```
 
 ## Step 3 — Register with pluginlib
 
-Add to `bar_controllers/bar_controllers_plugins.xml`:
+Add to `humanoid_controllers/humanoid_control_controllers_plugins.xml`:
 
 ```xml
 <class
-  name="bar/HelloController"
-  type="bar::HelloController"
+  name="humanoid_control/HelloController"
+  type="humanoid_control::HelloController"
   base_class_type="controller_interface::ControllerInterface">
   <description>Demo controller: sin-wave around the joint's captured starting position. Used by docs/tutorials/build_your_own_controller.</description>
 </class>
@@ -193,7 +193,7 @@ Add to `bar_controllers/bar_controllers_plugins.xml`:
 ## Step 4 — CMakeLists
 
 Add the new source to the existing library in
-`bar_controllers/CMakeLists.txt`:
+`humanoid_controllers/CMakeLists.txt`:
 
 ```cmake
 add_library(${PROJECT_NAME} SHARED
@@ -210,9 +210,9 @@ add_library(${PROJECT_NAME} SHARED
 ## Step 5 — Build
 
 ```bash
-cd ~/bar_ws
+cd ~/humanoid_control_ws
 pixi shell
-colcon build --symlink-install --packages-select bar_controllers
+colcon build --symlink-install --packages-select humanoid_controllers
 ```
 
 If the build fails:
@@ -224,14 +224,14 @@ Verify pluginlib sees the new controller:
 
 ```bash
 ros2 control list_controller_types | grep Hello
-# bar/HelloController                            controller_interface::ControllerInterface
+# humanoid_control/HelloController                            controller_interface::ControllerInterface
 ```
 
 ## Step 6 — Run it
 
 ```bash
 # Bring up Lite with the FSM disabled so we can hand-load:
-ros2 launch bar_bringup_lite mujoco.launch.py enable_mode_manager:=false
+ros2 launch humanoid_control_bringup_lite mujoco.launch.py enable_mode_manager:=false
 ```
 
 In another terminal, load the controller via the CLI (inside
@@ -257,7 +257,7 @@ Confirm it's loaded:
 
 ```bash
 ros2 control list_controllers
-# hello_controller        bar/HelloController        inactive
+# hello_controller        humanoid_control/HelloController        inactive
 ```
 
 Now activate it — but first deactivate `zero_torque_controller` so
@@ -289,19 +289,19 @@ Then `Ctrl+C` the launch.
 | Pluginlib registration | XML descriptor + `PLUGINLIB_EXPORT_CLASS` macro + CMake reference |
 | Lifecycle | `on_init` (declare params) → `on_configure` (read params, set up) → `on_activate` (capture state) → `update` (hot path) |
 | Interface claiming | Returned from `command_interface_configuration()` and `state_interface_configuration()` |
-| State reading | `bar::get_state(state_interfaces_[i])` |
-| Command writing | `bar::set_cmd(command_interfaces_[i], value)` |
+| State reading | `humanoid_control::get_state(state_interfaces_[i])` |
+| Command writing | `humanoid_control::set_cmd(command_interfaces_[i], value)` |
 | Mutual exclusion | Only one controller can claim a given interface — the controller_manager enforces this on `switch_controllers` |
 
 ## Where the existing controllers extend this pattern
 
 | Controller | Distinct mechanism worth studying |
 |---|---|
-| `bar/ZeroTorqueController` | The minimal case — claims all 5 MIT interfaces, writes 0. Best baseline. |
-| `bar/DampingController` | Captures state on activate; uses a YAML per-joint or scalar fallback. |
-| `bar/StandbyController` | Multi-segment trajectory with K_p / K_d ramp; publishes its own state topic. |
-| `bar/RLPolicyController` | The in-process System 0 policy: preloads a `.mcap` motion reference and runs ONNX inference inside `update()`; observation packing + action mapping, all RT-safe. |
-| `bar/RemotePolicyController` | The System 1/2 external-command ingress: subscribes to an `MITCommand` topic; `RealtimeBuffer` for the RT handoff; arrival-time-based stale-command policy. |
+| `humanoid_control/ZeroTorqueController` | The minimal case — claims all 5 MIT interfaces, writes 0. Best baseline. |
+| `humanoid_control/DampingController` | Captures state on activate; uses a YAML per-joint or scalar fallback. |
+| `humanoid_control/StandbyController` | Multi-segment trajectory with K_p / K_d ramp; publishes its own state topic. |
+| `humanoid_control/RLPolicyController` | The in-process System 0 policy: preloads a `.mcap` motion reference and runs ONNX inference inside `update()`; observation packing + action mapping, all RT-safe. |
+| `humanoid_control/RemotePolicyController` | The System 1/2 external-command ingress: subscribes to an `MITCommand` topic; `RealtimeBuffer` for the RT handoff; arrival-time-based stale-command policy. |
 
 Read those in order — the complexity ramps up.
 
@@ -309,6 +309,6 @@ Read those in order — the complexity ramps up.
 
 - [`ControllerInterface` API docs](https://control.ros.org/master/doc/api/classcontroller__interface_1_1ControllerInterface.html).
 - [Reference → Controllers](../reference/controllers.md) — per-plugin parameters.
-- [`bar_common/loaned_interface_helpers.hpp`](https://github.com/T-K-233/bar_ros2/blob/main/bar_common/include/bar_common/loaned_interface_helpers.hpp)
+- [`humanoid_control_common/loaned_interface_helpers.hpp`](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_control_common/include/humanoid_control_common/loaned_interface_helpers.hpp)
   — what `get_state` / `set_cmd` actually do (they wrap Jazzy's
   `[[nodiscard]]` migration helpers).

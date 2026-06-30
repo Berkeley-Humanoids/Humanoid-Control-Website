@@ -14,7 +14,7 @@ gravity-compensation loop that reads joint states and publishes
 and the difference between the torque-mode and PD-mode gravity loops.
 
 This is the worked, end-to-end companion to
-[How-to → Talk to bar_ros2 from Python](../how_to/talk_to_bar_ros2_from_python.md):
+[How-to → Talk to humanoid_control from Python](../how_to/talk_to_humanoid_control_from_python.md):
 that page is the recipe, this is the lesson.
 
 ## Time + materials
@@ -22,7 +22,7 @@ that page is the recipe, this is the lesson.
 - 20 minutes
 - A working workspace build (the bringup side)
 - The [`Lite-Gravity-Compensation`](https://github.com/Berkeley-Humanoids/Lite-Gravity-Compensation)
-  demo, checked out **anywhere outside `bar_ws`** (it's a standalone
+  demo, checked out **anywhere outside `humanoid_control_ws`** (it's a standalone
   Tier-3 project with its own `uv` environment — it only needs to reach
   the robot's DDS bus, not the colcon workspace)
 - [`uv`](https://docs.astral.sh/uv/) on PATH for the demo's own env
@@ -32,12 +32,12 @@ that page is the recipe, this is the lesson.
 
 The gravity-comp runner is **not** a controller and **not** a ROS node.
 It's an ordinary Python process that joins the same DDS network the
-bringup uses. The in-process `bar::RemotePolicyController` is the only
+bringup uses. The in-process `humanoid_control::RemotePolicyController` is the only
 thing that touches the command interfaces; the external loop just feeds
 it `MITCommand`s:
 
 ```
-   host-side process (pure pip, no rclpy)        bar_ros2 bringup (System 0, RT)
+   host-side process (pure pip, no rclpy)        humanoid_control bringup (System 0, RT)
    ┌───────────────────────────────┐            ┌──────────────────────────────┐
    │ run_ros2_torque.py            │            │ joint_state_broadcaster       │
    │   each tick @ COMMAND_HZ:     │  rt/lite/  │   publishes /lite/joint_states│
@@ -75,8 +75,8 @@ uv sync
 ```
 
 `uv sync` resolves the two host-side packages straight from their git
-repos — [`lite_sdk2`](../reference/packages.md#bar_msgs_dds) (the
-publisher/subscriber + QoS registry) and `bar_msgs_dds` (the
+repos — [`lite_sdk2`](../reference/packages.md#humanoid_control_msgs_dds) (the
+publisher/subscriber + QoS registry) and `humanoid_control_msgs_dds` (the
 ROS-wire-compatible CycloneDDS message types, pulled in transitively).
 Nothing here links against `rclpy`.
 
@@ -86,7 +86,7 @@ the three rmw conventions — the `rt/` topic prefix, the
 `pkg::msg::dds_::Name_` type-name mangling, and RELIABLE/KEEP_LAST QoS —
 so `cyclonedds-python` pairs directly with `rmw_cyclonedds_cpp` *or*
 `rmw_fastrtps_cpp` on the bringup. See
-[How-to → Talk to bar_ros2 from Python](../how_to/talk_to_bar_ros2_from_python.md).
+[How-to → Talk to humanoid_control from Python](../how_to/talk_to_humanoid_control_from_python.md).
 :::
 
 ## Step 2 — Bring up the stack
@@ -94,8 +94,8 @@ so `cyclonedds-python` pairs directly with `rmw_cyclonedds_cpp` *or*
 In the **bringup** terminal (inside `pixi shell`), start MuJoCo:
 
 ```bash
-cd bar_ws && pixi shell
-ros2 launch bar_bringup_lite mujoco.launch.py
+cd humanoid_control_ws && pixi shell
+ros2 launch humanoid_control_bringup_lite mujoco.launch.py
 ```
 
 Wait for `zero_torque_controller` to come active. (For real hardware,
@@ -109,14 +109,14 @@ transitions through `mode_manager`'s trigger services (in a second
 terminal, inside `pixi shell`):
 
 ```bash
-ros2 service call /bar/mode/damp std_srvs/srv/Trigger    # → DAMPING   (gamepad: X)
-ros2 service call /bar/mode/load std_srvs/srv/Trigger    # → STANDBY   (gamepad: L1+A)
+ros2 service call /humanoid_control/mode/damp std_srvs/srv/Trigger    # → DAMPING   (gamepad: X)
+ros2 service call /humanoid_control/mode/load std_srvs/srv/Trigger    # → STANDBY   (gamepad: L1+A)
 
 # Wait until the standby ramp reports finished:
 ros2 topic echo /standby_controller/state
 # ... is_finished: true
 
-ros2 service call /bar/mode/start_remote std_srvs/srv/Trigger   # → REMOTE (gamepad: R1+B)
+ros2 service call /humanoid_control/mode/start_remote std_srvs/srv/Trigger   # → REMOTE (gamepad: R1+B)
 ```
 
 :::caution[`start_remote` is R1+B, not R1+A]
@@ -173,7 +173,7 @@ PD mode encodes the same gravity term as a **position offset**
 (`K=PD_POSITION_KP`, `D=PD_VELOCITY_KD`). The arm feels stiffer and
 self-centering rather than free-floating. Both publish in
 `LITE_ARM_JOINTS` order (the `arm_joints` list in
-`bar_bringup_lite/config/lite_hardware.yaml`); `RemotePolicyController`
+`humanoid_control_bringup_lite/config/lite_hardware.yaml`); `RemotePolicyController`
 rejects a joint-order mismatch.
 
 :::tip[No bringup, no robot]
@@ -194,7 +194,7 @@ damping.
 For a deliberate stop, drive the FSM back down first:
 
 ```bash
-ros2 service call /bar/mode/damp std_srvs/srv/Trigger    # gamepad: X
+ros2 service call /humanoid_control/mode/damp std_srvs/srv/Trigger    # gamepad: X
 ```
 
 Then Ctrl-C the runner, then the bringup launch.
@@ -203,8 +203,8 @@ Then Ctrl-C the runner, then the bringup launch.
 
 | Skill | Page where it's documented in detail |
 |---|---|
-| The Tier-3 external-client (no-`rclpy`) DDS path | [How-to → Talk to bar_ros2 from Python](../how_to/talk_to_bar_ros2_from_python.md) |
-| `lite_sdk2` / `bar_msgs_dds` topic + QoS registry | [Reference → Packages](../reference/packages.md#bar_msgs_dds) |
+| The Tier-3 external-client (no-`rclpy`) DDS path | [How-to → Talk to humanoid_control from Python](../how_to/talk_to_humanoid_control_from_python.md) |
+| `lite_sdk2` / `humanoid_control_msgs_dds` topic + QoS registry | [Reference → Packages](../reference/packages.md#humanoid_control_msgs_dds) |
 | The REMOTE mode + `start_remote` transition | [Concepts → Five-mode FSM](../concepts/five_mode_fsm.md) |
 | `RemotePolicyController` and the MIT command write | [Reference → Controllers](../reference/controllers.md) |
 | The five MIT command interfaces (torque vs PD encoding) | [Concepts → MIT command surface](../concepts/mit_command_surface.md) |

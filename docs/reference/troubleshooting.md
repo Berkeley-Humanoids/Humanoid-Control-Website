@@ -53,7 +53,7 @@ the plugin's seeing from URDF.
 - You hand-edited the YAML and broke a key.
 
 **Fix**: open the file, compare keys against
-`bar_lite_controllers.yaml`'s `joints:` list. They must match
+`humanoid_control_lite_controllers.yaml`'s `joints:` list. They must match
 character-for-character. Or regenerate the file via
 [Calibrate the zero pose](../how_to/calibrate_zero_pose.md) — the
 output uses live URDF names.
@@ -73,7 +73,7 @@ hard-fails when the resolved `joy_dev` path is missing.
    `joy_dev:=/dev/input/jsN` (matching one of them) on the launch
    command line.
 3. **Headless / CI bringup.** Pass `enable_gamepad:=false` and drive
-   the FSM via the `/bar/mode/*` `std_srvs/Trigger` services
+   the FSM via the `/humanoid_control/mode/*` `std_srvs/Trigger` services
    instead.
 
 ## ENOBUFS / "Network is down" warnings during bringup
@@ -90,7 +90,7 @@ hardware adapter overload at very high frame rates.
    the USB-to-CAN adapter.
 3. **High-rate overload** — only relevant with many joints + tight
    update_rate. Lower `controller_manager.update_rate` in
-   `bar_lite_controllers.yaml`, or bump `sudo ip link set canN
+   `humanoid_control_lite_controllers.yaml`, or bump `sudo ip link set canN
    txqueuelen 100` (default 10).
 
 Full walk: [Diagnose ENOBUFS](../how_to/diagnose_enobufs.md).
@@ -141,8 +141,8 @@ xacro).
 entirely, the hardware plugin probably threw during `on_init` /
 `on_configure` and took the process down. Common causes:
 - URDF expansion failed (run `xacro <file>` directly to see the error).
-- `bar_robstride` was rebuilt with an ABI-incompatible bump but
-  the .so wasn't reinstalled. `colcon build --symlink-install --packages-select bar_robstride`.
+- `humanoid_control_robstride` was rebuilt with an ABI-incompatible bump but
+  the .so wasn't reinstalled. `colcon build --symlink-install --packages-select humanoid_control_robstride`.
 
 ## DDS discovery fails between launches and `ros2 topic ...`
 

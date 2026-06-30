@@ -15,7 +15,7 @@ build against which:
 
 ![Module dependency graph](/img/diagrams/concepts__architecture__03_module_deps.svg)
 
-Notice that `bar_controllers` does **not** `find_package(bar_robstride)`.
+Notice that `humanoid_controllers` does **not** `find_package(humanoid_control_robstride)`.
 The plugin is loaded by `controller_manager` at launch via `pluginlib` — a
 runtime dep that doesn't appear in the static graph but is just as binding.
 The same applies to every `<plugin>` entry in a controller-manager YAML.
@@ -36,7 +36,7 @@ MuJoCo — it performs three steps:
 | `update()` | read state_interfaces_, write command_interfaces_, lock-free trylock for diag publishers | allocations, blocking, exceptions across the RT boundary |
 | `write()` | stage frames into the bus library's outgoing queue | the actual CAN/EtherCAT syscall (that's the I/O thread's job) |
 
-The I/O thread in each hardware plugin (`bar_socketcan::SocketCanBus`,
+The I/O thread in each hardware plugin (`humanoid_control_socketcan::SocketCanBus`,
 `ethercat_driver_ros2`'s EtherLAB master thread) is **separate** from the
 controller-manager thread. RT-safety is preserved by making `read()` /
 `write()` allocation-free buffer swaps.
@@ -80,11 +80,11 @@ Behavior per state:
 
 | State | Plugin | What it writes |
 |---|---|---|
-| **ZERO_TORQUE** | `bar/ZeroTorqueController` | 0 to all 5 cmd interfaces. Startup default, fault fallback. |
-| **DAMPING** | `bar/DampingController` | `K=0`, `D=damping value`, `q_cmd=q_captured` — soft under gravity, resists velocity. |
-| **STANDBY** | `bar/StandbyController` | Linear pose interpolation through a YAML sequence; ramps `K_p / K_d` on first segment. Publishes `StandbyState` with `is_finished`. |
-| **LOCOMOTION** | `bar/RLPolicyController` | In-process ONNX inference (System 0): packs observations, replays the `.mcap` motion reference, decodes + writes commands — all in the RT `update()`. Runs every learned policy (tracking / piano / locomotion); they differ only by the loaded `.onnx` + `.mcap`. |
-| **REMOTE** | `bar/RemotePolicyController` | System 1/2 external-command ingress: subscribes `~/command` (`MITCommand` over DDS) from a *non*-real-time source (gravity-comp today, VLA / manipulation later) with arrival-time stale-command gating. |
+| **ZERO_TORQUE** | `humanoid_control/ZeroTorqueController` | 0 to all 5 cmd interfaces. Startup default, fault fallback. |
+| **DAMPING** | `humanoid_control/DampingController` | `K=0`, `D=damping value`, `q_cmd=q_captured` — soft under gravity, resists velocity. |
+| **STANDBY** | `humanoid_control/StandbyController` | Linear pose interpolation through a YAML sequence; ramps `K_p / K_d` on first segment. Publishes `StandbyState` with `is_finished`. |
+| **LOCOMOTION** | `humanoid_control/RLPolicyController` | In-process ONNX inference (System 0): packs observations, replays the `.mcap` motion reference, decodes + writes commands — all in the RT `update()`. Runs every learned policy (tracking / piano / locomotion); they differ only by the loaded `.onnx` + `.mcap`. |
+| **REMOTE** | `humanoid_control/RemotePolicyController` | System 1/2 external-command ingress: subscribes `~/command` (`MITCommand` over DDS) from a *non*-real-time source (gravity-comp today, VLA / manipulation later) with arrival-time stale-command gating. |
 
 ### Transition mechanics
 
@@ -100,8 +100,8 @@ plain `rclcpp::Node` that subscribes:
 …and exposes five `std_srvs/Trigger` services so transitions can also be
 driven from the command line:
 
-- `/bar/mode/damp`, `/bar/mode/load`, `/bar/mode/start_remote`,
-  `/bar/mode/start_locomotion`, `/bar/mode/quit`
+- `/humanoid_control/mode/damp`, `/humanoid_control/mode/load`, `/humanoid_control/mode/start_remote`,
+  `/humanoid_control/mode/start_locomotion`, `/humanoid_control/mode/quit`
 
 `/control_mode` is published at 50 Hz. The manager polls
 `list_controllers` periodically (every 25 ticks = 500 ms) so controllers
@@ -141,7 +141,7 @@ rather than the **inference**.
 ### Launch-time `prepare`, then in-process replay
 
 The heavy, non-real-time work runs **once at launch**, never per tick.
-`bar_policy prepare` (and `pianist_policy prepare`) resolves the ONNX
+`humanoid_control_policy prepare` (and `pianist_policy prepare`) resolves the ONNX
 checkpoint (local file or W&B run) and converts the policy's LeRobot
 motion dataset into a single-episode rosbag2 **`.mcap`** bag, then emits
 an `rl_policy_controller` parameter overlay. The launch runs `prepare`
@@ -179,10 +179,10 @@ the hot loop), resolving each term as one of:
 
 :::tip[Why a *generic* topic for the live key state]
 Routing live key state through a plain float array — rather than
-`pianist_msgs/PianoKeyState` — keeps `bar_controllers` free of any
+`pianist_msgs/PianoKeyState` — keeps `humanoid_controllers` free of any
 task-package dependency. The core controller package never learns the
 piano task exists; it just packs a named extern vector. New tasks add
-their own publisher on their own topic without touching `bar_controllers`.
+their own publisher on their own topic without touching `humanoid_controllers`.
 :::
 
 `reset()` (on activation) and `record_action()` (once per tick, after
@@ -196,15 +196,15 @@ sources that *should* live out-of-process: it subscribes to `MITCommand`
 over DDS and writes the bus, with arrival-time staleness gating. Today
 that is the gravity-compensation runner (`Lite-Gravity-Compensation` —
 raw CycloneDDS, no `rclpy`); next it is VLA / manipulation. Such a client
-does not hand-write the message types: [`bar_msgs_dds`](../reference/packages.md#bar_msgs_dds)
-generates wire-compatible `cyclonedds` types from `bar_msgs/msg/*.msg`, and
+does not hand-write the message types: [`humanoid_control_msgs_dds`](../reference/packages.md#humanoid_control_msgs_dds)
+generates wire-compatible `cyclonedds` types from `humanoid_control_msgs/msg/*.msg`, and
 the `lite_sdk2` SDK wraps them in a publisher/subscriber layer — see
-[Talk to bar_ros2 from Python](../how_to/talk_to_bar_ros2_from_python.md).
+[Talk to humanoid_control from Python](../how_to/talk_to_humanoid_control_from_python.md).
 These are System 1/2: slower, deliberative, and tolerant of the latency the
 DDS hop adds.
 
-`MITState` is a **code-level** schema (a `bar::MITState` POD in
-`bar_common`) — not a published topic. Observations are assembled
+`MITState` is a **code-level** schema (a `humanoid_control::MITState` POD in
+`humanoid_control_common`) — not a published topic. Observations are assembled
 in-process from `/lite/joint_states` (the always-on broadcaster) and
 `/imu/data` (the IMU driver). See [Policy runner](../reference/policy_runner.md).
 
@@ -214,8 +214,8 @@ A handful of artifacts are **frozen once a trained policy depends on them**:
 
 | Artifact | Frozen because |
 |---|---|
-| `bar_msgs/MITCommand` | trained policies emit this field-by-field over DDS |
-| Joint order in `bar_*_controllers.yaml` | trained policies index into this order |
+| `humanoid_control_msgs/MITCommand` | trained policies emit this field-by-field over DDS |
+| Joint order in `humanoid_control_*_controllers.yaml` | trained policies index into this order |
 | `MITState` struct + Python dataclass | both sides agree on `joint_position`/`joint_velocity`/IMU layout |
 | Observation term scale + default vectors | shifts mean retraining |
 
@@ -229,8 +229,8 @@ system:
 
 Concrete examples:
 
-- A Robstride bus-off → `bar_robstride` publishes `SafetyStatus{level=FAULT,
-  source="bar_robstride/can0", flags=BUS_OFF}` → `mode_manager` requests a
+- A Robstride bus-off → `humanoid_control_robstride` publishes `SafetyStatus{level=FAULT,
+  source="humanoid_control_robstride/can0", flags=BUS_OFF}` → `mode_manager` requests a
   STRICT switch to DAMPING. If DAMPING fails (e.g. command interfaces
   unavailable), `mode_manager` falls back to ZERO_TORQUE.
 - A `RemotePolicyController` whose Python publisher stalls for >100 ms
@@ -240,7 +240,7 @@ Concrete examples:
   **arrival time at the subscription callback**, not against
   `MITCommand.header.stamp`, so publisher clock skew is irrelevant.
 - An RL policy returning NaN in its action vector → `RLPolicyController`
-  detects via `bar::rt::all_finite(...)` and returns `return_type::ERROR`,
+  detects via `humanoid_control::rt::all_finite(...)` and returns `return_type::ERROR`,
   triggering `fallback_controllers` in the CM YAML.
 
 ## Deployment topology
@@ -249,19 +249,19 @@ The shipping configuration is a **two-machine tethered split**. The
 same colcon workspace is installed (and built from the same pixi lock
 file) on both machines; each launch boots only the subset of nodes
 that belongs on its side. Single-machine sim/dev paths
-(`bar_bringup_lite/mujoco.launch.py`, `bar_bringup_lite/view_lite.launch.py`,
-`bar_bringup_lite/calibrate.launch.py`) are unaffected — they
+(`humanoid_control_bringup_lite/mujoco.launch.py`, `humanoid_control_bringup_lite/view_lite.launch.py`,
+`humanoid_control_bringup_lite/calibrate.launch.py`) are unaffected — they
 collapse both sides into one process tree.
 
-Launches come from two sibling repos: `bar_ros2` ships every
+Launches come from two sibling repos: `humanoid_control` ships every
 Lite/Prime control-plane and tracking-policy launch; `pianist_ros2`
 ships the piano-task-specific launches.
 
 | Side | Machine | Launch | What lives here |
 |---|---|---|---|
-| **Robot** | Onboard computer (RT kernel, wired tether) | `bar_bringup_lite/launch/real.launch.py` (bar_ros2) | `ros2_control_node`, `bar_robstride` / `bar_sito` hardware plugins, `joint_state_broadcaster`, the five FSM controllers (`zero_torque` / `damping` / `standby` / `rl_policy` / `remote_policy`), `mode_manager`, `joy_node`, `robot_state_publisher`, IMU driver |
-| **Host** | Operator workstation | `bar_bringup_lite/launch/viz.launch.py` (bar_ros2) | `viser_viz` *or* `rerun_viz` (selected by `viewer:=`) |
-| **Robot** | Onboard computer | `bar_policy/launch/lite_policy.launch.py` (bar_ros2) / `pianist_policy/launch/piano_policy.launch.py` (pianist_ros2) | Runs `prepare` (resolve ONNX, convert motion → `.mcap` + overlay) then loads `rl_policy_controller` into the local CM. Inference is in-process, so the `.onnx` / `.mcap` artifacts **and** the W&B / HF Hub / `onnxruntime` *prepare-time* deps live here. The RT path itself pulls none of them. |
+| **Robot** | Onboard computer (RT kernel, wired tether) | `humanoid_control_bringup_lite/launch/real.launch.py` (humanoid_control) | `ros2_control_node`, `humanoid_control_robstride` / `humanoid_control_sito` hardware plugins, `joint_state_broadcaster`, the five FSM controllers (`zero_torque` / `damping` / `standby` / `rl_policy` / `remote_policy`), `mode_manager`, `joy_node`, `robot_state_publisher`, IMU driver |
+| **Host** | Operator workstation | `humanoid_control_bringup_lite/launch/viz.launch.py` (humanoid_control) | `viser_viz` *or* `rerun_viz` (selected by `viewer:=`) |
+| **Robot** | Onboard computer | `humanoid_control_policy/launch/lite_policy.launch.py` (humanoid_control) / `pianist_policy/launch/piano_policy.launch.py` (pianist_ros2) | Runs `prepare` (resolve ONNX, convert motion → `.mcap` + overlay) then loads `rl_policy_controller` into the local CM. Inference is in-process, so the `.onnx` / `.mcap` artifacts **and** the W&B / HF Hub / `onnxruntime` *prepare-time* deps live here. The RT path itself pulls none of them. |
 | **Robot** | Onboard computer | `pianist_policy/launch/midi_keyboard_driver.launch.py` (pianist_ros2) | USB-MIDI keyboard driver → `/piano/key_state` (`std_msgs/Float32MultiArray`); feeds the on-robot controller's `key_pressed` extern term locally (loopback, does **not** cross the tether). |
 
 :::tip[The deployment trade the in-process move makes]
@@ -332,7 +332,7 @@ deployed surface.
 
 ## Next
 
-- [`mode_manager` source](https://github.com/T-K-233/bar_ros2/blob/main/bar_controllers/src/mode_manager.cpp)
+- [`mode_manager` source](https://github.com/Berkeley-Humanoids/humanoid_control/blob/main/humanoid_controllers/src/mode_manager.cpp)
   — the FSM is ~150 lines of C++; readable in one sitting.
 - [Lite 101](../getting_started/lite_101.md) — see all of this run end-to-end
   against mock hardware and MuJoCo.

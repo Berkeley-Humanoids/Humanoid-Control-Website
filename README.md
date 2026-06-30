@@ -1,6 +1,6 @@
-# bar_ros2_docs
+# Humanoid-Control-Website
 
-Documentation site for [`bar_ros2`](https://github.com/T-K-233/bar_ros2) — the
+Documentation site for [`humanoid_control`](https://github.com/Berkeley-Humanoids/humanoid_control) — the
 Berkeley Architecture Research (BAR) humanoid low-level control stack.
 
 Built with [Docusaurus 3](https://docusaurus.io/) + `@docusaurus/theme-mermaid`
@@ -26,7 +26,7 @@ npm run serve        # serve the built dist locally
 The `build/` directory is a fully static site — drop it on Netlify,
 Cloudflare Pages, or GitHub Pages. For GitHub Pages, configure the workflow
 to publish `build/`; the bundled `docusaurus.config.ts` already sets
-`organizationName` and `projectName` for a `T-K-233/bar_ros2_docs` repo.
+`organizationName` and `projectName` for a `Berkeley-Humanoids/Humanoid-Control-Website` repo.
 
 ## Layout
 

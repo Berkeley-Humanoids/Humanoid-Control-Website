@@ -6,7 +6,7 @@ sidebar_position: 3
 # Tutorial: Run a tracking policy
 
 End-to-end: take a trained ONNX tracking policy, load it into the
-**in-process** `bar::RLPolicyController` (this stack is the **System 0**
+**in-process** `humanoid_control::RLPolicyController` (this stack is the **System 0**
 real-time layer), and watch the arms follow a LeRobot teleop dataset
 under MuJoCo physics. By the end you'll know what the launch-time
 `prepare` step produces, how the ONNX metadata schema makes everything
@@ -33,7 +33,7 @@ inside the RT cycle:
 ```
    launch-time, once:
    ┌──────────────────────┐
-   │ bar_policy prepare    │   (CLI, bar_policy — non-real-time)
+   │ humanoid_control_policy prepare    │   (CLI, humanoid_control_policy — non-real-time)
    │   - resolve ONNX      │
    │     (local / W&B)     │
    │   - LeRobot motion    │
@@ -45,7 +45,7 @@ inside the RT cycle:
               │ rl_policy_params.yaml (+ .onnx + .mcap)
               ▼
    ┌──────────────────────┐
-   │ RLPolicyController    │  (C++, bar_controllers — System 0, in-process)
+   │ RLPolicyController    │  (C++, humanoid_controllers — System 0, in-process)
    │   each RT tick:       │
    │   - pack observation  │
    │   - run ONNX inference│
@@ -75,7 +75,7 @@ any of this into YAML.
 The same launch as the previous tutorial, no gamepad needed:
 
 ```bash
-ros2 launch bar_bringup_lite mujoco.launch.py
+ros2 launch humanoid_control_bringup_lite mujoco.launch.py
 ```
 
 Wait for `zero_torque_controller` to come active.
@@ -86,7 +86,7 @@ Wait for `zero_torque_controller` to come active.
 Walk the FSM up to STANDBY. In a second terminal, drop into the env:
 
 ```bash
-cd bar_ws
+cd humanoid_control_ws
 pixi shell
 ```
 
@@ -98,8 +98,8 @@ transitions the gamepad would fire):
 #   X    → DAMP
 #   L1+A → LOAD (STANDBY); wait ~4 s for is_finished:true
 #
-ros2 service call /bar/mode/damp std_srvs/srv/Trigger
-ros2 service call /bar/mode/load std_srvs/srv/Trigger
+ros2 service call /humanoid_control/mode/damp std_srvs/srv/Trigger
+ros2 service call /humanoid_control/mode/load std_srvs/srv/Trigger
 
 # Wait for is_finished:
 ros2 topic echo /standby_controller/state
@@ -112,15 +112,15 @@ In a third terminal:
 
 ```bash
 # Option (a): local ONNX
-ros2 launch bar_policy lite_policy.launch.py \
+ros2 launch humanoid_control_policy lite_policy.launch.py \
     checkpoint_file:=/path/to/policy.onnx
 
-# Option (b): W&B run path (downloads + caches to ~/.cache/bar_policy/wandb/)
-ros2 launch bar_policy lite_policy.launch.py \
+# Option (b): W&B run path (downloads + caches to ~/.cache/humanoid_control_policy/wandb/)
+ros2 launch humanoid_control_policy lite_policy.launch.py \
     wandb_run_path:=IsaacLab-Training/mjlab/<run_id>
 
 # Option (c): W&B run with a specific checkpoint pinned
-ros2 launch bar_policy lite_policy.launch.py \
+ros2 launch humanoid_control_policy lite_policy.launch.py \
     wandb_run_path:=IsaacLab-Training/mjlab/<run_id> \
     wandb_checkpoint_name:=model_4000.onnx
 ```
@@ -131,7 +131,7 @@ pass-through alias for the `launch-policy-tracking` pixi task.)
 
 What happens behind the scenes:
 
-1. The launch runs `bar_policy prepare` **synchronously** as a one-shot
+1. The launch runs `humanoid_control_policy prepare` **synchronously** as a one-shot
    step (no long-lived Python node), which:
    - resolves the checkpoint to a local file via
      `checkpoint_loader.resolve_checkpoint` (downloading from W&B if
@@ -140,8 +140,8 @@ What happens behind the scenes:
      ```
      [prepare] checkpoint : /path/to/policy.onnx
      [prepare] task_type  : tracking
-     [prepare] motion bag : ~/.cache/bar_policy/launch/motion_tracking_ep0 (240 frames, 2 bodies)
-     [prepare] overlay    : ~/.cache/bar_policy/launch/rl_policy_params.yaml
+     [prepare] motion bag : ~/.cache/humanoid_control_policy/launch/motion_tracking_ep0 (240 frames, 2 bodies)
+     [prepare] overlay    : ~/.cache/humanoid_control_policy/launch/rl_policy_params.yaml
      ```
    - pulls the LeRobot reference motion (parquet shards from HF Hub)
      keyed off `episode_index` and converts the chosen episode into a
@@ -164,7 +164,7 @@ activate the policy through the FSM (in the FSM-walk terminal, inside
 `pixi shell`):
 
 ```bash
-ros2 service call /bar/mode/start_locomotion std_srvs/srv/Trigger
+ros2 service call /humanoid_control/mode/start_locomotion std_srvs/srv/Trigger
 ```
 
 (Gamepad equivalent: **R1 + A**.) `mode_manager` switches the active
@@ -202,7 +202,7 @@ and the command write all happen inside the RT `update()`.
 DAMP first, then exit (still in the `pixi shell` terminal):
 
 ```bash
-ros2 service call /bar/mode/damp std_srvs/srv/Trigger
+ros2 service call /humanoid_control/mode/damp std_srvs/srv/Trigger
 
 # Then Ctrl+C the policy launch, then the bringup launch.
 ```
