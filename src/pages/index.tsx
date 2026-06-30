@@ -54,7 +54,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title={`${siteConfig.title} — ${siteConfig.tagline}`}
-      description="Docs for humanoid_control, the humanoid_control humanoid low-level control stack.">
+      description="Docs for Humanoid Control, the Humanoid Control humanoid low-level control stack.">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

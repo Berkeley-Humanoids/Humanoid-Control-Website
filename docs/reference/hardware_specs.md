@@ -85,7 +85,7 @@ the `lite_description` repo and flows back through `bar.repos`:
 1. In the `lite_description` repo, edit the joint's `torque_limit` (N·m, float)
    and / or `current_limit` (A, float) in `robots/lite_dummy/cad/ros2_control.json`.
 2. Regenerate the xacro: `uv run robot-assets-generate lite_dummy --only xacro`.
-3. Commit + push; bump the `lite_description` pin in `humanoid_control`'s `bar.repos`
+3. Commit + push; bump the `lite_description` pin in `Humanoid Control`'s `bar.repos`
    (keep the buildfarm's in sync).
 4. Re-import, rebuild, and re-launch:
 
@@ -117,7 +117,7 @@ lives in `humanoid_bringup_lite/config/calibration.yaml`), torque and current
 caps are per-robot-tuning — same value on every Lite physical instance,
 versioned alongside the URDF. If you want to A/B-test caps across
 deployments without editing source, set up two checked-out branches of
-`humanoid_control` and switch between them rather than splitting the source of
+`Humanoid Control` and switch between them rather than splitting the source of
 truth.
 
 **Setting to 0 disables the firmware write.** The plugin treats

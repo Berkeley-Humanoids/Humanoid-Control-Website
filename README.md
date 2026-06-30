@@ -1,7 +1,7 @@
 # Humanoid-Control-Website
 
-Documentation site for [`humanoid_control`](https://github.com/Berkeley-Humanoids/humanoid_control) — the
-Berkeley Humanoids (humanoid_control) humanoid low-level control stack.
+Documentation site for [`Humanoid Control`](https://github.com/Berkeley-Humanoids/humanoid_control) — the
+Berkeley Humanoids (Humanoid Control) humanoid low-level control stack.
 
 Built with [Docusaurus 3](https://docusaurus.io/) + `@docusaurus/theme-mermaid`
 for source-controlled diagrams of the control flow, FSM, and package

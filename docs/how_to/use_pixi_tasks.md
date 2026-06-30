@@ -16,10 +16,10 @@ what each alias maps to, when to reach for it, and how to add your
 own.
 
 `pixi.toml` lives at the **workspace level** (`humanoid_control_ws/pixi.toml`),
-*not* inside `humanoid_control` or `pianist_ros2`. That's intentional — the
+*not* inside `Humanoid Control` or `pianist_ros2`. That's intentional — the
 file pins ROS 2 Jazzy, the colcon toolchain, every Python dep, and
 the activation script that auto-sources `install/setup.bash`. Those
-are workspace concerns; both `humanoid_control` and `pianist_ros2` consume them.
+are workspace concerns; both `Humanoid Control` and `pianist_ros2` consume them.
 
 :::tip[Why have aliases at all]
 A single `pixi run launch-mujoco` is shorter than
@@ -41,12 +41,12 @@ explicit `pixi shell` first.
 | `pixi run build` | `colcon build --symlink-install --packages-skip-regex 'ethercat.*\|humanoid_bringup_prime'` | Build the Lite path (skips the EtherCAT-linked Prime lane that has no conda recipe). |
 | `pixi run build-all` | `colcon build --symlink-install` | Same, but includes `humanoid_bringup_prime` and `ethercat_driver_ros2`. Requires `libethercat` installed on the host. |
 | `pixi run build-pkg <name>` | `colcon build --symlink-install --packages-select <name>` | Targeted rebuild of one package — fastest edit-loop while iterating. |
-| `pixi run test` | `colcon test --packages-skip-regex 'ethercat.*\|humanoid_bringup_prime\|mujoco_.*' --ctest-args -LE linter --event-handlers console_cohesion-` | Run humanoid_control-owned tests; skips the vendored `mujoco_*` packages and the CMake-registered linters (which RoboStack ships at newer versions than apt-jazzy, so they'd diverge from the industrial_ci-on-humanoid_control source of truth). |
+| `pixi run test` | `colcon test --packages-skip-regex 'ethercat.*\|humanoid_bringup_prime\|mujoco_.*' --ctest-args -LE linter --event-handlers console_cohesion-` | Run humanoid_control-owned tests; skips the vendored `mujoco_*` packages and the CMake-registered linters (which RoboStack ships at newer versions than apt-jazzy, so they'd diverge from the industrial_ci-on-Humanoid Control source of truth). |
 | `pixi run test-lint` | Same as `test`, but keeps the linters. | Use when you specifically want to see uncrustify / cpplint output locally. |
 | `pixi run test-results` | `colcon test-result --verbose` | Print the per-package test summary after `pixi run test`. |
 | `pixi run clean` | `rm -rf build install log` | Wipe the colcon overlay (leaves the source tree and `.pixi/` env alone). Handy after a package rename. |
 
-## Launch aliases — humanoid_control
+## Launch aliases — Humanoid Control
 
 Each alias just wraps a `ros2 launch <pkg> <file>` invocation; any
 extra arguments after the alias are forwarded unchanged.
@@ -115,7 +115,7 @@ Then `pixi run my-thing` works immediately; no rebuild needed.
 
 If the alias should live next to the launch file conceptually
 (e.g. it's a piano-specific helper), the convention today is to
-still register it at the workspace level — `humanoid_control` and
+still register it at the workspace level — `Humanoid Control` and
 `pianist_ros2` are pure ROS 2 source trees and don't try to expose
 a workspace-shell-shortcut layer of their own.
 

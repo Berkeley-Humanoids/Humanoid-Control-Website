@@ -10,7 +10,7 @@ which keeps `humanoid_controllers` free of any `pianist_msgs` dependency.
 Tier-3 (non-`rclpy`) clients get these types from
 [`humanoid_control_msgs_dds`](packages.md#humanoid_control_msgs_dds) — generated from the same `.msg`
 and wire-compatible — usually via the `lite_sdk2` SDK. See
-[Talk to humanoid_control from Python](../how_to/talk_to_humanoid_control_from_python.md).
+[Talk to Humanoid Control from Python](../how_to/talk_to_humanoid_control_from_python.md).
 :::
 
 ## Topology

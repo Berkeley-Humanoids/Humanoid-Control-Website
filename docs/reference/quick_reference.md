@@ -11,7 +11,7 @@ parameters. The cheat sheet you print or pin to a second monitor.
 Every link points at the page with the full details.
 
 All commands below assume you've entered the workspace env (e.g.
-`cd humanoid_control_ws && pixi shell`) so `ros2`, `colcon`, and the humanoid_control console
+`cd humanoid_control_ws && pixi shell`) so `ros2`, `colcon`, and the Humanoid Control console
 scripts are on `PATH`. Looking for one-line aliases (`pixi run
 launch-mujoco`, `pixi run build`, …)?  See
 [How-to → Workspace shortcuts with pixi](../how_to/use_pixi_tasks.md).
@@ -22,7 +22,7 @@ Grouped by which machine they run on. See
 [Concepts → Architecture → Deployment topology](../concepts/architecture.md#deployment-topology)
 for the split rationale. Launches come from two repos:
 
-- `humanoid_control` ships the Lite + Prime bringups (`humanoid_bringup_lite`,
+- `Humanoid Control` ships the Lite + Prime bringups (`humanoid_bringup_lite`,
   `humanoid_bringup_prime`), the description viewer (`humanoid_bringup_lite`),
   and the policy prepare-and-load launch (`humanoid_control_policy`).
 - `pianist_ros2` ships the piano-task launches (`pianist_bringup`
@@ -68,7 +68,7 @@ loaded on the robot below.
 ### Robot onboard computer (prepare + load a policy)
 
 ```bash
-# Prepare + load the in-process tracking policy (humanoid_control → humanoid_control_policy):
+# Prepare + load the in-process tracking policy (Humanoid Control → humanoid_control_policy):
 # runs `prepare` (ONNX → .mcap + overlay), then loads rl_policy_controller
 # inactive. START_LOCOMOTION (R1+A) activates it.
 ros2 launch humanoid_control_policy lite_policy.launch.py \

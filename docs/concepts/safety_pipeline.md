@@ -4,7 +4,7 @@ title: Safety pipeline
 
 # Safety pipeline
 
-`humanoid_control`'s safety layer is **layered** rather than concentrated.
+`Humanoid Control`'s safety layer is **layered** rather than concentrated.
 Three subsystems each enforce one piece of the contract; together
 they make sure that "the robot is in DAMPING within a tick of a
 fault" is the worst case, never "the robot is doing something

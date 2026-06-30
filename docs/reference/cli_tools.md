@@ -4,7 +4,7 @@ title: CLI tools
 
 # CLI tools
 
-Standalone executables shipped by `humanoid_control`. The primary entry
+Standalone executables shipped by `Humanoid Control`. The primary entry
 point is the unified `hc` CLI from `humanoid_control_cli` — `hc bus ping`,
 `hc bus discover`, `hc motor slider`, `hc viz rerun`, `hc viz
 viser`, `hc calibrate`. Every underlying executable is also
@@ -22,15 +22,15 @@ These are normally driven by their launch files, but are reachable via
 
 | Executable | Package | Repo | What it does |
 |---|---|---|---|
-| `hc` (unified CLI) | `humanoid_control_cli` | humanoid_control | Verb/noun entry point (`hc bus ping`, `hc bus discover`, `hc motor slider`, `hc viz rerun`, …). |
-| `robstride_ping` | `humanoid_devices_robstride` | humanoid_control | Single-actuator probe (GetDeviceId / OperationStatus). Read-only. |
-| `robstride_discover` | `humanoid_devices_robstride` | humanoid_control | Scan a CAN ID range, print every device that replies. Read-only. |
-| `mit_slider_gui` | `humanoid_devices_robstride` | humanoid_control | Qt slider window publishing Float64MultiArray to a forward_command_controller. |
-| `mode_manager` | `humanoid_controllers` | humanoid_control | The FSM orchestrator. Normally launched by bringup; sometimes useful to start manually. |
-| `calibrate_robot` | `humanoid_bringup_lite` | humanoid_control | Sample (min, max) per joint; write `calibration.yaml` on Ctrl+C. |
-| `rerun_viz` | `humanoid_bringup_lite` | humanoid_control | Native rerun viewer subscribed to `/robot_description` + `/lite/joint_states`. |
-| `viser_viz` | `humanoid_bringup_lite` | humanoid_control | Browser viewer (default port 8080). Same subscriptions. |
-| `prepare` | `humanoid_control_policy` | humanoid_control | Launch-time prep: resolve the ONNX (local / W&B), convert the LeRobot motion → `.mcap` bag, emit the `rl_policy_controller` overlay (used by `lite_policy.launch.py`). |
+| `hc` (unified CLI) | `humanoid_control_cli` | Humanoid Control | Verb/noun entry point (`hc bus ping`, `hc bus discover`, `hc motor slider`, `hc viz rerun`, …). |
+| `robstride_ping` | `humanoid_devices_robstride` | Humanoid Control | Single-actuator probe (GetDeviceId / OperationStatus). Read-only. |
+| `robstride_discover` | `humanoid_devices_robstride` | Humanoid Control | Scan a CAN ID range, print every device that replies. Read-only. |
+| `mit_slider_gui` | `humanoid_devices_robstride` | Humanoid Control | Qt slider window publishing Float64MultiArray to a forward_command_controller. |
+| `mode_manager` | `humanoid_controllers` | Humanoid Control | The FSM orchestrator. Normally launched by bringup; sometimes useful to start manually. |
+| `calibrate_robot` | `humanoid_bringup_lite` | Humanoid Control | Sample (min, max) per joint; write `calibration.yaml` on Ctrl+C. |
+| `rerun_viz` | `humanoid_bringup_lite` | Humanoid Control | Native rerun viewer subscribed to `/robot_description` + `/lite/joint_states`. |
+| `viser_viz` | `humanoid_bringup_lite` | Humanoid Control | Browser viewer (default port 8080). Same subscriptions. |
+| `prepare` | `humanoid_control_policy` | Humanoid Control | Launch-time prep: resolve the ONNX (local / W&B), convert the LeRobot motion → `.mcap` bag, emit the `rl_policy_controller` overlay (used by `lite_policy.launch.py`). |
 | `prepare` | `pianist_policy` | pianist_ros2 | Piano counterpart of `humanoid_control_policy prepare` (song → key-state `.mcap`; used by `piano_policy.launch.py`). |
 | `piano_state_bridge` | `pianist_policy` | pianist_ros2 | Sim-side bridge — JointState piano keys → `std_msgs/Float32MultiArray` on `/piano/key_state`. |
 | `midi_keyboard_driver` | `pianist_policy` | pianist_ros2 | USB-MIDI input → `/piano/key_state` (`std_msgs/Float32MultiArray`, real-piano counterpart of the sim bridge). |

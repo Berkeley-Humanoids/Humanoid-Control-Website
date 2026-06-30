@@ -1,6 +1,6 @@
 # Installation
 
-There are two ways to get humanoid_control onto your machine:
+There are two ways to get Humanoid Control onto your machine:
 
 - **Install the prebuilt packages (recommended)** — pull the `ros-jazzy-humanoid-control-*`
   conda packages straight from the [`berkeley-humanoids`](https://prefix.dev/channels/berkeley-humanoids)
@@ -8,7 +8,7 @@ There are two ways to get humanoid_control onto your machine:
   control stack, deploying to a robot or Jetson, or building your own packages on
   top of `humanoid_control_msgs` / `humanoid_controllers`.
 - **Build from source** — clone the repos into a pixi workspace and `colcon
-  build`. For contributors who modify `humanoid_control`, and for the parts not yet in
+  build`. For contributors who modify `Humanoid Control`, and for the parts not yet in
   the channel (MuJoCo sim, the piano task, EtherCAT / Prime).
 
 Both use [pixi](https://pixi.sh); neither needs a system-wide `ros-jazzy-desktop`
@@ -19,7 +19,7 @@ every developer machine and on the Jetson.
 
 | Item | Required | Reason |
 |---|---|---|
-| 64-bit Linux | yes | humanoid_control targets `linux-64` / `linux-aarch64`. macOS and Windows are not supported (SocketCAN + PREEMPT_RT are Linux-only). |
+| 64-bit Linux | yes | Humanoid Control targets `linux-64` / `linux-aarch64`. macOS and Windows are not supported (SocketCAN + PREEMPT_RT are Linux-only). |
 | pixi ≥ 0.30 | yes | manages every other dependency |
 | Display server | for sim | `mujoco_sim` opens a GLFW window (source build only, today) |
 | PREEMPT_RT kernel | recommended | hard real-time guarantees on real hardware |
@@ -51,7 +51,7 @@ shell rc. Restart your shell (or `source ~/.bashrc`) so `pixi` resolves.
 
 ## Install the prebuilt packages (recommended)
 
-The humanoid_control packages are published as conda packages on the
+The Humanoid Control packages are published as conda packages on the
 [`berkeley-humanoids`](https://prefix.dev/channels/berkeley-humanoids) channel and rebuilt by
 the buildfarm on every release. You consume them like any other dependency.
 
@@ -146,7 +146,7 @@ pixi add --pypi rerun-sdk viser yourdfpy "scipy>=1.13"
 
 ## Build from source
 
-For contributors who modify `humanoid_control`, or to get the packages not yet in the
+For contributors who modify `Humanoid Control`, or to get the packages not yet in the
 channel (MuJoCo sim, piano task, EtherCAT / Prime). This builds everything with
 `colcon` inside the same pixi-managed environment.
 
@@ -212,7 +212,7 @@ colcon build --symlink-install --packages-skip-regex 'ethercat.*|humanoid_bringu
 
 `pixi shell` sources the conda env and `humanoid_control_ws/install/setup.bash` once it
 exists, so `ros2`, `colcon`, and every console script land on `PATH`. The build
-covers the Lite path (every humanoid_control + Pianist package plus the three `mujoco_*`
+covers the Lite path (every Humanoid Control + Pianist package plus the three `mujoco_*`
 deps). `--symlink-install` means edits to launch / config / Python files are
 picked up without rebuilding. After the first successful build the install
 overlay is on `AMENT_PREFIX_PATH` automatically — pixi's `[activation]` block
@@ -221,13 +221,13 @@ re-sources `install/setup.bash` whenever you enter `pixi shell`.
 ### 5. Sanity-check
 
 ```sh
-ros2 pkg list | grep '^humanoid_control_'        # 12 entries from humanoid_control
+ros2 pkg list | grep '^humanoid_control_'        # 12 entries from Humanoid Control
 ros2 pkg list | grep '^pianist_'    # 4 entries from pianist_ros2
 ros2 control list_hardware_interfaces 2>/dev/null \
     || echo "(no controller_manager running yet — expected)"
 ```
 
-The 11 `humanoid_control` packages (Lite's `lite_description` comes separately, via `bar.repos`):
+The 11 `Humanoid Control` packages (Lite's `lite_description` comes separately, via `bar.repos`):
 
 ```
 humanoid_bringup_lite
