@@ -14,16 +14,16 @@
   <rect width="100%" height="100%" fill="white"/>
 <text x="20" y="30" font-size="15" font-weight="700" text-anchor="start" fill="#111111" dominant-baseline="middle">MuJoCo bringup — single mujoco_sim process</text>
 <text x="20" y="48" font-size="11" font-weight="400" text-anchor="start" fill="#888888" dominant-baseline="middle">Physics + controller_manager + hardware plugin all live in one binary</text><rect x="40" y="80" width="800" height="280" rx="8" ry="8" fill="white" stroke="#888888" stroke-width="1" stroke-dasharray="5 3"/>
-<text x="52" y="96" font-size="11" font-weight="600" text-anchor="start" fill="#888888" dominant-baseline="middle">mujoco_sim process (mujoco_sim_ros2)</text><rect x="60" y="130" width="220" height="60" rx="6" ry="6" fill="#FFF6DF" stroke="#FDB515" stroke-width="1.5"/>
+<text x="52" y="96" font-size="11" font-weight="600" text-anchor="start" fill="#888888" dominant-baseline="middle">mujoco_sim process (mujoco_sim_ros2)</text><rect x="60" y="130" width="220" height="60" rx="6" ry="6" fill="#eef0f2" stroke="#5f6671" stroke-width="1.5"/>
 <text x="170" y="151" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">MuJoCo viewer</text>
 <text x="170" y="168" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">(GLFW window)</text>
-<rect x="60" y="220" width="220" height="60" rx="6" ry="6" fill="#FFF6DF" stroke="#FDB515" stroke-width="1.5"/>
+<rect x="60" y="220" width="220" height="60" rx="6" ry="6" fill="#eef0f2" stroke="#5f6671" stroke-width="1.5"/>
 <text x="170" y="241" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">Physics step</text>
 <text x="170" y="258" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">(500 Hz)</text>
-<rect x="330" y="130" width="230" height="60" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<rect x="330" y="130" width="230" height="60" rx="6" ry="6" fill="#ffece2" stroke="#ff6633" stroke-width="1.5"/>
 <text x="445" y="151" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">MujocoRos2ControlPlugin</text>
 <text x="445" y="168" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">(physics plugin)</text>
-<rect x="330" y="220" width="230" height="60" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<rect x="330" y="220" width="230" height="60" rx="6" ry="6" fill="#ffece2" stroke="#ff6633" stroke-width="1.5"/>
 <text x="445" y="241" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">controller_manager</text>
 <text x="445" y="258" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">(50 Hz)</text>
 <rect x="610" y="175" width="200" height="60" rx="6" ry="6" fill="#E7FFE7" stroke="#3B7A57" stroke-width="1.5"/>

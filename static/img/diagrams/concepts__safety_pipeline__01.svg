@@ -36,20 +36,20 @@
 <text x="480" y="250" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">flags: uint32 bit mask</text>
 <rect x="380" y="290" width="200" height="40" rx="6" ry="6" fill="#F4F4F4" stroke="#888888" stroke-width="1.5"/>
 <text x="480" y="310" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">source: 'humanoid_devices_robstride/can0'</text>
-<rect x="380" y="360" width="200" height="50" rx="6" ry="6" fill="#FFF6DF" stroke="#FDB515" stroke-width="1.5"/>
+<rect x="380" y="360" width="200" height="50" rx="6" ry="6" fill="#eef0f2" stroke="#5f6671" stroke-width="1.5"/>
 <text x="480" y="376" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">/safety_status</text>
 <text x="480" y="393" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">(TRANSIENT_LOCAL)</text>
-<line x1="480" y1="270" x2="480" y2="290" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="480" y1="330" x2="480" y2="360" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><rect x="660" y="100" width="280" height="40" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<line x1="480" y1="270" x2="480" y2="290" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><line x1="480" y1="330" x2="480" y2="360" stroke="#888888" stroke-width="1.4" marker-end="url(#arrow-grey)"/><rect x="660" y="100" width="280" height="40" rx="6" ry="6" fill="#ffece2" stroke="#ff6633" stroke-width="1.5"/>
 <text x="800" y="120" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">mode_manager.on_safety()</text>
 <rect x="660" y="160" width="280" height="40" rx="6" ry="6" fill="#EEEEEE" stroke="#888888" stroke-width="1.5"/>
 <text x="800" y="180" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">level == OK?</text>
-<rect x="660" y="220" width="280" height="40" rx="6" ry="6" fill="#FFF6DF" stroke="#FDB515" stroke-width="1.5"/>
+<rect x="660" y="220" width="280" height="40" rx="6" ry="6" fill="#eef0f2" stroke="#5f6671" stroke-width="1.5"/>
 <text x="800" y="240" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">request_mode(Mode::Damping)</text>
 <rect x="660" y="280" width="280" height="40" rx="6" ry="6" fill="#EEEEEE" stroke="#888888" stroke-width="1.5"/>
 <text x="800" y="300" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">if STRICT switch fails:</text>
 <rect x="660" y="330" width="280" height="40" rx="6" ry="6" fill="#E7FFE7" stroke="#3B7A57" stroke-width="1.5"/>
 <text x="800" y="350" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">request_mode(Mode::ZeroTorque)</text>
-<rect x="660" y="390" width="280" height="36" rx="6" ry="6" fill="#E7F0FF" stroke="#003262" stroke-width="1.5"/>
+<rect x="660" y="390" width="280" height="36" rx="6" ry="6" fill="#ffece2" stroke="#ff6633" stroke-width="1.5"/>
 <text x="800" y="408" font-size="13" font-weight="600" text-anchor="middle" fill="#111111" dominant-baseline="middle">controller_manager: switch_controller</text>
 <line x1="800" y1="140" x2="800" y2="160" stroke="#111111" stroke-width="1.4" marker-end="url(#arrow)"/><line x1="800" y1="200" x2="800" y2="220" stroke="#111111" stroke-width="1.4" marker-end="url(#arrow)"/>
 <rect x="778" y="210" width="44" height="16" rx="3" ry="3" fill="white" stroke="none"/>

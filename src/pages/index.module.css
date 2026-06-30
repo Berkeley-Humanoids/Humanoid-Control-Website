@@ -1,61 +1,94 @@
 /**
- * CSS scoped to the homepage. Following Docusaurus's CSS-modules convention:
- * imports as a JS object, classes are uniquified at build time.
+ * Homepage styles — deliberately plain. A modest, left-aligned intro followed
+ * by a simple "Documentation" contents list: no cards, no icons, no hover
+ * motion, the way a classical manual or reference site reads. Colors come from
+ * Infima variables so light and dark both work.
  */
 
-.heroBanner {
-  padding: 4rem 0;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(135deg, #003262 0%, #1c4f7d 60%, #246da6 100%);
-  color: #fff;
+.hero {
+  padding: 4rem 0 0.5rem;
 }
 
-.heroBanner :global(.hero__title) {
-  font-size: 3rem;
-  font-weight: 700;
+.title {
+  font-size: clamp(2rem, 4vw, 2.6rem);
+  line-height: 1.15;
   letter-spacing: -0.02em;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
 }
 
-.heroBanner :global(.hero__subtitle) {
-  font-size: 1.4rem;
-  opacity: 0.95;
+.tagline {
+  font-size: 1.25rem;
+  line-height: 1.45;
+  font-weight: 400;
+  color: var(--ifm-color-emphasis-800);
+  margin: 0 0 1.5rem;
+  max-width: 46ch;
 }
 
-.tagDetail {
-  max-width: 720px;
-  margin: 1.5rem auto 0 auto;
+.intro {
   font-size: 1rem;
-  opacity: 0.85;
-  line-height: 1.6;
+  line-height: 1.7;
+  max-width: 65ch;
+  margin: 0;
+  color: var(--ifm-color-content);
 }
 
-.tagDetail code {
-  background: rgba(255, 255, 255, 0.15);
-  color: #FDB515; /* Berkeley gold */
-  padding: 0.1em 0.4em;
-  border-radius: 4px;
-  font-size: 0.95em;
-}
-
-.buttons {
+.actions {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  margin-top: 2rem;
   flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 1.75rem;
 }
 
-@media screen and (max-width: 996px) {
-  .heroBanner {
-    padding: 2.5rem 1rem;
+.ghostLink {
+  font-weight: 600;
+}
+
+/* Contents list — a plain reference index, not a card grid. */
+.contents {
+  margin: 3rem 0 5rem;
+}
+
+.contentsHead {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  margin: 0 0 1.5rem;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.75rem 3rem;
+}
+
+.entryTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem;
+}
+
+.entryTitle a {
+  color: var(--ifm-color-primary);
+}
+
+.entryDesc {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--ifm-color-emphasis-700);
+  margin: 0;
+  max-width: 48ch;
+}
+
+@media screen and (max-width: 768px) {
+  .hero {
+    padding: 2.5rem 0 0.5rem;
   }
-  .heroBanner :global(.hero__title) {
-    font-size: 2.2rem;
-  }
-  .heroBanner :global(.hero__subtitle) {
-    font-size: 1.1rem;
+  .list {
+    grid-template-columns: 1fr;
   }
 }
